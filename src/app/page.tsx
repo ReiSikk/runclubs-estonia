@@ -25,7 +25,7 @@ export default async function Home() {
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
-    <div className={`${styles.page}`}>
+    <div className={`${styles.page}`} id="page-top">
       <header className={`${styles.header} container`}>
         <WeatherWidget />
       </header>
