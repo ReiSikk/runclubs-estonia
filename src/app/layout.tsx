@@ -2,7 +2,7 @@ import type { Metadata, Viewport } from "next";
 import Script from "next/script";
 import { Geist, Geist_Mono, Work_Sans, Inter_Tight } from "next/font/google";
 import "./globals.css";
-import SiteFooter from "./components/SiteFooter";
+import SiteFooter from "./components/Footer/SiteFooter";
 // Providers
 import Providers from "./providers/providers";
 

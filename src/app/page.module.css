@@ -7,7 +7,7 @@
   --button-secondary-hover: #f2f2f2;
 
   min-height: 100svh;
-  padding-block: 16px 32px;
+  padding-block: 16px 80px;
   font-family: var(--font-geist-sans);
 }
 
@@ -230,7 +230,7 @@
    Cta section
    ========================================================================== */
 .ctaSection {
-  margin-block: 100px;
+  margin-block: clamp(40px, 8vw, 80px) 0px;
 }
 .ctaSection__wrapper {
   display: flex;
