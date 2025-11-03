@@ -1,6 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import Script from "next/script";
-import { Geist, Geist_Mono, Work_Sans } from "next/font/google";
+import { Geist, Geist_Mono, Work_Sans, Inter_Tight } from "next/font/google";
 import "./globals.css";
 import SiteFooter from "./components/SiteFooter";
 // Providers
@@ -18,6 +18,11 @@ const geistMono = Geist_Mono({
 
 const workSans = Work_Sans({
   variable: "--font-work-sans",
+  subsets: ["latin"],
+});
+
+const interTight = Inter_Tight({
+  variable: "--font-inter-tight",
   subsets: ["latin"],
 });
 
@@ -49,7 +54,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" data-scroll-behavior="smooth">
-        <body className={`${geistSans.variable} ${geistMono.variable} ${workSans.variable}`}>
+        <body className={`${geistSans.variable} ${geistMono.variable} ${workSans.variable} ${interTight.variable}`}>
               <Providers>{children}</Providers>
               <SiteFooter />
               <Script

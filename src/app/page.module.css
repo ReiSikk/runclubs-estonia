@@ -7,7 +7,7 @@
   --button-secondary-hover: #f2f2f2;
 
   min-height: 100svh;
-  padding-block: 12px 32px;
+  padding-block: 16px 32px;
   font-family: var(--font-geist-sans);
 }
 

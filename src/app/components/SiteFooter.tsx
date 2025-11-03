@@ -5,7 +5,7 @@ function SiteFooter() {
   return (
     <footer className="siteFooter container">
         <div className="sitefooter__main fp-col">
-          <h5 className="siteFooter__title h1 uppercase italic">Run Clubs Est</h5>
+          <h4 className="siteFooter__title h1 uppercase italic">Run Clubs Est</h4>
           <a href="https://www.reihopsti.ee" target="_blank" rel="noopener noreferrer" data-umami-event="Clicked Portfolio link in footer">Idea, design & code by <span className='underline'>Rei Sikk</span></a>
           <span>All rights reserved © {new Date().getFullYear()}</span>
         </div>
