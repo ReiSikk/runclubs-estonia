@@ -27,10 +27,9 @@ export default async function Home() {
     <HydrationBoundary state={dehydrate(queryClient)}>
     <div className={`${styles.page}`}>
       <header className={`${styles.header} container`}>
-        <h1 className={`${styles.siteTitle} italic uppercase`}>Run Clubs Est</h1>
         <WeatherWidget />
       </header>
-      <main className={`${styles.main} container`}>
+      <main className={`${styles.main}`}>
         <HeroSection />
         <MainSection />
         <CtaSection />

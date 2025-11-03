@@ -48,34 +48,41 @@ body {
 
 h1,
 .h1 {
-  font-weight: 700;
+  font-family: var(--font-inter-tight);
+  font-weight: 800;
   line-height: 1.2;
-  font-size: clamp(4.8rem, 6vw, 6.4rem);
-  line-height: 60px;
+  font-size: clamp(3.2rem, 4vw, 3.6rem);
 }
 h2,
 .h2 {
+  font-family: var(--font-inter-tight);
   font-weight: 900;
-  font-size: clamp(3.2rem, 5vw, 4.8rem);
-  line-height: 1.2;
+  font-size: clamp(2.4rem, 3vw, 2.8rem);
+  line-height: auto;
 }
+
 h3,
 .h3 {
-  font-weight: 400;
-  font-size: clamp(2.4rem, 4vw, 3.2rem);
+  font-family: var(--font-inter-tight);
+  font-weight: 500;
+  font-size: clamp(2rem, 3vw, 2.4rem);
+  line-height: auto;
 }
 h4,
 .h4 {
-  font-weight: 700;
-  font-size: clamp(1.8rem, 3vw, 2.4rem);
-}
-h5,
-.h5 {
+  font-family: var(--font-inter-tight);
   font-weight: 600;
   font-size: clamp(1.6rem, 2vw, 1.8rem);
 }
+h5,
+.h5 {
+  font-family: var(--font-inter-tight);
+  font-weight: 500;
+  font-size: 1.4rem;
+}
 h6,
 .h6 {
+  font-family: var(--font-inter-tight);
   font-weight: 500;
   font-size: 1.4rem;
 }
@@ -83,8 +90,9 @@ h6,
 p,
 .txt-body {
   font-size: 1.6rem;
-  line-height: 1.5;
-  max-width: 44ch;
+  line-height: 1.4;
+  max-width: 62ch;
+  font-family: var(--font-work-sans);
 }
 .txt-label {
   font-size: clamp(1.2rem, 2vw, 1.4rem);
