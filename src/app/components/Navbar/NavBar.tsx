@@ -49,7 +49,6 @@ function NavBar() {
             priority 
             /> 
         </Link>
-        <WeatherWidget />
       </nav>
   )
 }

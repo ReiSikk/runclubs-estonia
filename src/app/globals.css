@@ -5,11 +5,11 @@
   --white: #fffaf0;
   --cream: #faf3e0;
   --footer-1: var(--cream);
-  --footer-2: #F97239;
-  --footer-3: #F8E7CE;
-  --footer-4: #FFB88F;
+  --footer-2: #f97239;
+  --footer-3: #f8e7ce;
+  --footer-4: #ffb88f;
   --footer-5: var(--accent);
-  --footer-6: #F8E7CE;
+  --footer-6: #f8e7ce;
   --divider: 1px solid rgba(0, 0, 0, 0.2);
 }
 
@@ -87,12 +87,6 @@ h5,
   font-weight: 500;
   font-size: 1.4rem;
 }
-h6,
-.h6 {
-  font-family: var(--font-inter-tight);
-  font-weight: 500;
-  font-size: 1.4rem;
-}
 
 p,
 .txt-body {
@@ -110,9 +104,9 @@ span {
   text-underline-offset: 2px;
 }
 .txt-label {
+  font-family: var(--font-inter-tight);
   font-size: clamp(1.2rem, 2vw, 1.4rem);
   font-weight: 500;
-  text-transform: uppercase;
   letter-spacing: 0.8px;
 }
 .txt-small {
@@ -244,6 +238,7 @@ ol {
   border: 1px solid var(--dark);
 
   &.socials {
+    width: 100%;
     position: relative;
     display: inline-flex;
     align-items: center;
@@ -253,6 +248,10 @@ ol {
     gap: 1rem;
     padding-block: 4px;
     text-transform: none;
+
+    @media only screen and (min-width: 468px) and (max-width: 1024px), only screen and (min-width: 1025px) {
+      width: fit-content;
+    }
 
     &:hover {
       background: var(--dark);
@@ -354,14 +353,14 @@ ol {
 @media (hover: hover) and (pointer: fine) {
   /* Target All clubs list item card */
   .page-module___8aEwW__allClubsList__item:hover .btn-txt-anim .txt-main {
-  transform: translateY(-100%);
-  opacity: 0;
-}
+    transform: translateY(-100%);
+    opacity: 0;
+  }
 
-.page-module___8aEwW__allClubsList__item:hover .btn-txt-anim .txt-hovered {
-  transform: translateY(0);
-  opacity: 1;
-}
+  .page-module___8aEwW__allClubsList__item:hover .btn-txt-anim .txt-hovered {
+    transform: translateY(0);
+    opacity: 1;
+  }
 
   .btn-txt-anim:hover {
     filter: brightness(1.2);
