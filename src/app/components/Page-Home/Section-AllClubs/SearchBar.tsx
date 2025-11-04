@@ -30,7 +30,7 @@ function SearchBar({ inputHandler, clearInput, searchTerm }: SearchBarProps) {
       name="q"
       type="search"
       placeholder="Search clubs"
-      className={`${styles.searchField__input} h6`}
+      className={`${styles.searchField__input} h5`}
       autoComplete="off"
       enterKeyHint="search"
       onChange={inputHandler}
@@ -43,8 +43,8 @@ function SearchBar({ inputHandler, clearInput, searchTerm }: SearchBarProps) {
       aria-label="Clear search input"
       onClick={clearInput}
       >
-      <span className="txt-main h6">Clear</span>
-      <span className="txt-hovered h6">Clear</span>
+      <span className="txt-main h5">Clear</span>
+      <span className="txt-hovered h5">Clear</span>
     </div>
   </div>
 </form>

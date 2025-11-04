@@ -1,6 +1,8 @@
-import styles from './page.module.css'
 import Link from 'next/link';
 import Image from 'next/image';
+import { notFound } from 'next/navigation'
+// Styles
+import styles from './page.module.css'
 // Components
 import CtaSection from '@/app/components/Page-Home/CtaSection/CtaSection';
 import NavBar from '@/app/components/Navbar/NavBar';
@@ -22,8 +24,36 @@ async function SingleRunClubPage({ params }: { params: { slug: string } }) {
   const hasWebsite = club?.website && club.website.trim() !== '';
 
 
+  // Define info cards
+  const infoCards = [
+    {
+      id: 'schedule',
+      label: 'Schedule',
+      title: club?.days?.map(day => day.charAt(0).toUpperCase() + day.slice(1)).join(', '),
+      description: null,
+      show: club?.days && club.days.length > 0
+    },
+    {
+      id: 'location',
+      label: 'Meeting Point',
+      title: club?.location,
+      description: club?.address,
+      show: club?.location || club?.address
+    },
+    {
+      id: 'distance',
+      label: 'Distance',
+      title: club?.distance ? `${club.distance} kilometers` : null,
+      description: club?.distanceDescription,
+      show: club?.distance
+    }
+  ].filter(card => card.show);
+
+
   if (!club) {
-    return <div>Club not found</div>;
+    return (
+      notFound()
+    )
   }
 
   return (
@@ -58,42 +88,45 @@ async function SingleRunClubPage({ params }: { params: { slug: string } }) {
               priority
             />
         )}
-        <h1 className={styles.pageHeader__title}>{club.name}</h1>
-        <p className={styles.pageHeader__description}>{club.description}</p>
-        <ul className={`${styles.pageHeader__cards}`}>
-          <li className={`${styles.pageHeader__card} fp`}>
-            <span className={`${styles.label} uppercase txt-label`}>Schedule</span>
-            <div className={styles.right}>
-              <h2 className={`${styles.cardTitle} h5`}>
-                  {club.days?.map(day => day.charAt(0).toUpperCase() + day.slice(1)).join(', ')}
-              </h2>
-            </div>
-          </li>
-          <li className={`${styles.pageHeader__card} fp`}>
-            <span className={`${styles.label} uppercase txt-label`}>Meeting Point</span>
-            <div className={styles.right}>
-              <h2 className={`${styles.cardTitle}`}>{club.location}</h2>
-              <p>{club.address}</p>
-            </div>
-          </li>
-          {club.distance &&
-            <li className={`${styles.pageHeader__card} fp`}>
-              <span className={`${styles.label} uppercase txt-label`}>Distance</span>
-              <div className={styles.right}>
-                <h2 className={`${styles.cardTitle}`}>{club.distance} kilometers</h2>
-                {club.distanceDescription &&
-                  <p>{club.distanceDescription}</p>
-                }
-              </div>
-            </li>
-          }
-        </ul>
+        <div className={`${styles.pageHeader__titledes} fp-col`}>
+          <h1 className={styles.pageHeader__title}>
+            {club.name}
+          </h1>
+          <p className={styles.pageHeader__description}>
+            {club.description}
+          </p>
+        </div>
+        {infoCards.length > 0 && (
+          <ul className={`${styles.pageHeader__cards}`}>
+            {infoCards.map((card) => (
+              <li key={card.id} className={`${styles.pageHeader__card} fp`}>
+                <span className={`${styles.label} uppercase txt-label`}>
+                  {card.label}
+                </span>
+                <div className={styles.card_main}>
+                  {card.title && (
+                    <h2 className={`${styles.cardTitle} h4`}>
+                      {card.title}
+                    </h2>
+                  )}
+                  {card.description && (
+                    <p className=''>{card.description}</p>
+                  )}
+                </div>
+              </li>
+            ))}
+          </ul>
+        )}
         <h3 className={`${styles.pageHeader__subtitle} txt-body`}>Visit our socials to stay in the loop for events!</h3>
         <ul className={`${styles.pageHeader__socials} list-flex`}>
           {hasFacebook && (
           <li className='btn_main socials white'>
-            <div className={`${styles.socialIcon} fp`}>
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 36 36" fill="url(#facebook-a)" height="24" width="24"><defs><linearGradient x1="50%" x2="50%" y1="97.078%" y2="0%" id="facebook-a"><stop offset="0%" stopColor="#0062E0"/><stop offset="100%" stopColor="#19AFFF"/></linearGradient></defs><path d="M15 35.8C6.5 34.3 0 26.9 0 18 0 8.1 8.1 0 18 0s18 8.1 18 18c0 8.9-6.5 16.3-15 17.8l-1-.8h-4l-1 .8z"/><path fill="#FFF" d="m25 23 .8-5H21v-3.5c0-1.4.5-2.5 2.7-2.5H26V7.4c-1.3-.2-2.7-.4-4-.4-4.1 0-7 2.5-7 7v4h-4.5v5H15v12.7c1 .2 2 .3 3 .3s2-.1 3-.3V23h4z"/></svg>
+            <div className={`${styles.socialIcon} ${styles.socialIcon__fb} fp`}>
+              <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="24" height="24" viewBox="0 0 50 50"
+              fill='#FFFFFF;'
+              >
+                  <path d="M25,3C12.85,3,3,12.85,3,25c0,11.03,8.125,20.137,18.712,21.728V30.831h-5.443v-5.783h5.443v-3.848 c0-6.371,3.104-9.168,8.399-9.168c2.536,0,3.877,0.188,4.512,0.274v5.048h-3.612c-2.248,0-3.033,2.131-3.033,4.533v3.161h6.588 l-0.894,5.783h-5.694v15.944C38.716,45.318,47,36.137,47,25C47,12.85,37.15,3,25,3z"></path>
+              </svg>
             </div>
             <a href={club.facebook} target="_blank" rel="noopener noreferrer" className="txt-body" aria-label="Visit our Facebook page">Facebook</a>
           </li>
@@ -124,7 +157,7 @@ async function SingleRunClubPage({ params }: { params: { slug: string } }) {
           )}
         </ul>
       </header>
-      <main className={`${styles.pageMain} container`}>
+      <main className={`${styles.pageMain}`}>
         <CtaSection variant="white-bg"/>
       </main>
     </div>

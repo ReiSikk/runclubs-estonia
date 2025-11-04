@@ -1,13 +1,14 @@
 .page {
+  margin-inline: 12px;
 }
 .pageHeader {
   background: var(--white);
   color: var(--dark);
   flex-direction: column;
-  padding-block: clamp(16px, 6vw, 64px) clamp(48px, 7vw, 64px);
+  padding-block: clamp(16px, 6vw, 64px) clamp(40px, 8vw, 80px);
   border-radius: clamp(12px, 2vw, 16px);
   margin-top: 100px;
-  
+
   @media only screen and (min-width: 768px) and (max-width: 1024px), only screen and (min-width: 1025px) {
     margin-top: 93px;
   }
@@ -22,14 +23,16 @@
   object-fit: cover;
   margin-inline: auto;
 }
-.pageHeader__title {
-  text-align: center;
+.pageHeader__titledes {
   margin-inline: auto;
+}
+.pageHeader__title {
   margin-bottom: clamp(12px, 2vw, 24px);
+  margin-inline: auto;
+  text-align: center;
 }
 .pageHeader__description {
   text-align: center;
-  margin-inline: auto;
   max-width: 636px;
 }
 .pageHeader__cards {
@@ -38,7 +41,7 @@
   width: 100%;
   display: grid;
   grid-template-columns: 1fr;
-  margin-block: clamp(48px, 6vw, 64px);
+  margin-block: clamp(40px, 5vw, 48px);
 }
 
 .pageHeader__card {
@@ -57,23 +60,15 @@
 }
 .label {
   width: 150px;
-  margin-bottom: 12px;
-  color: #626262;
-
-  @media only screen and (min-width: 768px) and (max-width: 1024px), only screen and (min-width: 1025px) {
-    margin-bottom: 0px;
-  }
+  margin-bottom: clamp(8px, 2vw, 12px);
+  color: #858585;
 }
-.right {
-  display: flex;
-  flex-direction: column;
+.card_main {
   p {
-    color: #626262;
+    color: #858585;
   }
 }
 .cardTitle {
-  font-size: clamp(1.8rem, 2vw, 2.4rem);
-  font-weight: 700;
   margin-block: 0px 4px;
 }
 .pageHeader__subtitle {
@@ -84,7 +79,7 @@
 .pageHeader__socials {
   width: 100%;
   justify-content: center;
-  margin-top: 24px;
+  margin-top: clamp(12px, 3vw, 24px);
   gap: clamp(16px, 2vw, 24px);
 
   .socialIcon {
@@ -105,14 +100,15 @@
 }
 .pageMain {
   position: relative;
-  background: var(--accent);
+  background: var(--dark);
 
   section {
     margin-top: clamp(32px, 6vw, 64px);
     padding-bottom: clamp(64px, 8vw, 80px);
   }
 
-  &:before, &:after {
+  &:before,
+  &:after {
     position: absolute;
     content: "";
     display: block;
@@ -121,7 +117,7 @@
     height: 48px;
     width: calc(100% + 160px);
     z-index: -1;
-    background: var(--accent);
+    background: var(--dark);
     user-select: none;
     pointer-events: none;
   }

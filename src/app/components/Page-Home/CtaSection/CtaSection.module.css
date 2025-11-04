@@ -13,6 +13,7 @@
   border-radius: clamp(32px, 4vw, 40px);
   width: 100%;
   max-width: 1440px;
+  margin-inline: auto;
 
   &.whiteBg {
     background: var(--cream);
