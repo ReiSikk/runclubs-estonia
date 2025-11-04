@@ -227,7 +227,7 @@ ol {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 15px 24px;
+  padding: clamp(8px, 1vw, 14px) clamp(16px, 3vw, 24px);
   font-size: 1.4rem;
   font-weight: 500;
   border: 1px solid transparent;
