@@ -45,7 +45,7 @@
   line-height: 1.1;
 }
 .ctaSection__text {
-  margin-top: clamp(6px, 2vw, 16px);
+  margin-top: clamp(12px, 2vw, 16px);
   max-width: 488px;
   color: var(--dark);
 }
