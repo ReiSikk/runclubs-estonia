@@ -12,10 +12,10 @@ test.describe('Club Filtering', () => {
     
     const initialCount = await clubLinks.count();
     
-    const filterSelect = page.locator('[class*="select__trigger"]');
+    const filterSelect = page.getByRole('button', { name: /All Cities|Tallinn|Tartu/i });
     await filterSelect.click();
     
-    const tallinnOption = page.locator('[class*="select__option"]>span', { hasText: 'Tallinn' }).first();
+    const tallinnOption = page.getByRole('option', { name: /Tallinn/i });
     await expect(tallinnOption).toBeVisible();
     await tallinnOption.click({ force: true });
     
@@ -67,10 +67,10 @@ test.describe('Club Filtering', () => {
     await expect(clubLinks.first()).toBeVisible();
     await page.waitForLoadState('networkidle');
     
-    const filterSelect = page.locator('[class*="select__trigger"]');
+    const filterSelect = page.getByRole('button', { name: /All Cities|Tallinn|Tartu/i });
     await filterSelect.click();
     
-    const tartuOption = page.locator('[class*="select__option"]>span', { hasText: 'Tartu' }).first();
+    const tartuOption = page.getByRole('option', { name: /Tartu/i });
     await expect(tartuOption).toBeVisible();
     await tartuOption.click({ force: true });
     

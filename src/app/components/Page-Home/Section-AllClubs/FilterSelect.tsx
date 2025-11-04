@@ -58,7 +58,13 @@ export function FilterSelect({
       </button>
 
       <div className={`${styles.select__dropdown} ${isOpen ? styles["select__dropdown--open"] : ""}`}>
-        <ul className={styles.select__dropdownContent} aria-expanded={isOpen} aria-roledescription="listbox">
+        <ul 
+          className={styles.select__dropdownContent} 
+          aria-expanded={isOpen} 
+          role="listbox"
+          aria-label="Filter options"
+          aria-activedescendant={value ? `option-${value}` : undefined} // Indicates which option is active
+          >
           {options.map((option) => (
             <li
               key={option.value}

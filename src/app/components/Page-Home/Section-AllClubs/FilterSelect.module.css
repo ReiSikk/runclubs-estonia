@@ -45,7 +45,6 @@
 }
 
 .select__trigger:focus {
-  outline: 1px solid var(--cream);
   outline-offset: 2px;
   border: 1px solid var(--accent);
   box-shadow:
