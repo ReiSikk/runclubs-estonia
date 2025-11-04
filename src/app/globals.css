@@ -101,6 +101,10 @@ p,
   max-width: 62ch;
   font-family: var(--font-work-sans);
 }
+span {
+  font-size: inherit;
+  font-family: var(--font-inter-tight);
+}
 .underline {
   text-decoration: underline;
   text-underline-offset: 2px;
@@ -331,6 +335,16 @@ ol {
   }
 }
 
+.card-label--small {
+  padding-block: 2px;
+  padding-inline: 14px;
+  border-radius: 999px;
+  border: 1px solid var(--dark);
+  text-transform: uppercase;
+  font-size: clamp(1.2rem, 2vw, 1.4rem);
+  font-weight: 500;
+}
+
 /* Only non-touch devices */
 @media (hover: hover) and (pointer: fine) {
   /* Target All clubs list item card */
@@ -464,7 +478,7 @@ ol {
   flex-wrap: wrap;
   align-items: flex-start;
   margin-inline: auto;
-  padding-inline: 16px;
+  padding-inline: 12px;
 
   &.block {
     display: block;

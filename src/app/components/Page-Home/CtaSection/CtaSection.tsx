@@ -2,7 +2,7 @@ import React from "react";
 // Next.js
 import Image from "next/image";
 // Styles
-import styles from '@/app/page.module.css'
+import styles from './CtaSection.module.css'
 // Assets
 import ctaImage from '@/app/assets/runclub__img.webp'
 import { LucideSendHorizonal } from "lucide-react";

@@ -31,8 +31,6 @@
 
   @media (hover: hover) and (pointer: fine) {
     &:hover {
-      background: var(--white);
-
       .todayClubsList__label {
         background: var(--dark);
         color: var(--cream);
@@ -82,7 +80,7 @@
 
   div:nth-child(2) {
     margin-block: 4px 16px;
-    color: #4B4B4B;
+    color: #4b4b4b;
   }
 }
 .todayClubsList__label {
@@ -112,15 +110,8 @@
     font-weight: 400;
   }
 }
-
 .todayClubsList__day {
-  padding-block: 2px;
-  padding-inline: 14px;
-  border-radius: 999px;
-  border: 1px solid var(--dark);
-
 }
-
 .todayClubsList__icon {
   width: 16px;
   height: 16px;

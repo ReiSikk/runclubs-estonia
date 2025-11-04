@@ -58,7 +58,7 @@ function TodaysClubsListItem({ club, formattedDays }: TodaysClubsListItemProps) 
                     }
                     <ul className={styles.todayClubsList__row}>
                         {formattedDays?.split(', ').map((day) => (
-                            <li key={day} className={styles.todayClubsList__day}>
+                            <li key={day} className={`${styles.todayClubsList__day} card-label--small`}>
                                 {day}
                             </li>
                         ))}
