@@ -11,7 +11,7 @@ function HeroSection () {
             <p className="txt-body">Join fellow runners across Estonia and discover local clubs that match your pace and goals. Whether you&apos;re training for your first 5K or logging weekly miles with friends, there&apos;s a club waiting to welcome you.</p>
             <div className={`${styles.buttons} fp`}>
               <a href="#home-clubs-list" 
-                className="btn_main white"
+                className="btn_main cream"
               >
                 Find a Club
               </a>

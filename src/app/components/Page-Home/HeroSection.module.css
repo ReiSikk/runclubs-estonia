@@ -51,9 +51,10 @@
   }
 }
 .hero__main {
+  margin-inline: clamp(12px, 7vw, 68px);
 
   @media only screen and (min-width: 1025px) {
-    width: 33.33%;
+    max-width: 430px;
   }
 }
 .hero__title {
@@ -81,15 +82,17 @@
 
   a {
 
+    box-shadow: 0px 2px 12px rgba(0, 0, 0, 0.4);
+
     &:last-of-type {
+      border: 1px solid var(--cream);
+      color: var(--cream);
+      background: transparent;
+      backdrop-filter: blur(6px);
       &:hover {
         background: var(--cream);
         color: var(--dark);
       }
-    }
-
-    &:hover {
-      background: var(--cream);
     }
 
     @media only screen and (min-width: 768px) and (max-width: 1024px), only screen and (min-width: 1025px) {

@@ -269,6 +269,11 @@ ol {
     color: var(--dark);
     border: 1px solid var(--dark);
   }
+  &.cream {
+    background: var(--cream);
+    color: var(--dark);
+    border: 1px solid var(--cream);
+  }
 }
 .btn_small {
   display: inline-block;
