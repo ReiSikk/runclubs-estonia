@@ -1,7 +1,7 @@
 // Components
 import MainSection from "./components/Page-Home/MainSection";
 import HeroSection  from "./components/Page-Home/HeroSection";
-import CtaSection from "./components/Page-Home/CtaSection";
+import CtaSection from "./components/Page-Home/CtaSection/CtaSection";
 import WeatherWidget from "./components/Navbar/WeatherWidget";
 // Styles
 import styles from "./page.module.css";

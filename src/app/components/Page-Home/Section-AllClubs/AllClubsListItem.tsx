@@ -5,16 +5,24 @@ import Link from 'next/link'
 // Sanity
 import { urlFor } from "@/sanity/client";
 // Styles
-import styles from '@/app/page.module.css'
+import styles from './AllClubsList.module.css'
 // Types
 import { RunClub } from '@/app/lib/types'
 // Icons
-import { LucideArrowUpRight } from 'lucide-react'
+import { LucideArrowRight } from 'lucide-react'
 
 
 function AllClubsListItem({ club }: { club: RunClub }) {
   const slug = club?.slug?.current;
   const logo = club?.logo;
+
+  // Format days for label list
+  const daysList = club.days?.map((day) => {
+    const trimmedDay = day.trim();
+    const abbreviatedDay = trimmedDay.slice(0, 3);
+
+    return abbreviatedDay.charAt(0).toUpperCase() + abbreviatedDay.slice(1).toLowerCase();
+  });
 
 
   if (!club) {
@@ -55,12 +63,25 @@ function AllClubsListItem({ club }: { club: RunClub }) {
             </div>
         )}
         <div className={`${styles.allClubsList__info} fp-col`}>
-          <h4 className=''>
+          <span className={`${styles.city} uppercase txt-label`}>{club.city}</span>
+          <h4 className='h4'>
             {club.name}
           </h4>
-            <div role="button" className={`${styles.allClubsList__btn} btn_small btn-txt-anim`} aria-label="Go to run club page to see more info">
-              <span className="txt-main">View <LucideArrowUpRight width={24} height={24} /></span>
-              <span className="txt-hovered">View <LucideArrowUpRight width={24} height={24} /></span>
+          {daysList && daysList.length > 0 && (
+              <ul className={`${styles.allClubsList__days} fp`}>
+                {daysList.map((day) => (
+                    <li key={day} className={`${styles.allClubsList__day} card-label--small`}>
+                        {day}
+                    </li>
+                ))}
+              </ul>
+            )}
+            <div role="button" className={`${styles.allClubsList__btn} btn_main`} aria-label="Go to run club page to see more info">
+              Learn more
+              <div className={`${styles.allClubsList__linkIcon} icon-carousel-anim`}>
+                <LucideArrowRight width={24} height={24} strokeWidth={1.5} className='icon-hovered'/>
+                <LucideArrowRight width={24} height={24} strokeWidth={1.5} className='icon-main'/>
+              </div>
             </div>
         </div>
       </Link>

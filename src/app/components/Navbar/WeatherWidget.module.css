@@ -1,13 +1,13 @@
 .weatherWidget {
   display: flex;
   align-items: center;
-  gap: 8px;
-  justify-content: flex-end;
   font-family: var(--font-work-sans);
   font-size: 1.4rem;
-  font-weight: 700;
+  font-weight: 600;
   color: var(--cream);
   width: fit-content;
+  margin-inline: auto;
+  padding-inline: 16px;
 
   opacity: 0;
   transform: translateX(20px);
@@ -16,9 +16,5 @@
   &.visible {
     opacity: 1;
     transform: translateX(0);
-  }
-
-  @media only screen and (min-width: 768px) and (max-width: 1024px), only screen and (min-width: 1025px) {
-    margin-left: auto;
   }
 }

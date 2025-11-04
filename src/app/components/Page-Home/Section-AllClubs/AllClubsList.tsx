@@ -1,5 +1,5 @@
 // Styles
-import styles from "../../../page.module.css"
+import styles from "./AllClubsList.module.css"
 // Components
 import AllClubsListItem from '../Section-AllClubs/AllClubsListItem'
 // Types
@@ -38,7 +38,7 @@ function AllClubsList({clubs, isLoading, isError, }: { clubs: RunClub[], isLoadi
       ) : (
         <li className={`${styles.noResults} fp-col`}>
             <Search width={24} height={24} className=''/>
-            <span className='h5'>
+            <span className='h4'>
               {`No results for your search`}  
             </span>
             <br />
