@@ -2,7 +2,6 @@
 import MainSection from "./components/Page-Home/MainSection";
 import HeroSection  from "./components/Page-Home/HeroSection";
 import CtaSection from "./components/Page-Home/CtaSection/CtaSection";
-import WeatherWidget from "./components/Navbar/WeatherWidget";
 // Styles
 import styles from "./page.module.css";
 // TanStack Query
@@ -27,7 +26,7 @@ export default async function Home() {
     <HydrationBoundary state={dehydrate(queryClient)}>
     <div className={`${styles.page}`} id="page-top">
       <header className={`${styles.header} container`}>
-        <WeatherWidget />
+        {/* <WeatherWidget /> */}
       </header>
       <main className={`${styles.main}`}>
         <HeroSection />

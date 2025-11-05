@@ -57,7 +57,7 @@ async function SingleRunClubPage({ params }: { params: { slug: string } }) {
   }
 
   return (
-    <div className={`${styles.page} page-single-runclub`}>
+    <div className={`${styles.page} page-single-runclub`} id="page-top">
       <NavBar />
       <header className={`${styles.pageHeader} container fp`}>
         <Link href="/" className="back-link back-link--mob" aria-label="Back to home page">
