@@ -21,6 +21,9 @@
   top: 0;
   left: 0;
   margin-top: 36px;
+  &:empty {
+    display: none;
+  }
 }
 
 /*
