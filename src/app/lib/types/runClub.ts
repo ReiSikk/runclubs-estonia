@@ -11,7 +11,7 @@ export interface RunClub {
   description: string;
   participants: number;
   distance: string;
-  distanceDescription: string;
+  distanceDescription?: string;
   days: string[];
   slug?: { current: string };
   status?: 'starting-soon' | 'in-progress' | 'upcoming';

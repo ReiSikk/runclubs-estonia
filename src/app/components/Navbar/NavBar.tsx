@@ -5,8 +5,6 @@ import { useEffect, useState } from 'react'
 // Next.js
 import Image from 'next/image';
 import Link from 'next/link';
-// Components
-import WeatherWidget from '@/app/components/Navbar/WeatherWidget';
 // Assets
 import LogoImg from '@/app/assets/runclubs__logo.svg';
 import { LucideMoveLeft } from 'lucide-react';

@@ -2,7 +2,7 @@ import Image from 'next/image';
 // Components
 import SocialsList from './SocialsList';
 // Types
-import { RunClub } from '@/app/lib/types';
+import { RunClub } from '@/app/lib/types/runClub';
 // Styles
 import styles from '../../runclubs/[slug]/page.module.css';
 // Sanity

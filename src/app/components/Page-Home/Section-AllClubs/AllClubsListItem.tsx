@@ -7,7 +7,7 @@ import { urlFor } from "@/sanity/client";
 // Styles
 import styles from './AllClubsList.module.css'
 // Types
-import { RunClub } from '@/app/lib/types'
+import { RunClub } from '@/app/lib/types/runClub'
 // Icons
 import { LucideArrowRight } from 'lucide-react'
 

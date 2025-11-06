@@ -1,6 +1,14 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+    experimental: {
+      serverActions: {
+      /**
+       * Allows adjusting body parser size limit for server actions.
+       */
+      bodySizeLimit: "7mb"
+      },
+    },
     images: {
       remotePatterns: [
         new URL('https://placehold.co/**'),

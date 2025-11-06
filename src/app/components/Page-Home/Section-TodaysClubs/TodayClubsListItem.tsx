@@ -7,7 +7,7 @@ import styles from './TodayClubsList.module.css';
 // Sanity
 import { urlFor } from '@/sanity/client';
 // Types
-import { RunClub } from '@/app/lib/types';
+import { RunClub } from '@/app/lib/types/runClub';
 // Icons
 import { ArrowUpRight, Clock } from 'lucide-react';
 
