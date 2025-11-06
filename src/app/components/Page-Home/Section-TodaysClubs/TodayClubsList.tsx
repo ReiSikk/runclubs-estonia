@@ -1,5 +1,3 @@
-"use client";
-
 // Styles
 import styles from './TodayClubsList.module.css';
 // Components
