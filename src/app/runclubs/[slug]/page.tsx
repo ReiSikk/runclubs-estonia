@@ -13,31 +13,6 @@ async function SingleRunClubPage({ params }: { params: { slug: string } }) {
   const { slug } = await params;
   const club = await getCurrentRunClub(slug);
 
-  // Define info cards
-  const infoCards = [
-    {
-      id: 'schedule',
-      label: 'Schedule',
-      title: club?.days?.map(day => day.charAt(0).toUpperCase() + day.slice(1)).join(', '),
-      description: null,
-      show: club?.days && club.days.length > 0
-    },
-    {
-      id: 'location',
-      label: 'Meeting Point',
-      title: club?.location,
-      description: club?.address,
-      show: club?.location || club?.address
-    },
-    {
-      id: 'distance',
-      label: 'Distance',
-      title: club?.distance ? `${club.distance} kilometers` : null,
-      description: club?.distanceDescription,
-      show: club?.distance
-    }
-  ].filter(card => card.show);
-
   if (!club) {
     return (
       notFound()
