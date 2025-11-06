@@ -2,10 +2,10 @@
 
 import React, { useState } from "react";
 // Styles
-import styles from '@/app/page.module.css'
+import styles from './MainSection.module.css'
 // Components
 import { TodayClubsList } from "./Section-TodaysClubs/TodayClubsList";
-import HomeMainAside from "./HomeMainAside";
+import  HomeMainAside  from "./Section-AllClubs/HomeMainAside";
 // Hooks
 import getRunClubs from "../../lib/hooks/useRunClubs";
 
@@ -60,15 +60,14 @@ function MainSection() {
 
     const filteredClubs = getFilteredClubs();
 
-
-/* Check which clubs are running today */
+    // Check which clubs are running today
     const today = new Date().toLocaleString('en-US', { weekday: 'long' }).toLowerCase();
     
     // Filter clubs that run today
     const todaysClubs = filteredClubs.filter(club => 
     club.days && club.days.some(day => 
         day.toLowerCase().includes(today) ||
-        day.toLowerCase().includes(today.substring(0, 3)) // Check for abbreviations too
+        day.toLowerCase().includes(today.substring(0, 3)) // Check for abbreviations
     )
     );
 
@@ -79,11 +78,11 @@ function MainSection() {
                 <h2 className={`${styles.mainSection__title} h3`}>
                     {todaysClubs.length > 0 ? `${todaysClubs.length} clubs running in ${selectedCity === 'all' ? 'Estonia' : selectedCity} today` : 'No clubs matching your search running today'}
                 </h2>
-                <div className={styles.clubsList} id="home-clubs-list">
+                <div className={styles.mainSection__clubsList} id="home-clubs-list">
                     <TodayClubsList
-                    todaysClubs={todaysClubs}
-                    isLoading={isLoading}
-                    isError={isError}
+                        todaysClubs={todaysClubs}
+                        isLoading={isLoading}
+                        isError={isError}
                     />
                 </div>
             </div>

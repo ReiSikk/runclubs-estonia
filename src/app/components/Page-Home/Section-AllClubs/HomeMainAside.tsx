@@ -2,13 +2,13 @@
 
 import { useEffect, useRef } from "react"
 // Styles
-import styles from "../../page.module.css"
+import styles from "./HomeMainAside.module.css"
 // Components
-import AllClubsList from './Section-AllClubs/AllClubsList'
-import SearchBar from './Section-AllClubs/SearchBar'
-import { FilterSelect } from './Section-AllClubs/FilterSelect';
+import AllClubsList from './AllClubsList'
+import SearchBar from './SearchBar'
+import { FilterSelect } from './FilterSelect';
 // Types
-import { RunClub } from '../../lib/types';
+import { RunClub } from '../../../lib/types';
 
 interface HomeMainAsideProps {
   selectedCity: string;
@@ -21,7 +21,7 @@ interface HomeMainAsideProps {
   filteredClubs: RunClub[];
 }
 
-function HomeMainAside({ 
+export default function HomeMainAside({ 
   selectedCity, 
   onCityChange, 
   filterOptions, 
@@ -82,5 +82,3 @@ function HomeMainAside({
     </aside>
   )
 }
-
-export default HomeMainAside
