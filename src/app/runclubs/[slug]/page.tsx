@@ -1,4 +1,3 @@
-import Link from 'next/link';
 import Image from 'next/image';
 import { notFound } from 'next/navigation'
 // Styles
@@ -6,7 +5,7 @@ import styles from './page.module.css'
 // Components
 import CtaSection from '@/app/components/Page-Home/CtaSection/CtaSection';
 import NavBar from '@/app/components/Navbar/NavBar';
-import { LucideLink, LucideMoveLeft } from 'lucide-react';
+import { LucideLink } from 'lucide-react';
 // Sanity
 import { urlFor } from "@/sanity/client";
 // Queries
@@ -60,13 +59,6 @@ async function SingleRunClubPage({ params }: { params: { slug: string } }) {
     <div className={`${styles.page} page-single-runclub`} id="page-top">
       <NavBar />
       <header className={`${styles.pageHeader} container fp`}>
-        <Link href="/" className="back-link back-link--mob" aria-label="Back to home page">
-          <div className="icon-carousel-anim left">
-            <LucideMoveLeft width={24} height={24} strokeWidth={1.5} className="icon-main"/>
-            <LucideMoveLeft width={24} height={24} strokeWidth={1.5} className="icon-hovered"/>
-          </div>
-          Back
-        </Link>
        {club.logo ? (
           <Image
             src={urlFor(club.logo)

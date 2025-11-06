@@ -97,8 +97,6 @@
   border-radius: 999px;
   transition: all 0.2s ease;
 }
-.todayClubsList__linkIcon {
-}
 
 .todayClubsList__row {
   display: flex;
@@ -109,8 +107,6 @@
     font-size: 1.4rem;
     font-weight: 400;
   }
-}
-.todayClubsList__day {
 }
 .todayClubsList__icon {
   width: 16px;

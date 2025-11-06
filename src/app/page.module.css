@@ -1,14 +1,7 @@
 .page {
-  --gray-rgb: 0, 0, 0;
-  --gray-alpha-200: rgba(var(--gray-rgb), 0.08);
-  --gray-alpha-100: rgba(var(--gray-rgb), 0.05);
-
-  --button-primary-hover: #383838;
-  --button-secondary-hover: #f2f2f2;
-
   min-height: 100svh;
   padding-block: 16px clamp(64px, 8vw, 84px);
-  font-family: var(--font-geist-sans);
+  font-family: var(--font-inter-tight);
 }
 
 /*
