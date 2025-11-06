@@ -312,7 +312,7 @@ ol {
 }
 
 .back-link {
-  display: none;
+  display: inline-flex;
   align-items: center;
   gap: 8px;
   font-size: 1.6rem;
@@ -324,19 +324,6 @@ ol {
   border-radius: 999px;
   padding-inline: 8px 16px;
   padding-block: 8px;
-
-  @media only screen and (min-width: 768px) and (max-width: 1024px), only screen and (min-width: 1025px) {
-    display: inline-flex;
-  }
-
-  &.back-link--mob {
-    display: inline-flex;
-    margin-bottom: 24px;
-
-    @media only screen and (min-width: 768px) and (max-width: 1024px), only screen and (min-width: 1025px) {
-      display: none;
-    }
-  }
 }
 
 .card-label--small {
@@ -345,23 +332,12 @@ ol {
   border-radius: 999px;
   border: 1px solid var(--dark);
   text-transform: uppercase;
-  font-size: clamp(1.2rem, 2vw, 1.4rem);
+  font-size: 1.2rem;
   font-weight: 500;
 }
 
 /* Only non-touch devices */
 @media (hover: hover) and (pointer: fine) {
-  /* Target All clubs list item card */
-  .page-module___8aEwW__allClubsList__item:hover .btn-txt-anim .txt-main {
-    transform: translateY(-100%);
-    opacity: 0;
-  }
-
-  .page-module___8aEwW__allClubsList__item:hover .btn-txt-anim .txt-hovered {
-    transform: translateY(0);
-    opacity: 1;
-  }
-
   .btn-txt-anim:hover {
     filter: brightness(1.2);
   }
@@ -488,7 +464,6 @@ ol {
     display: block;
   }
 }
-
 /*
     Grid system
    ========================================================================== */
@@ -629,9 +604,11 @@ ol {
   transition: 0.3s ease;
   position: fixed;
   top: 0;
+  left: -50%;
   z-index: 99;
   background: rgba(0, 0, 0, 0.6);
   backdrop-filter: blur(10px);
+  transform: translateX(50%);
 }
 .siteNav__logo {
   position: relative;

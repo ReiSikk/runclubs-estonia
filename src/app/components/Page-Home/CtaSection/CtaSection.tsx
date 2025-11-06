@@ -26,8 +26,8 @@ function CtaSection({ variant }: { variant?: string }) {
             >
               Let us know!
               <div className="icon-carousel-anim">
-                <LucideSendHorizonal width={16} height={16} strokeWidth={1.5}  className="icon-main"/>
-                <LucideSendHorizonal width={16} height={16} strokeWidth={1.5}  className="icon-hovered"/>
+                <LucideSendHorizonal width={24} height={24} strokeWidth={1.5}  className="icon-main"/>
+                <LucideSendHorizonal width={24} height={24} strokeWidth={1.5}  className="icon-hovered"/>
               </div>
             </a>
         </div>
