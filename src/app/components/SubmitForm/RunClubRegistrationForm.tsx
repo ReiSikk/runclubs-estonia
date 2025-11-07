@@ -177,7 +177,7 @@ export default function RunClubRegistrationForm() {
         error={fieldErr(state.errors, "name")}
       />
 
-      {/* <CustomInput
+      <CustomInput
         label="Logo (JPG, PNG, WEBP, max 5MB)"
         name="logo"
         type="file"
@@ -185,7 +185,7 @@ export default function RunClubRegistrationForm() {
         ref={fileRef}
         aria-invalid={!!fieldErr(state.errors, "logo")}
         error={fieldErr(state.errors, "logo")}
-      /> */}
+      />
 
       <CustomInput 
         label="Mis päevadel tavaliselt jooksete? *" 

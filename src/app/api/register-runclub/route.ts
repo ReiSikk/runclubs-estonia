@@ -1,17 +1,64 @@
 import { NextRequest, NextResponse } from "next/server";
+// Types
 import { runClubSchema } from "@/app/lib/types/submitRunClub";
-import { db } from "@/app/lib/firebase";
+// Firbase
+import { db, storage } from "@/app/lib/firebase";
 import { collection, addDoc, Timestamp } from "firebase/firestore";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+// Zod validation
 import { treeifyError } from "zod";
 
 export async function POST(request: NextRequest) {
   try {
     const formData = await request.formData();
 
-    // Build submission object (logo upload disabled for now)
+     // Extract and validate logo file
+    const logoFile = formData.get("logo") as File | null;
+    let logoUrl = "";
+
+    if (logoFile && logoFile.size > 0) {
+      // Validate file size (5MB)
+      if (logoFile.size > 5 * 1024 * 1024) {
+        return NextResponse.json(
+          { error: "Logo fail on liiga suur (max 5MB)." },
+          { status: 400 }
+        );
+      }
+
+      // Validate file type
+      const allowedTypes = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
+      if (!allowedTypes.includes(logoFile.type)) {
+        return NextResponse.json(
+          { error: "Lubatud formaadid: JPG, PNG, WEBP." },
+          { status: 400 }
+        );
+      }
+
+      try {
+        // Upload to Firebase Storage
+        const buffer = await logoFile.arrayBuffer();
+        const fileName = `${Date.now()}-${logoFile.name.replace(/[^a-zA-Z0-9.-]/g, '_')}`;
+        const logoRef = ref(storage, `runclub-logos/${fileName}`);
+        
+        await uploadBytes(logoRef, Buffer.from(buffer), { 
+          contentType: logoFile.type 
+        });
+        logoUrl = await getDownloadURL(logoRef);
+        
+        console.log("Logo uploaded successfully:", logoUrl);
+      } catch (storageError) {
+        console.error("Storage upload error:", storageError);
+        return NextResponse.json(
+          { error: "Logo üleslaadimine ebaõnnestus. Palun proovi uuesti." },
+          { status: 500 }
+        );
+      }
+    }
+
+    // Build submission object
     const submission = {
       name: formData.get("name") as string,
-      // logo: undefined, // Will add back when Storage is configured
+      logo: logoUrl || undefined, 
       runDays: formData.get("runDays") as string,
       distance: formData.get("distance") as string,
       distanceDescription: (formData.get("distanceDescription") as string) || undefined,

@@ -1,28 +1,15 @@
 import { z } from "zod";
 
-// const ACCEPTED_TYPES = [
-//   "image/jpeg",
-//   "image/jpg",
-//   "image/png",
-//   "image/webp"
-// ];
+const ACCEPTED_TYPES = [
+  "image/jpeg",
+  "image/jpg",
+  "image/png",
+  "image/webp"
+];
 
 export const runClubSchema = z.object({
   name: z.string().min(1, { message: "Klubi nimi on kohustuslik." }),
   logo: z.any().optional(),
-//   logo: z
-//     .any()
-//     .refine(
-//       (file) =>
-//         !file || (file instanceof File && file.size <= 5 * 1024 * 1024),
-//       { message: "Logo faili maksimaalne suurus on 5MB." }
-//     )
-//     .refine(
-//       (file) =>
-//         !file ||
-//         (file instanceof File && ACCEPTED_TYPES.includes(file.type)),
-//       { message: "Ainult JPG, JPEG, PNG või WEBP formaadid on lubatud." }
-//     ),
   runDays: z.string().min(1, { message: "Tavapärased päevad on kohustuslikud." }),
   distance: z.string().min(1, { message: "Distants on kohustuslik." }),
   distanceDescription: z.string().optional(),
