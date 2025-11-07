@@ -63,7 +63,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Build submission object
-    const submission: Record<string, any> = {
+    const submission: Record<string, unknown> = {
       name: formData.get("name") as string,
       runDays: formData.get("runDays") as string,
       distance: formData.get("distance") as string,
