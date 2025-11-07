@@ -1,12 +1,5 @@
 import { z } from "zod";
 
-const ACCEPTED_TYPES = [
-  "image/jpeg",
-  "image/jpg",
-  "image/png",
-  "image/webp"
-];
-
 export const runClubSchema = z.object({
   name: z.string().min(1, { message: "Klubi nimi on kohustuslik." }),
   logo: z.any().optional(),
@@ -23,4 +16,9 @@ export const runClubSchema = z.object({
   strava: z.string().optional(),
   website: z.string().optional(),
   email: z.string().min(1, { message: "E-post on kohustuslik." }),
+  status: z.enum(["pending", "approved", "rejected"]),
+  createdAt: z.any(),
+  updatedAt: z.any(),
 });
+
+export type RunClubSubmission = z.infer<typeof runClubSchema>;

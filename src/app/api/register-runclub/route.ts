@@ -8,6 +8,13 @@ import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 // Zod validation
 import { treeifyError } from "zod";
 
+function getOptionalField(formData: FormData, key: string): string | undefined {
+  const value = formData.get(key);
+  if (!value || value === null) return undefined;
+  const strValue = value.toString().trim();
+  return strValue.length > 0 ? strValue : undefined;
+}
+
 export async function POST(request: NextRequest) {
   try {
     const formData = await request.formData();
@@ -56,26 +63,56 @@ export async function POST(request: NextRequest) {
     }
 
     // Build submission object
-    const submission = {
+    const submission: Record<string, any> = {
       name: formData.get("name") as string,
-      logo: logoUrl || undefined, 
       runDays: formData.get("runDays") as string,
       distance: formData.get("distance") as string,
-      distanceDescription: (formData.get("distanceDescription") as string) || undefined,
       startTime: formData.get("startTime") as string,
       city: formData.get("city") as string,
       area: formData.get("area") as string,
-      address: (formData.get("address") as string) || undefined,
       description: formData.get("description") as string,
-      instagram: (formData.get("instagram") as string) || undefined,
-      facebook: (formData.get("facebook") as string) || undefined,
-      strava: (formData.get("strava") as string) || undefined,
-      website: (formData.get("website") as string) || undefined,
       email: formData.get("email") as string,
       status: "pending",
       createdAt: Timestamp.now(),
       updatedAt: Timestamp.now(),
     };
+
+    // Add optional fields only if they have values
+    if (logoUrl) {
+      submission.logo = logoUrl;
+    }
+
+    const distanceDescription = getOptionalField(formData, "distanceDescription");
+    if (distanceDescription) {
+      submission.distanceDescription = distanceDescription;
+    }
+
+    const address = getOptionalField(formData, "address");
+    if (address) {
+      submission.address = address;
+    }
+
+    const instagram = getOptionalField(formData, "instagram");
+    if (instagram) {
+      submission.instagram = instagram;
+    }
+
+    const facebook = getOptionalField(formData, "facebook");
+    if (facebook) {
+      submission.facebook = facebook;
+    }
+
+    const strava = getOptionalField(formData, "strava");
+    if (strava) {
+      submission.strava = strava;
+    }
+
+    const website = getOptionalField(formData, "website");
+    if (website) {
+      submission.website = website;
+    }
+
+    console.log("Submission object (before validation):", submission);
 
     // Validate with Zod
     const validated = runClubSchema.safeParse(submission);
@@ -88,6 +125,8 @@ export async function POST(request: NextRequest) {
         { status: 400 }
       );
     }
+
+    console.log("Validated data:", validated.data);
 
     // Save to Firestore DB
     const docRef = await addDoc(collection(db, "runclubs"), validated.data);

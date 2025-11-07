@@ -1,0 +1,48 @@
+.rcForm {
+    gap: 2rem;
+    margin: 0 auto;
+}
+.rcForm__section {
+    padding-block: 2rem;
+    padding-inline: 1rem;
+    border-radius: 12px;
+    gap: 1rem;
+    width: 100%;
+    background: var(--cream);
+    color: var(--dark);
+}
+/** *Form elements* */
+.customInput {
+    width: 100%;
+
+    input {
+        border-radius: 8px;
+        padding: 8px;
+        border: 1px solid var(--dark);
+        background: var(--cream);
+        color: var(--dark);
+        width: 100%;
+    }
+  label {
+    gap: 8px;
+  }
+}
+.customTextArea {
+    width: 100%;
+
+    label {
+        gap: 8px;
+    }
+    textarea {
+        border-radius: 8px;
+        padding: 8px;
+        border: 1px solid var(--cream);
+        background: var(--cream);
+        color: var(--dark);
+        width: 100%;
+    }
+}
+
+.rcForm__submitButton {
+    margin-left: auto;
+}

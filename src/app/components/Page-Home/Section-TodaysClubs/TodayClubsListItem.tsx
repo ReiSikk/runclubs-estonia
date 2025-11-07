@@ -9,7 +9,7 @@ import { urlFor } from '@/sanity/client';
 // Types
 import { RunClub } from '@/app/lib/types/runClub';
 // Icons
-import { ArrowUpRight, Clock } from 'lucide-react';
+import { ArrowUpRight } from 'lucide-react';
 
 
 interface TodaysClubsListItemProps {
@@ -50,12 +50,6 @@ function TodaysClubsListItem({ club, formattedDays }: TodaysClubsListItemProps) 
                     <div className={`${styles.todayClubsList__row} txt-small`}>
                         <p>Avg. distance: {club.distance}km</p>
                     </div>
-                    {club.time &&
-                        <div className={styles.todayClubsList__row}>
-                            <Clock className={styles.todayClubsList__icon} />
-                            {club.time}
-                        </div>
-                    }
                     <ul className={styles.todayClubsList__row}>
                         {formattedDays?.split(', ').map((day) => (
                             <li key={day} className={`${styles.todayClubsList__day} card-label--small`}>

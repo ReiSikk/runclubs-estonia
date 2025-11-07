@@ -1,4 +1,5 @@
 import { forwardRef } from "react";
+import styles from "./RunClubRegistrationForm.module.css";
 
 interface CustomInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   label: string;
@@ -8,17 +9,15 @@ interface CustomInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
 export const CustomInput = forwardRef<HTMLInputElement, CustomInputProps>(
   function CustomInput({ label, error, ...props }, ref) {
     return (
-      <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
-        <label>
+      <div className={styles.customInput}>
+        <label className="fp-col txt-body">
           {label}
           <input
             ref={ref}
             style={{
-              width: "100%",
-              padding: "0.5rem",
-              border: error ? "1px solid #c00" : "1px solid #ccc",
-              borderRadius: "0.3rem",
+              border: error ? "1px solid #c00" : "",
             }}
+            className={`h5`}
             {...props}
           />
         </label>
@@ -36,18 +35,15 @@ interface CustomTextareaProps extends React.TextareaHTMLAttributes<HTMLTextAreaE
 export const CustomTextarea = forwardRef<HTMLTextAreaElement, CustomTextareaProps>(
   function CustomTextarea({ label, error, ...props }, ref) {
     return (
-      <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
-        <label>
+      <div className={styles.customTextArea}>
+        <label className="fp-col txt-body">
           {label}
           <textarea
             ref={ref}
             style={{
-              width: "100%",
-              padding: "0.5rem",
               border: error ? "1px solid #c00" : "1px solid #ccc",
-              borderRadius: "0.3rem",
-              fontFamily: "inherit",
             }}
+            className={`h5`}
             {...props}
           />
         </label>
