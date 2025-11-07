@@ -1,15 +1,40 @@
 .rcForm {
-    gap: 2rem;
-    margin: 0 auto;
+    margin-block: 48px 0px;
+    margin-inline: auto;
+}
+.rcForm__header {
+    text-align: center;
+    margin-inline: auto;
+
+    p:first-of-type {
+        margin-bottom: 2.4rem;
+    }
+}
+.rcForm__title {
+    margin-bottom: 1.2rem;
+}
+.rcForm__wrapper {
+    gap: 2.4rem;
+    margin-block: 40px 16px;
+}
+.rcForm__block {
+    gap: 0.8rem;
+    width: 100%;
+    max-width: 600px;
+}
+.rcForm__step {
 }
 .rcForm__section {
-    padding-block: 2rem;
-    padding-inline: 1rem;
+    padding: 2rem;
     border-radius: 12px;
     gap: 1rem;
     width: 100%;
     background: var(--cream);
     color: var(--dark);
+
+    h3 {
+        margin-bottom: 6px;
+    }
 }
 /** *Form elements* */
 .customInput {
@@ -40,9 +65,16 @@
         background: var(--cream);
         color: var(--dark);
         width: 100%;
+        max-width: 100%;
     }
 }
 
 .rcForm__submitButton {
     margin-left: auto;
+    border: none;
+    width: 100%;
+
+    @media only screen and (min-width: 768px) and (max-width: 1024px), only screen and (min-width: 1025px) {
+        width: fit-content;
+    }
 }

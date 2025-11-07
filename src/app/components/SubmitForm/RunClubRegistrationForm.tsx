@@ -4,6 +4,7 @@ import { useActionState, useEffect, useRef, useState } from "react";
 import { useFormStatus } from "react-dom";
 import { CustomInput, CustomTextarea } from "./CustomInputs";
 import styles from "./RunClubRegistrationForm.module.css";
+import FormToast from "../Toast/Toast";
 
 type FieldErrors = Record<string, string[] | undefined>;
 type FormState =
@@ -28,6 +29,7 @@ function SubmitButton() {
         cursor: pending ? "not-allowed" : "pointer",
         opacity: pending ? 0.7 : 1,
       }}
+      aria-label="Submit form"
     >
       {pending ? "Saatmine..." : "Registreeri klubi"}
     </button>
@@ -36,6 +38,7 @@ function SubmitButton() {
 
 export default function RunClubRegistrationForm() {
   const [mounted, setMounted] = useState(false);
+  const [toastOpen, setToastOpen] = useState(false);
   const formRef = useRef<HTMLFormElement | null>(null);
 
   useEffect(() => {
@@ -57,27 +60,36 @@ export default function RunClubRegistrationForm() {
           return {
             success: false,
             errors: result.errors || {},
-            message: result.error || "Viga registreerimisel. Palun proovi uuesti.",
+            message: result.error || "An error occurred. Please try again.",
           };
         }
 
         return {
           success: true,
           errors: {},
-          message: result.message || "Edu! Registreerimine laekus ja ootab kinnitamist.",
+          message: result.message || "Success! Your registration has been received and is pending approval.",
         };
       } catch {
         return {
           success: false,
           errors: {},
-          message: "Viga registreerimisel. Palun kontrolli internetiühendust ja proovi uuesti.",
+          message: "An error occurred during registration. Please check your internet connection and try again.",
         };
       }
     },
     initialState
   );
 
-  // Only reset form on success
+
+  // Show toast when state changes
+  useEffect(() => {
+    if (state.message) {
+      setToastOpen(true);
+    }
+  }, [state.message]);
+
+
+  // Reset form on success
   useEffect(() => {
     if (state.success && formRef.current) {
       formRef.current.reset();
@@ -91,10 +103,10 @@ export default function RunClubRegistrationForm() {
         margin: "0 auto",
         padding: "2rem 1rem",
       }}>
-        <h2 style={{ marginBottom: "1.5rem", fontSize: "1.875rem", fontWeight: 700 }}>
-          Registreeri oma jooksuklubi
+        <h2 style={{ marginBottom: "1.5rem", textAlign: "center" }}>
+          Submit a new running club to Run Clubs Estonia
         </h2>
-        <p style={{ color: "#64748b" }}>Laadib vormi...</p>
+        <p style={{ color: "#64748b" }} className="txt-body">Loading...</p>
       </div>
     );
   }
@@ -106,207 +118,206 @@ export default function RunClubRegistrationForm() {
       noValidate
       className={`${styles.rcForm} fp-col`}
     >
-      {/* Header */}
-      <div style={{ marginBottom: "1rem" }}>
-        <h1 style={{
-          marginBottom: "0.5rem",
-        }}>
-          Registreeri oma jooksuklubi
+      <div className={styles.rcForm__header}>
+        <h1 className={styles.rcForm__title}>
+          Register a new running club
         </h1>
         <p>
-          Täida allolev vorm ja ootame sinu klubit meie nimekirja.
+          Fill out the form below to submit your club to our list.
+        </p>
+        <p>
+          Please feel free to answer in <strong>Estonian</strong> or <strong>English</strong> as you prefer.
         </p>
       </div>
 
-      {/* Error message */}
-      {!state.success && state.message && (
-        <div style={{
-          padding: "1rem 1.25rem",
-          backgroundColor: "#fef2f2",
-          color: "#991b1b",
-          borderRadius: "0.5rem",
-          border: "1px solid #fecaca",
-          fontSize: "0.875rem",
-        }}>
-          {state.message}
+        {state.message && (
+          <FormToast
+            message={state.message}
+            type={state.success ? "success" : "error"}
+            open={toastOpen}
+            onOpenChange={setToastOpen}
+          />
+        )}
+
+      <div className={`${styles.rcForm__wrapper} fp-col`}>
+        <p><i>All fields marked with <strong>*</strong> are <strong>required</strong></i></p>
+        <div className={`${styles.rcForm__block} fp-col`}>
+          <span className={`${styles.rcForm__step} txt-body`}>Step 1 of 5</span>
+          <section className={`${styles.rcForm__section} fp-col`}>
+            <h3>
+              Põhiinfo
+            </h3>
+
+            <CustomInput
+              label="Name of the run club *"
+              name="name"
+              required
+              placeholder="E.g.: Kesklinna Jooksuklubi"
+              aria-invalid={!!fieldErr(state.errors, "name")}
+              error={fieldErr(state.errors, "name")}
+            />
+
+            <CustomInput
+              label="Logo (JPG, PNG, WEBP, max 5MB)"
+              name="logo"
+              type="file"
+              accept="image/jpeg,image/jpg,image/png,image/webp"
+              aria-invalid={!!fieldErr(state.errors, "logo")}
+              error={fieldErr(state.errors, "logo")}
+            />
+          </section>
         </div>
-      )}
 
-      {/* Success message */}
-      {state.success && (
-        <div style={{
-          padding: "1rem 1.25rem",
-          backgroundColor: "#f0fdf4",
-          color: "#166534",
-          borderRadius: "0.5rem",
-          border: "1px solid #bbf7d0",
-          fontSize: "0.875rem",
-        }}>
-          {state.message ?? "Edu! Registreerimine laekus ja ootab kinnitamist."}
+        <div className={`${styles.rcForm__block} fp-col`}>
+          <span className={`${styles.rcForm__step} txt-body`}>Step 2 of 5</span>
+          <section className={`${styles.rcForm__section} fp-col`}>
+            <h3>
+              Information about runs & schedule
+            </h3>
+
+            <CustomInput
+              label="What days do you usually run on? *"
+              name="runDays"
+              placeholder="E.g. Tuesday, Thursday"
+              required
+              aria-invalid={!!fieldErr(state.errors, "runDays")}
+              error={fieldErr(state.errors, "runDays")}
+            />
+
+            <CustomInput
+              label="How long are the runs on average? You can also enter the distance as a range for example 5-8 km *"
+              name="distance"
+              placeholder="E.g 5-8 km"
+              required
+              aria-invalid={!!fieldErr(state.errors, "distance")}
+              error={fieldErr(state.errors, "distance")}
+            />
+
+            <CustomTextarea
+              label="Describe the pace groups available (if any) and their average paces (if known)"
+              name="distanceDescription"
+              placeholder="E.g. At least two different pace groups: slower group 7-8km and faster group 9-11km"
+              rows={3}
+              aria-invalid={!!fieldErr(state.errors, "distanceDescription")}
+              error={fieldErr(state.errors, "distanceDescription")}
+            />
+
+            <CustomInput
+              label="At what time do the runs usually start? * (If it varies, just answer ''Varies'')"
+              name="startTime"
+              placeholder="E.g. 18:30"
+              required
+              aria-invalid={!!fieldErr(state.errors, "startTime")}
+              error={fieldErr(state.errors, "startTime")}
+            />
+          </section>
         </div>
-      )}
+        
+        <div className={`${styles.rcForm__block} fp-col`}>
+          <span className={`${styles.rcForm__step} txt-body`}>Step 3 of 5</span>
+          <section className={`${styles.rcForm__section} fp-col`}>
+            <h3>
+              Location details
+            </h3>
 
-      <section className={`${styles.rcForm__section} fp-col`}>
-        <h3>
-          Põhiinfo
-        </h3>
+            <CustomInput
+              label="City *"
+              name="city"
+              placeholder="E.g. Tallinn"
+              required
+              aria-invalid={!!fieldErr(state.errors, "city")}
+              error={fieldErr(state.errors, "city")}
+            />
 
-        <CustomInput
-          label="Klubi nimi *"
-          name="name"
-          required
-          placeholder="Näiteks: Tallinna Jooksuklubi"
-          aria-invalid={!!fieldErr(state.errors, "name")}
-          error={fieldErr(state.errors, "name")}
-        />
+            <CustomInput
+              label="The area where you usually gather and start your runs from *"
+              name="area"
+              placeholder="E.g. Rotermanni kvartal"
+              required
+              aria-invalid={!!fieldErr(state.errors, "area")}
+              error={fieldErr(state.errors, "area")}
+            />
 
-        <CustomInput
-          label="Logo (JPG, PNG, WEBP, max 5MB)"
-          name="logo"
-          type="file"
-          accept="image/jpeg,image/jpg,image/png,image/webp"
-          aria-invalid={!!fieldErr(state.errors, "logo")}
-          error={fieldErr(state.errors, "logo")}
-        />
-      </section>
+            <CustomInput
+              label="Starting location address (if applicable)"
+              name="address"
+              placeholder="E.g. Rotermanni 2, Tallinn"
+              aria-invalid={!!fieldErr(state.errors, "address")}
+              error={fieldErr(state.errors, "address")}
+            />
+          </section>
+        </div>
 
-      <section className={`${styles.rcForm__section} fp-col`}>
-        <h3>
-          Jooksude info
-        </h3>
+        <div className={`${styles.rcForm__block} fp-col`}>
+          <span className={`${styles.rcForm__step} txt-body`}>Step 4 of 5</span>
+          <section className={`${styles.rcForm__section} fp-col`}>
+            <h3>
+              Introduction
+            </h3>
 
-        <CustomInput
-          label="Mis päevadel tavaliselt jooksete? *"
-          name="runDays"
-          placeholder="Näiteks: Teisipäev, Neljapäev"
-          required
-          aria-invalid={!!fieldErr(state.errors, "runDays")}
-          error={fieldErr(state.errors, "runDays")}
-        />
+            <CustomTextarea
+              label="Introduction *"
+              name="description"
+              placeholder="Describe your running club, its atmosphere, and culture..."
+              required
+              rows={6}
+              aria-invalid={!!fieldErr(state.errors, "description")}
+              error={fieldErr(state.errors, "description")}
+            />
+          </section>
+        </div>
 
-        <CustomInput
-          label="Kui pikad on jooksud keskmiselt? *"
-          name="distance"
-          placeholder="Näiteks: 5-8 km"
-          required
-          aria-invalid={!!fieldErr(state.errors, "distance")}
-          error={fieldErr(state.errors, "distance")}
-        />
+        <div className={`${styles.rcForm__block} fp-col`}>
+          <span className={`${styles.rcForm__step} txt-body`}>Step 5 of 5</span>
+          <section className={`${styles.rcForm__section} fp-col`}>
+            <h3>
+              Contact & social media links
+            </h3>
 
-        <CustomTextarea
-          label="Lühikirjeldus distantsidest"
-          name="distanceDescription"
-          placeholder="Nt: Vähemalt kahes erinevas tempo grupis: rahulikum grupp 7-8km ja kiirem grupp 9-11km"
-          rows={3}
-          aria-invalid={!!fieldErr(state.errors, "distanceDescription")}
-          error={fieldErr(state.errors, "distanceDescription")}
-        />
+            <CustomInput
+              label="Instagram"
+              name="instagram"
+              placeholder="https://instagram.com/..."
+              aria-invalid={!!fieldErr(state.errors, "instagram")}
+              error={fieldErr(state.errors, "instagram")}
+            />
 
-        <CustomInput
-          label="Mis kellaajal algavad jooksud? *"
-          name="startTime"
-          placeholder="Näiteks: 18:30"
-          required
-          aria-invalid={!!fieldErr(state.errors, "startTime")}
-          error={fieldErr(state.errors, "startTime")}
-        />
-      </section>
+            <CustomInput
+              label="Facebook"
+              name="facebook"
+              placeholder="https://facebook.com/..."
+              aria-invalid={!!fieldErr(state.errors, "facebook")}
+              error={fieldErr(state.errors, "facebook")}
+            />
 
-      <section className={`${styles.rcForm__section} fp-col`}>
-        <h3>
-          Asukoht
-        </h3>
+            <CustomInput
+              label="Strava"
+              name="strava"
+              placeholder="https://strava.com/clubs/..."
+              aria-invalid={!!fieldErr(state.errors, "strava")}
+              error={fieldErr(state.errors, "strava")}
+            />
 
-        <CustomInput
-          label="Linn *"
-          name="city"
-          placeholder="Näiteks: Tallinn"
-          required
-          aria-invalid={!!fieldErr(state.errors, "city")}
-          error={fieldErr(state.errors, "city")}
-        />
+            <CustomInput
+              label="Website"
+              name="website"
+              placeholder="https://..."
+              aria-invalid={!!fieldErr(state.errors, "website")}
+              error={fieldErr(state.errors, "website")}
+            />
 
-        <CustomInput
-          label="Kogunemisala *"
-          name="area"
-          placeholder="Näiteks: Vabaduse väljak"
-          required
-          aria-invalid={!!fieldErr(state.errors, "area")}
-          error={fieldErr(state.errors, "area")}
-        />
-
-        <CustomInput
-          label="Alguskoha aadress (kui sama koht)"
-          name="address"
-          placeholder="Näiteks: Vabaduse väljak 1, Tallinn"
-          aria-invalid={!!fieldErr(state.errors, "address")}
-          error={fieldErr(state.errors, "address")}
-        />
-      </section>
-
-      <section className={`${styles.rcForm__section} fp-col`}>
-        <h3>
-          Tutvustus
-        </h3>
-
-        <CustomTextarea
-          label="Klubi tutvustus *"
-          name="description"
-          placeholder="Kirjelda oma jooksuklubi, selle õhkkonda ja kultuuri..."
-          required
-          rows={6}
-          aria-invalid={!!fieldErr(state.errors, "description")}
-          error={fieldErr(state.errors, "description")}
-        />
-      </section>
-
-      <section className={`${styles.rcForm__section} fp-col`}>
-        <h3>
-          Sotsiaalmeedia ja kontakt
-        </h3>
-
-        <CustomInput
-          label="Instagram"
-          name="instagram"
-          placeholder="https://instagram.com/..."
-          aria-invalid={!!fieldErr(state.errors, "instagram")}
-          error={fieldErr(state.errors, "instagram")}
-        />
-
-        <CustomInput
-          label="Facebook"
-          name="facebook"
-          placeholder="https://facebook.com/..."
-          aria-invalid={!!fieldErr(state.errors, "facebook")}
-          error={fieldErr(state.errors, "facebook")}
-        />
-
-        <CustomInput
-          label="Strava"
-          name="strava"
-          placeholder="https://strava.com/clubs/..."
-          aria-invalid={!!fieldErr(state.errors, "strava")}
-          error={fieldErr(state.errors, "strava")}
-        />
-
-        <CustomInput
-          label="Veebisait"
-          name="website"
-          placeholder="https://..."
-          aria-invalid={!!fieldErr(state.errors, "website")}
-          error={fieldErr(state.errors, "website")}
-        />
-
-        <CustomInput
-          label="Kontakt e-post *"
-          name="email"
-          type="email"
-          placeholder="kontakt@jooksuklubi.ee"
-          required
-          aria-invalid={!!fieldErr(state.errors, "email")}
-          error={fieldErr(state.errors, "email")}
-        />
-      </section>
+            <CustomInput
+              label="Contact person's email *"
+              name="email"
+              type="email"
+              placeholder="contact@runclub.ee"
+              required
+              aria-invalid={!!fieldErr(state.errors, "email")}
+              error={fieldErr(state.errors, "email")}
+            />
+          </section>
+        </div>
+      </div>
 
       <SubmitButton />
     </form>

@@ -56,7 +56,7 @@ export async function POST(request: NextRequest) {
       } catch (storageError) {
         console.error("Storage upload error:", storageError);
         return NextResponse.json(
-          { error: "Logo üleslaadimine ebaõnnestus. Palun proovi uuesti." },
+          { error: "Uploading the logo failed. Please try again." },
           { status: 500 }
         );
       }
@@ -119,7 +119,7 @@ export async function POST(request: NextRequest) {
     if (!validated.success) {
       return NextResponse.json(
         { 
-          error: "Valideerimise viga",
+          error: "Palun kontrolli sisestatud andmeid ja proovi uuesti.",
           errors: treeifyError(validated.error)
         },
         { status: 400 }
@@ -133,7 +133,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ 
       success: true, 
-      message: "Klubi registreerimine õnnestus!",
+      message: "Club registration successful!",
       id: docRef.id
     }, { status: 200 });
 
