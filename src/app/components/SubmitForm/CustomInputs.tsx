@@ -7,7 +7,7 @@ interface CustomInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
 }
 
 export const CustomInput = forwardRef<HTMLInputElement, CustomInputProps>(
-  function CustomInput({ label, error, ...props }, ref) {
+  function CustomInput({ label, error, required, ...props }, ref) {
     return (
       <div className={styles.customInput}>
         <label className="fp-col txt-body">
@@ -19,9 +19,15 @@ export const CustomInput = forwardRef<HTMLInputElement, CustomInputProps>(
             }}
             className={`h5`}
             {...props}
+            required={required}
+            aria-required={required}
           />
         </label>
-        {error && <span style={{ color: "#c00", fontSize: "0.9rem" }}>{error}</span>}
+         {error && (
+          <p className={styles.customInput__error} role="alert">
+            {error}
+          </p>
+        )}
       </div>
     );
   }
@@ -33,13 +39,15 @@ interface CustomTextareaProps extends React.TextareaHTMLAttributes<HTMLTextAreaE
 }
 
 export const CustomTextarea = forwardRef<HTMLTextAreaElement, CustomTextareaProps>(
-  function CustomTextarea({ label, error, ...props }, ref) {
+  function CustomTextarea({ label, error, required, ...props }, ref) {
     return (
       <div className={styles.customTextArea}>
         <label className="fp-col txt-body">
           {label}
           <textarea
             ref={ref}
+            required={required}
+            aria-required={required}
             style={{
               border: error ? "1px solid #c00" : "1px solid #ccc",
             }}
@@ -47,7 +55,11 @@ export const CustomTextarea = forwardRef<HTMLTextAreaElement, CustomTextareaProp
             {...props}
           />
         </label>
-        {error && <span style={{ color: "#c00", fontSize: "0.9rem" }}>{error}</span>}
+         {error && (
+          <p className={styles.customInput__error}>
+            {error}
+          </p>
+        )}
       </div>
     );
   }

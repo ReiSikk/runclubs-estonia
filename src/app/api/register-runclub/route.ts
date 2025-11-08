@@ -5,8 +5,6 @@ import { runClubSchema } from "@/app/lib/types/submitRunClub";
 import { db, storage } from "@/app/lib/firebase";
 import { collection, addDoc, Timestamp } from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
-// Zod validation
-import { treeifyError } from "zod";
 
 function getOptionalField(formData: FormData, key: string): string | undefined {
   const value = formData.get(key);
@@ -19,15 +17,13 @@ export async function POST(request: NextRequest) {
   try {
     const formData = await request.formData();
 
-     // Extract and validate logo file
     const logoFile = formData.get("logo") as File | null;
     let logoUrl = "";
 
     if (logoFile && logoFile.size > 0) {
-      // Validate file size (5MB)
       if (logoFile.size > 5 * 1024 * 1024) {
         return NextResponse.json(
-          { error: "Logo fail on liiga suur (max 5MB)." },
+          { error: "File is too large (max 5MB)." },
           { status: 400 }
         );
       }
@@ -36,7 +32,7 @@ export async function POST(request: NextRequest) {
       const allowedTypes = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
       if (!allowedTypes.includes(logoFile.type)) {
         return NextResponse.json(
-          { error: "Lubatud formaadid: JPG, PNG, WEBP." },
+          { error: "Accepted formats: JPG, JPEG, PNG, WEBP." },
           { status: 400 }
         );
       }
@@ -117,10 +113,25 @@ export async function POST(request: NextRequest) {
     // Validate with Zod
     const validated = runClubSchema.safeParse(submission);
     if (!validated.success) {
+      // Format Zod errors to match frontend expectations
+      const formatted = validated.error.format();
+      const fieldErrors: Record<string, string[]> = {};
+      
+      Object.keys(formatted).forEach((key) => {
+        if (key !== "_errors") {
+          const field = formatted[key as keyof typeof formatted];
+          if (field && typeof field === "object" && "_errors" in field) {
+            fieldErrors[key] = field._errors as string[];
+          }
+        }
+      });
+
+      console.log("Validation errors:", fieldErrors);
+
       return NextResponse.json(
         { 
-          error: "Palun kontrolli sisestatud andmeid ja proovi uuesti.",
-          errors: treeifyError(validated.error)
+          error: "Validation failed.",
+          errors: fieldErrors
         },
         { status: 400 }
       );
@@ -139,7 +150,7 @@ export async function POST(request: NextRequest) {
 
   } catch (error: unknown) { 
     console.error("Registration error:", error);
-    const errorMessage = error instanceof Error ? error.message : "Serveri viga";
+    const errorMessage = error instanceof Error ? error.message : "Server error occurred.";
     return NextResponse.json(
       { error: errorMessage },
       { status: 500 }

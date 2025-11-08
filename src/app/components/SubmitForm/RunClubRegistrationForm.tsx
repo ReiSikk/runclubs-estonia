@@ -18,6 +18,7 @@ function fieldErr(errors: FieldErrors, name: string) {
   return msgs?.length ? msgs.join(", ") : undefined;
 }
 
+
 function SubmitButton() {
   const { pending } = useFormStatus();
   return (
@@ -86,7 +87,7 @@ export default function RunClubRegistrationForm() {
     if (state.message) {
       setToastOpen(true);
     }
-  }, [state.message]);
+  }, [state.message, state.success]);
 
 
   // Reset form on success
@@ -145,7 +146,7 @@ export default function RunClubRegistrationForm() {
           <span className={`${styles.rcForm__step} txt-body`}>Step 1 of 5</span>
           <section className={`${styles.rcForm__section} fp-col`}>
             <h3>
-              Põhiinfo
+              Name & Logo
             </h3>
 
             <CustomInput

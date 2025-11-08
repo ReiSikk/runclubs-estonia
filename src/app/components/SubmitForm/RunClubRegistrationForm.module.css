@@ -52,6 +52,12 @@
     gap: 8px;
   }
 }
+.customInput__error {
+    color: var(--error);
+    padding-top: 8px;
+    margin-left: 4px;
+    font-size: 1.4rem;
+}
 .customTextArea {
     width: 100%;
 
