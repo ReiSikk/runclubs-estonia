@@ -1,85 +1,74 @@
 "use client";
 
-import { useActionState, useEffect, useRef, useState } from "react";
-import { useFormStatus } from "react-dom";
-import { CustomInput, CustomTextarea } from "./CustomInputs";
+import { useEffect, useRef, useState } from "react";
 import styles from "./RunClubRegistrationForm.module.css";
 import FormToast from "../Toast/Toast";
+import { Form } from "radix-ui";
+import { LucideUpload } from "lucide-react";
 
 type FieldErrors = Record<string, string[] | undefined>;
-type FormState =
-  | { success: false; errors: FieldErrors; message?: string }
-  | { success: true; errors: FieldErrors; message?: string };
+type FormState = {
+  success: boolean;
+  errors: FieldErrors;
+  message?: string;
+};
 
-const initialState: FormState = { success: false, errors: {} };
 
 function fieldErr(errors: FieldErrors, name: string) {
   const msgs = errors?.[name];
   return msgs?.length ? msgs.join(", ") : undefined;
 }
 
-
-function SubmitButton() {
-  const { pending } = useFormStatus();
-  return (
-    <button
-      type="submit"
-      disabled={pending}
-      className={`${styles.rcForm__submitButton} btn_main white`}
-      style={{
-        cursor: pending ? "not-allowed" : "pointer",
-        opacity: pending ? 0.7 : 1,
-      }}
-      aria-label="Submit form"
-    >
-      {pending ? "Saatmine..." : "Registreeri klubi"}
-    </button>
-  );
-}
-
 export default function RunClubRegistrationForm() {
   const [mounted, setMounted] = useState(false);
   const [toastOpen, setToastOpen] = useState(false);
+  const [state, setState] = useState<FormState>({ success: false, errors: {} });
   const formRef = useRef<HTMLFormElement | null>(null);
 
   useEffect(() => {
     setMounted(true);
   }, []);
 
-  const [state, formAction] = useActionState<FormState, FormData>(
-    async (_prev, formData) => {
-      try {
-        // Send to API route
-        const response = await fetch("/api/register-runclub", {
-          method: "POST",
-          body: formData,
-        });
+ const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const form = event.currentTarget;
+    const formData = new FormData(form);
 
-        const result = await response.json();
+    try {
+      const response = await fetch("/api/register-runclub", {
+        method: "POST",
+        body: formData,
+      });
+      const result = await response.json();
 
-        if (!response.ok) {
-          return {
-            success: false,
-            errors: result.errors || {},
-            message: result.error || "An error occurred. Please try again.",
-          };
-        }
+      const nextState: FormState = {
+        success: response.ok,
+        errors: response.ok ? {} : result.errors ?? {},
+        message:
+          result.message ??
+          result.error ??
+          (response.ok
+            ? "Success! Your registration has been received and is pending approval."
+            : "An error occurred. Please try again."),
+      };
 
-        return {
-          success: true,
-          errors: {},
-          message: result.message || "Success! Your registration has been received and is pending approval.",
-        };
-      } catch {
-        return {
-          success: false,
-          errors: {},
-          message: "An error occurred during registration. Please check your internet connection and try again.",
-        };
+      setState(nextState);
+      setToastOpen(Boolean(nextState.message));
+
+      if (response.ok) {
+        form.reset();
       }
-    },
-    initialState
-  );
+    } catch {
+      const fallback: FormState = {
+        success: false,
+        errors: {},
+        message:
+          "An error occurred during registration. Please check your internet connection and try again.",
+      };
+      setState(fallback);
+      setToastOpen(true);
+    }
+  };
 
 
   // Show toast when state changes
@@ -91,11 +80,11 @@ export default function RunClubRegistrationForm() {
 
 
   // Reset form on success
-  useEffect(() => {
-    if (state.success && formRef.current) {
-      formRef.current.reset();
-    }
-  }, [state.success]);
+    useEffect(() => {
+      if (state.success && formRef.current) {
+        formRef.current.reset();
+      }
+    }, [state.success]);
 
   if (!mounted) {
     return (
@@ -113,214 +102,306 @@ export default function RunClubRegistrationForm() {
   }
 
   return (
-    <form
+     <Form.Root
       ref={formRef}
-      action={formAction}
-      noValidate
+      onSubmit={handleSubmit}
       className={`${styles.rcForm} fp-col`}
+      onClearServerErrors={() => setState((prev) => ({ ...prev, errors: {} }))}
     >
+      {state.message && (
+        <FormToast
+          message={state.message}
+          type={state.success ? "success" : "error"}
+          open={toastOpen}
+          onOpenChange={setToastOpen}
+        />
+      )}
+
       <div className={styles.rcForm__header}>
-        <h1 className={styles.rcForm__title}>
-          Register a new running club
-        </h1>
+        <h1 className={styles.rcForm__title}>Register a new running club</h1>
+        <p>Fill out the form below to submit your club to our list.</p>
         <p>
-          Fill out the form below to submit your club to our list.
-        </p>
-        <p>
-          Please feel free to answer in <strong>Estonian</strong> or <strong>English</strong> as you prefer.
+          Please feel free to answer in <strong>Estonian</strong> or{" "}
+          <strong>English</strong> as you prefer.
         </p>
       </div>
 
-        {state.message && (
-          <FormToast
-            message={state.message}
-            type={state.success ? "success" : "error"}
-            open={toastOpen}
-            onOpenChange={setToastOpen}
-          />
-        )}
-
       <div className={`${styles.rcForm__wrapper} fp-col`}>
-        <p><i>All fields marked with <strong>*</strong> are <strong>required</strong></i></p>
+        <p>
+          <i>
+            All fields marked with <strong>*</strong> are <strong>required</strong>
+          </i>
+        </p>
+
         <div className={`${styles.rcForm__block} fp-col`}>
           <span className={`${styles.rcForm__step} txt-body`}>Step 1 of 5</span>
           <section className={`${styles.rcForm__section} fp-col`}>
-            <h3>
-              Name & Logo
-            </h3>
+            <h3>Name & Logo</h3>
 
-            <CustomInput
-              label="Name of the run club *"
-              name="name"
-              required
-              placeholder="E.g.: Kesklinna Jooksuklubi"
-              aria-invalid={!!fieldErr(state.errors, "name")}
-              error={fieldErr(state.errors, "name")}
-            />
+            <Form.Field name="name" className={`${styles.customInput} fp-col`}>
+              <Form.Label className={`${styles.rcForm__label} h4`}>
+                Name of the run club *
+              </Form.Label>
+              <Form.Control asChild>
+                <input
+                  type="text"
+                  placeholder="E.g. Kesklinna Jooksuklubi"
+                  required
+                  className={`${styles.rcForm__input} h5`}
+                  aria-invalid={!!fieldErr(state.errors, "name")}
+                />
+              </Form.Control>
+              <Form.Message className={styles.rcForm__hint} match="valueMissing">
+                This field is required.
+              </Form.Message>
+            </Form.Field>
 
-            <CustomInput
-              label="Logo (JPG, PNG, WEBP, max 5MB)"
-              name="logo"
-              type="file"
-              accept="image/jpeg,image/jpg,image/png,image/webp"
-              aria-invalid={!!fieldErr(state.errors, "logo")}
-              error={fieldErr(state.errors, "logo")}
-            />
+            <Form.Field name="logo" className={`${styles.customInput} ${styles.customInput__file} fp-col`}>
+              <Form.Label className={`${styles.rcForm__label} h4`}>
+                Logo (JPG, PNG, WEBP, max 5MB)
+              </Form.Label>
+              <div className={styles.rcForm__uploadIcon}>
+                <LucideUpload size={16} strokeWidth={2} aria-hidden="true" focusable="false" />
+              </div>
+                <Form.Control asChild>
+                  <input
+                    type="file"
+                    accept="image/jpeg,image/jpg,image/png,image/webp"
+                    className={styles.rcForm__file}
+                  />
+                </Form.Control>
+            </Form.Field>
           </section>
         </div>
 
         <div className={`${styles.rcForm__block} fp-col`}>
           <span className={`${styles.rcForm__step} txt-body`}>Step 2 of 5</span>
           <section className={`${styles.rcForm__section} fp-col`}>
-            <h3>
-              Information about runs & schedule
-            </h3>
+            <h3>Information about runs & schedule</h3>
 
-            <CustomInput
-              label="What days do you usually run on? *"
-              name="runDays"
-              placeholder="E.g. Tuesday, Thursday"
-              required
-              aria-invalid={!!fieldErr(state.errors, "runDays")}
-              error={fieldErr(state.errors, "runDays")}
-            />
+            <Form.Field name="runDays" className={`${styles.customInput} fp-col`}>
+              <Form.Label className={`${styles.rcForm__label} h4`}>
+                What days do you usually run on? *
+              </Form.Label>
+              <Form.Control asChild>
+                <input
+                  type="text"
+                  placeholder="E.g. Tuesday, Thursday"
+                  required
+                  className={`${styles.rcForm__input} h5`}
+                />
+              </Form.Control>
+              <Form.Message className={styles.rcForm__hint} match="valueMissing">
+                This field is required.
+              </Form.Message>
+            </Form.Field>
 
-            <CustomInput
-              label="How long are the runs on average? You can also enter the distance as a range for example 5-8 km *"
-              name="distance"
-              placeholder="E.g 5-8 km"
-              required
-              aria-invalid={!!fieldErr(state.errors, "distance")}
-              error={fieldErr(state.errors, "distance")}
-            />
+            <Form.Field name="distance" className={`${styles.customInput} fp-col`}>
+              <Form.Label className={`${styles.rcForm__label} h4`}>
+                How long are the runs on average? *
+              </Form.Label>
+              <Form.Control asChild>
+                <input
+                  type="text"
+                  placeholder="E.g. 5-8 km"
+                  required
+                  className={`${styles.rcForm__input} h5`}
+                />
+              </Form.Control>
+              <Form.Message className={styles.rcForm__hint} match="valueMissing">
+                This field is required.
+              </Form.Message>
+            </Form.Field>
 
-            <CustomTextarea
-              label="Describe the pace groups available (if any) and their average paces (if known)"
+            <Form.Field
               name="distanceDescription"
-              placeholder="E.g. At least two different pace groups: slower group 7-8km and faster group 9-11km"
-              rows={3}
-              aria-invalid={!!fieldErr(state.errors, "distanceDescription")}
-              error={fieldErr(state.errors, "distanceDescription")}
-            />
+              className={`${styles.customTextArea} fp-col`}
+            >
+              <Form.Label className={`${styles.rcForm__label} h4`}>
+                Describe the pace groups available (if any) and their average paces
+              </Form.Label>
+              <Form.Control asChild>
+                <textarea
+                  placeholder="E.g. Two pace groups: slower 7-8 km, faster 9-11 km"
+                  rows={3}
+                  className="h5"
+                />
+              </Form.Control>
+            </Form.Field>
 
-            <CustomInput
-              label="At what time do the runs usually start? * (If it varies, just answer ''Varies'')"
-              name="startTime"
-              placeholder="E.g. 18:30"
-              required
-              aria-invalid={!!fieldErr(state.errors, "startTime")}
-              error={fieldErr(state.errors, "startTime")}
-            />
+            <Form.Field name="startTime" className={`${styles.customInput} fp-col`}>
+              <Form.Label className={`${styles.rcForm__label} h4`}>
+                At what time do the runs usually start? *
+              </Form.Label>
+              <Form.Control asChild>
+                <input
+                  type="text"
+                  placeholder="E.g. 18:30"
+                  required
+                  className={`${styles.rcForm__input} h5`}
+                  aria-invalid={!!fieldErr(state.errors, "startTime")}
+                />
+              </Form.Control>
+              <Form.Message className={styles.rcForm__hint} match="valueMissing">
+                This field is required.
+              </Form.Message>
+            </Form.Field>
           </section>
         </div>
-        
+
         <div className={`${styles.rcForm__block} fp-col`}>
           <span className={`${styles.rcForm__step} txt-body`}>Step 3 of 5</span>
           <section className={`${styles.rcForm__section} fp-col`}>
-            <h3>
-              Location details
-            </h3>
+            <h3>Location details</h3>
 
-            <CustomInput
-              label="City *"
-              name="city"
-              placeholder="E.g. Tallinn"
-              required
-              aria-invalid={!!fieldErr(state.errors, "city")}
-              error={fieldErr(state.errors, "city")}
-            />
+            <Form.Field name="city" className={`${styles.customInput} fp-col`}>
+              <Form.Label className={`${styles.rcForm__label} h4`}>City *</Form.Label>
+              <Form.Control asChild>
+                <input
+                  type="text"
+                  placeholder="E.g. Tallinn"
+                  required
+                  className={`${styles.rcForm__input} h5`}
+                  aria-invalid={!!fieldErr(state.errors, "city")}
+                />
+              </Form.Control>
+              <Form.Message className={styles.rcForm__hint} match="valueMissing">
+                This field is required.
+              </Form.Message>
+            </Form.Field>
 
-            <CustomInput
-              label="The area where you usually gather and start your runs from *"
-              name="area"
-              placeholder="E.g. Rotermanni kvartal"
-              required
-              aria-invalid={!!fieldErr(state.errors, "area")}
-              error={fieldErr(state.errors, "area")}
-            />
+            <Form.Field name="area" className={`${styles.customInput} fp-col`}>
+              <Form.Label className={`${styles.rcForm__label} h4`}>
+                Where do you usually gather and start your runs? *
+              </Form.Label>
+              <Form.Control asChild>
+                <input
+                  type="text"
+                  placeholder="E.g. Rotermanni kvartal"
+                  required
+                  className={`${styles.rcForm__input} h5`}
+                />
+              </Form.Control>
+              <Form.Message className={styles.rcForm__hint} match="valueMissing">
+                This field is required.
+              </Form.Message>
+            </Form.Field>
 
-            <CustomInput
-              label="Starting location address (if applicable)"
-              name="address"
-              placeholder="E.g. Rotermanni 2, Tallinn"
-              aria-invalid={!!fieldErr(state.errors, "address")}
-              error={fieldErr(state.errors, "address")}
-            />
+            <Form.Field name="address" className={`${styles.customInput} fp-col`}>
+              <Form.Label className={`${styles.rcForm__label} h4`}>
+                Starting location address (if applicable)
+              </Form.Label>
+              <Form.Control asChild>
+                <input
+                  type="text"
+                  placeholder="E.g. Rotermanni 2, Tallinn"
+                  className={`${styles.rcForm__input} h5`}
+                />
+              </Form.Control>
+            </Form.Field>
           </section>
         </div>
 
         <div className={`${styles.rcForm__block} fp-col`}>
           <span className={`${styles.rcForm__step} txt-body`}>Step 4 of 5</span>
           <section className={`${styles.rcForm__section} fp-col`}>
-            <h3>
-              Introduction
-            </h3>
+            <h3>Introduction</h3>
 
-            <CustomTextarea
-              label="Introduction *"
-              name="description"
-              placeholder="Describe your running club, its atmosphere, and culture..."
-              required
-              rows={6}
-              aria-invalid={!!fieldErr(state.errors, "description")}
-              error={fieldErr(state.errors, "description")}
-            />
+            <Form.Field name="description" className={`${styles.customTextArea} fp-col`}>
+              <Form.Label className={`${styles.rcForm__label} h4`}>Introduction *</Form.Label>
+              <Form.Control asChild>
+                <textarea
+                  placeholder="Describe your running club..."
+                  required
+                  rows={6}
+                  className="h5"
+                />
+              </Form.Control>
+              <Form.Message className={styles.rcForm__hint} match="valueMissing">
+                This field is required.
+              </Form.Message>
+            </Form.Field>
           </section>
         </div>
 
         <div className={`${styles.rcForm__block} fp-col`}>
           <span className={`${styles.rcForm__step} txt-body`}>Step 5 of 5</span>
           <section className={`${styles.rcForm__section} fp-col`}>
-            <h3>
-              Contact & social media links
-            </h3>
+            <h3>Contact & social media links</h3>
 
-            <CustomInput
-              label="Instagram"
-              name="instagram"
-              placeholder="https://instagram.com/..."
-              aria-invalid={!!fieldErr(state.errors, "instagram")}
-              error={fieldErr(state.errors, "instagram")}
-            />
+            <Form.Field name="instagram" className={`${styles.customInput} fp-col`}>
+              <Form.Label className={`${styles.rcForm__label} h4`}>Instagram</Form.Label>
+              <Form.Control asChild>
+                <input
+                  type="url"
+                  placeholder="https://instagram.com/..."
+                  className={`${styles.rcForm__input} h5`}
+                />
+              </Form.Control>
+            </Form.Field>
 
-            <CustomInput
-              label="Facebook"
-              name="facebook"
-              placeholder="https://facebook.com/..."
-              aria-invalid={!!fieldErr(state.errors, "facebook")}
-              error={fieldErr(state.errors, "facebook")}
-            />
+            <Form.Field name="facebook" className={`${styles.customInput} fp-col`}>
+              <Form.Label className={`${styles.rcForm__label} h4`}>Facebook</Form.Label>
+              <Form.Control asChild>
+                <input
+                  type="url"
+                  placeholder="https://facebook.com/..."
+                  className={`${styles.rcForm__input} h5`}
+                />
+              </Form.Control>
+            </Form.Field>
 
-            <CustomInput
-              label="Strava"
-              name="strava"
-              placeholder="https://strava.com/clubs/..."
-              aria-invalid={!!fieldErr(state.errors, "strava")}
-              error={fieldErr(state.errors, "strava")}
-            />
+            <Form.Field name="strava" className={`${styles.customInput} fp-col`}>
+              <Form.Label className={`${styles.rcForm__label} h4`}>Strava</Form.Label>
+              <Form.Control asChild>
+                <input
+                  type="url"
+                  placeholder="https://strava.com/clubs/..."
+                  className={`${styles.rcForm__input} h5`}
+                />
+              </Form.Control>
+            </Form.Field>
 
-            <CustomInput
-              label="Website"
-              name="website"
-              placeholder="https://..."
-              aria-invalid={!!fieldErr(state.errors, "website")}
-              error={fieldErr(state.errors, "website")}
-            />
+            <Form.Field name="website" className={`${styles.customInput} fp-col`}>
+              <Form.Label className={`${styles.rcForm__label} h4`}>Website</Form.Label>
+              <Form.Control asChild>
+                <input
+                  type="url"
+                  placeholder="https://..."
+                  className={`${styles.rcForm__input} h5`}
+                  aria-invalid={!!fieldErr(state.errors, "website")}
+                />
+              </Form.Control>
+            </Form.Field>
 
-            <CustomInput
-              label="Contact person's email *"
-              name="email"
-              type="email"
-              placeholder="contact@runclub.ee"
-              required
-              aria-invalid={!!fieldErr(state.errors, "email")}
-              error={fieldErr(state.errors, "email")}
-            />
+            <Form.Field name="email" className={`${styles.customInput} fp-col`}>
+              <Form.Label className={`${styles.rcForm__label} h4`}>
+                Contact person's email *
+              </Form.Label>
+              <Form.Control asChild>
+                <input
+                  type="email"
+                  placeholder="contact@runclub.ee"
+                  required
+                  className={`${styles.rcForm__input} h5`}
+                />
+              </Form.Control>
+              <Form.Message className={styles.rcForm__hint} match="typeMismatch">
+                This email address is not valid.
+              </Form.Message>
+            </Form.Field>
           </section>
         </div>
       </div>
 
-      <SubmitButton />
-    </form>
+      <Form.Submit asChild>
+        <button
+          className={`${styles.rcForm__submit} btn_main white`}
+          data-umami-event="Submitted Run Club Registration Form"
+        >
+          Submit form
+        </button>
+      </Form.Submit>
+    </Form.Root>
   );
 }

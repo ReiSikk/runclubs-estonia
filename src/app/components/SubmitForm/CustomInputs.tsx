@@ -60,6 +60,11 @@ export const CustomTextarea = forwardRef<HTMLTextAreaElement, CustomTextareaProp
             {error}
           </p>
         )}
+        {!error && required && (
+          <p className={`${styles.customInput__required}`}>
+            This field is required
+          </p>
+        )}
       </div>
     );
   }
