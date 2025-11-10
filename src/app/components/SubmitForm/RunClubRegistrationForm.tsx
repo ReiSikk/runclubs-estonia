@@ -1,90 +1,98 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useActionState, useState, useEffect, useRef } from 'react';
 import styles from "./RunClubRegistrationForm.module.css";
 import FormToast from "../Toast/Toast";
 import { Form } from "radix-ui";
 import { LucideUpload } from "lucide-react";
-
-type FieldErrors = Record<string, string[] | undefined>;
-type FormState = {
-  success: boolean;
-  errors: FieldErrors;
-  message?: string;
-};
+import { createRunClub } from "@/app/actions"
+import { useRouter } from 'next/navigation'
 
 
-function fieldErr(errors: FieldErrors, name: string) {
-  const msgs = errors?.[name];
-  return msgs?.length ? msgs.join(", ") : undefined;
-}
+// Match server action's return type
+type FormState = | { success: true; message: string } | { success: false; message: string; errors?: Record<string, string[]> } | undefined;
+
+const initialState: FormState = undefined;
 
 export default function RunClubRegistrationForm() {
+  const router = useRouter();
   const [mounted, setMounted] = useState(false);
+  const [state, formAction, pending] = useActionState(createRunClub, initialState)
+  // Feedback toast state
   const [toastOpen, setToastOpen] = useState(false);
-  const [state, setState] = useState<FormState>({ success: false, errors: {} });
-  const formRef = useRef<HTMLFormElement | null>(null);
+  // Form and file input refs
+  const formRef = useRef<HTMLFormElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  // File preview and error states
+  const [filePreview, setFilePreview] = useState<string | null>(null);
+  const [fileError, setFileError] = useState<string | null>(null);
+
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    
+    if (!file) {
+      setFilePreview(null);
+      setFileError(null);
+      return;
+    }
+
+    const maxSize = 5 * 1024 * 1024; // 5MB
+    const allowedTypes = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
+
+    // Validate file size
+    if (file.size > maxSize) {
+      setFileError(`File is too large (${(file.size / 1024 / 1024).toFixed(2)}MB). Maximum size is 5MB.`);
+      setFilePreview(null);
+      event.target.value = ''; // Clear file input
+      return;
+    }
+
+    // Validate file type
+    if (!allowedTypes.includes(file.type)) {
+      setFileError("Accepted formats: JPG, JPEG, PNG, WEBP.");
+      setFilePreview(null);
+      event.target.value = ''; // Clear file input
+      return;
+    }
+
+    // File is valid, show preview
+    setFileError(null);
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setFilePreview(reader.result as string);
+    };
+    reader.readAsDataURL(file);
+  };
 
   useEffect(() => {
     setMounted(true);
   }, []);
 
- const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    const form = event.currentTarget;
-    const formData = new FormData(form);
-
-    try {
-      const response = await fetch("/api/register-runclub", {
-        method: "POST",
-        body: formData,
-      });
-      const result = await response.json();
-
-      const nextState: FormState = {
-        success: response.ok,
-        errors: response.ok ? {} : result.errors ?? {},
-        message:
-          result.message ??
-          result.error ??
-          (response.ok
-            ? "Success! Your registration has been received and is pending approval."
-            : "An error occurred. Please try again."),
-      };
-
-      setState(nextState);
-      setToastOpen(Boolean(nextState.message));
-
-      if (response.ok) {
-        form.reset();
-      }
-    } catch {
-      const fallback: FormState = {
-        success: false,
-        errors: {},
-        message:
-          "An error occurred during registration. Please check your internet connection and try again.",
-      };
-      setState(fallback);
+ useEffect(() => {
+    if (state?.message) {
       setToastOpen(true);
     }
-  };
-
-
-  // Show toast when state changes
-  useEffect(() => {
-    if (state.message) {
-      setToastOpen(true);
-    }
-  }, [state.message, state.success]);
-
+  }, [state?.message, state?.success]);
 
   // Reset form on success
-    useEffect(() => {
-      if (state.success && formRef.current) {
-        formRef.current.reset();
+  useEffect(() => {
+    if (state?.success && formRef.current) {
+      formRef.current.reset();
+      setFilePreview(null);
+      setFileError(null);
+
+      // Clear file input
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
       }
-    }, [state.success]);
+
+      const timer = setTimeout(() => {
+        router.push('/');
+      }, 2000);
+
+      return () => clearTimeout(timer);
+    }
+  }, [state?.success, router]);
 
   if (!mounted) {
     return (
@@ -103,17 +111,17 @@ export default function RunClubRegistrationForm() {
 
   return (
      <Form.Root
+      action={formAction}
       ref={formRef}
-      onSubmit={handleSubmit}
       className={`${styles.rcForm} fp-col`}
-      onClearServerErrors={() => setState((prev) => ({ ...prev, errors: {} }))}
     >
-      {state.message && (
+      {state?.message && (
         <FormToast
-          message={state.message}
-          type={state.success ? "success" : "error"}
+          message={state?.message}
+          type={state?.success ? "success" : "error"}
           open={toastOpen}
           onOpenChange={setToastOpen}
+          aria-live="polite"
         />
       )}
 
@@ -148,7 +156,6 @@ export default function RunClubRegistrationForm() {
                   placeholder="E.g. Kesklinna Jooksuklubi"
                   required
                   className={`${styles.rcForm__input} h5`}
-                  aria-invalid={!!fieldErr(state.errors, "name")}
                 />
               </Form.Control>
               <Form.Message className={styles.rcForm__hint} match="valueMissing">
@@ -165,11 +172,28 @@ export default function RunClubRegistrationForm() {
               </div>
                 <Form.Control asChild>
                   <input
+                    ref={fileInputRef}
                     type="file"
                     accept="image/jpeg,image/jpg,image/png,image/webp"
                     className={styles.rcForm__file}
+                    onChange={handleFileChange}
                   />
                 </Form.Control>
+                {fileError && (
+                    <Form.Message className={styles.rcForm__hint}>
+                      {fileError}
+                    </Form.Message>
+                  )}
+                {filePreview && (
+                  <div style={{ marginTop: '0.8rem' }}>
+                    <img 
+                      src={filePreview} 
+                      alt="Logo preview" 
+                      style={{ maxWidth: '250px', maxHeight: '250px', borderRadius: '0.8rem', objectFit: 'cover' }}
+                      loading="lazy"
+                    />
+                  </div>
+                )}
             </Form.Field>
           </section>
         </div>
@@ -179,22 +203,22 @@ export default function RunClubRegistrationForm() {
           <section className={`${styles.rcForm__section} fp-col`}>
             <h3>Information about runs & schedule</h3>
 
-            <Form.Field name="runDays" className={`${styles.customInput} fp-col`}>
-              <Form.Label className={`${styles.rcForm__label} h4`}>
-                What days do you usually run on? *
-              </Form.Label>
-              <Form.Control asChild>
-                <input
-                  type="text"
-                  placeholder="E.g. Tuesday, Thursday"
-                  required
-                  className={`${styles.rcForm__input} h5`}
-                />
-              </Form.Control>
-              <Form.Message className={styles.rcForm__hint} match="valueMissing">
-                This field is required.
-              </Form.Message>
-            </Form.Field>
+        <Form.Field name="runDays" className={`${styles.customInput} fp-col`}>
+          <Form.Label className={`${styles.rcForm__label} h4`}>
+            What days do you usually run on? *
+          </Form.Label>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+            {['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'].map((day) => (
+              <label key={day} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }} className="txt-body">
+                <input type="checkbox" name="runDays" value={day} />
+                {day}
+              </label>
+            ))}
+          </div>
+          <Form.Message className={styles.rcForm__hint} match="valueMissing">
+            Please select at least one day.
+          </Form.Message>
+        </Form.Field>
 
             <Form.Field name="distance" className={`${styles.customInput} fp-col`}>
               <Form.Label className={`${styles.rcForm__label} h4`}>
@@ -206,6 +230,7 @@ export default function RunClubRegistrationForm() {
                   placeholder="E.g. 5-8 km"
                   required
                   className={`${styles.rcForm__input} h5`}
+                  maxLength={256}
                 />
               </Form.Control>
               <Form.Message className={styles.rcForm__hint} match="valueMissing">
@@ -225,6 +250,7 @@ export default function RunClubRegistrationForm() {
                   placeholder="E.g. Two pace groups: slower 7-8 km, faster 9-11 km"
                   rows={3}
                   className="h5"
+                  maxLength={1000}
                 />
               </Form.Control>
             </Form.Field>
@@ -239,7 +265,7 @@ export default function RunClubRegistrationForm() {
                   placeholder="E.g. 18:30"
                   required
                   className={`${styles.rcForm__input} h5`}
-                  aria-invalid={!!fieldErr(state.errors, "startTime")}
+                  maxLength={256}
                 />
               </Form.Control>
               <Form.Message className={styles.rcForm__hint} match="valueMissing">
@@ -262,7 +288,7 @@ export default function RunClubRegistrationForm() {
                   placeholder="E.g. Tallinn"
                   required
                   className={`${styles.rcForm__input} h5`}
-                  aria-invalid={!!fieldErr(state.errors, "city")}
+                  maxLength={256}
                 />
               </Form.Control>
               <Form.Message className={styles.rcForm__hint} match="valueMissing">
@@ -280,6 +306,7 @@ export default function RunClubRegistrationForm() {
                   placeholder="E.g. Rotermanni kvartal"
                   required
                   className={`${styles.rcForm__input} h5`}
+                  maxLength={256}
                 />
               </Form.Control>
               <Form.Message className={styles.rcForm__hint} match="valueMissing">
@@ -296,6 +323,7 @@ export default function RunClubRegistrationForm() {
                   type="text"
                   placeholder="E.g. Rotermanni 2, Tallinn"
                   className={`${styles.rcForm__input} h5`}
+                  maxLength={256}
                 />
               </Form.Control>
             </Form.Field>
@@ -315,6 +343,7 @@ export default function RunClubRegistrationForm() {
                   required
                   rows={6}
                   className="h5"
+                  maxLength={5000}
                 />
               </Form.Control>
               <Form.Message className={styles.rcForm__hint} match="valueMissing">
@@ -336,6 +365,7 @@ export default function RunClubRegistrationForm() {
                   type="url"
                   placeholder="https://instagram.com/..."
                   className={`${styles.rcForm__input} h5`}
+                  maxLength={2048}
                 />
               </Form.Control>
             </Form.Field>
@@ -347,6 +377,7 @@ export default function RunClubRegistrationForm() {
                   type="url"
                   placeholder="https://facebook.com/..."
                   className={`${styles.rcForm__input} h5`}
+                  maxLength={2048}
                 />
               </Form.Control>
             </Form.Field>
@@ -358,6 +389,7 @@ export default function RunClubRegistrationForm() {
                   type="url"
                   placeholder="https://strava.com/clubs/..."
                   className={`${styles.rcForm__input} h5`}
+                  maxLength={2048}
                 />
               </Form.Control>
             </Form.Field>
@@ -369,7 +401,7 @@ export default function RunClubRegistrationForm() {
                   type="url"
                   placeholder="https://..."
                   className={`${styles.rcForm__input} h5`}
-                  aria-invalid={!!fieldErr(state.errors, "website")}
+                  maxLength={2048}
                 />
               </Form.Control>
             </Form.Field>
@@ -384,22 +416,30 @@ export default function RunClubRegistrationForm() {
                   placeholder="contact@runclub.ee"
                   required
                   className={`${styles.rcForm__input} h5`}
+                  maxLength={254}
                 />
               </Form.Control>
               <Form.Message className={styles.rcForm__hint} match="typeMismatch">
                 This email address is not valid.
               </Form.Message>
+              <Form.Message className={styles.rcForm__hint} match="valueMissing">
+                This field is required.
+              </Form.Message>
             </Form.Field>
           </section>
         </div>
       </div>
-
       <Form.Submit asChild>
         <button
           className={`${styles.rcForm__submit} btn_main white`}
           data-umami-event="Submitted Run Club Registration Form"
+          disabled={pending || !!fileError}
+          style={{
+            opacity: pending || fileError ? 0.6 : 1,
+            cursor: pending || fileError ? "not-allowed" : "pointer",
+          }}
         >
-          Submit form
+          {pending ? "Submitting..." : "Submit form"}
         </button>
       </Form.Submit>
     </Form.Root>

@@ -133,6 +133,15 @@
     max-width: 100%;
   }
 }
+.rcForm__checkbox {
+    gap: 8px;
+
+    input {
+        width: 16px;
+        height: 16px;
+        background: var(--cream);
+    }
+}
 
 .rcForm__submit {
   margin-left: auto;

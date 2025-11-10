@@ -1,9 +1,8 @@
-import { NextRequest, NextResponse } from "next/server";
-// Types
+'use server';
+
 import { submitRunClubSchema } from "@/app/lib/types/submitRunClub";
-// Firbase
-import { db, storage } from "@/app/lib/firebase";
 import { collection, addDoc, Timestamp } from "firebase/firestore";
+import { db, storage } from "@/app/lib/firebase";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
 function getOptionalField(formData: FormData, key: string): string | undefined {
@@ -13,28 +12,37 @@ function getOptionalField(formData: FormData, key: string): string | undefined {
   return strValue.length > 0 ? strValue : undefined;
 }
 
-export async function POST(request: NextRequest) {
-  try {
-    const formData = await request.formData();
+type ActionResult = 
+  | { success: true; message: string }
+  | { success: false; message: string; errors?: Record<string, string[]> };
 
+export async function createRunClub(
+  prevState: ActionResult | undefined, 
+  formData: FormData
+): Promise<ActionResult> {
+  try {
+    // Handle logo file upload
     const logoFile = formData.get("logo") as File | null;
     let logoUrl = "";
 
     if (logoFile && logoFile.size > 0) {
+      // Validate file size
       if (logoFile.size > 5 * 1024 * 1024) {
-        return NextResponse.json(
-          { error: "File is too large (max 5MB)." },
-          { status: 400 }
-        );
+        return {
+          success: false,
+          message: "File is too large (max 5MB).",
+          errors: { logo: ["File is too large (max 5MB)."] }
+        };
       }
 
       // Validate file type
       const allowedTypes = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
       if (!allowedTypes.includes(logoFile.type)) {
-        return NextResponse.json(
-          { error: "Accepted formats: JPG, JPEG, PNG, WEBP." },
-          { status: 400 }
-        );
+        return {
+          success: false,
+          message: "Accepted formats: JPG, JPEG, PNG, WEBP.",
+          errors: { logo: ["Accepted formats: JPG, JPEG, PNG, WEBP."] }
+        };
       }
 
       try {
@@ -51,17 +59,18 @@ export async function POST(request: NextRequest) {
         console.log("Logo uploaded successfully:", logoUrl);
       } catch (storageError) {
         console.error("Storage upload error:", storageError);
-        return NextResponse.json(
-          { error: "Uploading the logo failed. Please try again." },
-          { status: 500 }
-        );
+        return {
+          success: false,
+          message: "Uploading the logo failed. Please try again.",
+          errors: { logo: ["Uploading the logo failed. Please try again."] }
+        };
       }
     }
 
     // Build submission object
     const submission: Record<string, unknown> = {
       name: formData.get("name") as string,
-      runDays: formData.get("runDays") as string,
+      runDays: formData.getAll("runDays"),
       distance: formData.get("distance") as string,
       startTime: formData.get("startTime") as string,
       city: formData.get("city") as string,
@@ -73,11 +82,12 @@ export async function POST(request: NextRequest) {
       updatedAt: Timestamp.now(),
     };
 
-    // Add optional fields only if they have values
+    // Add logo URL if uploaded
     if (logoUrl) {
       submission.logo = logoUrl;
     }
 
+    // Add optional fields
     const distanceDescription = getOptionalField(formData, "distanceDescription");
     if (distanceDescription) {
       submission.distanceDescription = distanceDescription;
@@ -108,52 +118,52 @@ export async function POST(request: NextRequest) {
       submission.website = website;
     }
 
-    console.log("Submission object (before validation):", submission);
+    // Validate with Zod schema
+    const validatedFields = submitRunClubSchema.safeParse(submission);
 
-    // Validate with Zod
-    const validated = submitRunClubSchema.safeParse(submission);
-    if (!validated.success) {
-      // Format Zod errors to match frontend expectations
-      const formatted = validated.error.format();
-      const fieldErrors: Record<string, string[]> = {};
-      
-      Object.keys(formatted).forEach((key) => {
-        if (key !== "_errors") {
-          const field = formatted[key as keyof typeof formatted];
-          if (field && typeof field === "object" && "_errors" in field) {
-            fieldErrors[key] = field._errors as string[];
-          }
+    // Return validation errors if any
+    if (!validatedFields.success) {
+      const errors: Record<string, string[]> = {};
+      validatedFields.error.issues.forEach((issue) => {
+        const path = issue.path.join('.');
+        if (!errors[path]) {
+          errors[path] = [];
         }
+        errors[path].push(issue.message);
       });
 
-      console.log("Validation errors:", fieldErrors);
-
-      return NextResponse.json(
-        { 
-          error: "Validation failed.",
-          errors: fieldErrors
-        },
-        { status: 400 }
-      );
+      return {
+        success: false,
+        message: 'Please fix the validation errors',
+        errors,
+      };
     }
 
-    console.log("Validated data:", validated.data);
+    // Clean data - remove undefined/null/empty values
+    const cleanData: Record<string, any> = {};
+    Object.entries(validatedFields.data).forEach(([key, value]) => {
+      if (value !== undefined && value !== null && value !== "") {
+        cleanData[key] = value;
+      }
+    });
 
-    // Save to Firestore DB
-    const docRef = await addDoc(collection(db, "runclubs"), validated.data);
+    // Save to Firestore
+    await addDoc(collection(db, "runclubs"), cleanData);
 
-    return NextResponse.json({ 
-      success: true, 
-      message: "Club registration successful!",
-      id: docRef.id
-    }, { status: 200 });
+    return {
+      success: true,
+      message: "Success! Your club has been registered and is pending approval.",
+    };
 
-  } catch (error: unknown) { 
+
+  } catch (error: unknown) {
     console.error("Registration error:", error);
-    const errorMessage = error instanceof Error ? error.message : "Server error occurred.";
-    return NextResponse.json(
-      { error: errorMessage },
-      { status: 500 }
-    );
+    const errorMessage = error instanceof Error ? error.message : "An unexpected error occurred";
+    
+    return {
+      success: false,
+      message: errorMessage,
+      errors: {},
+    };
   }
 }

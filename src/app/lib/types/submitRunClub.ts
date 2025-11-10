@@ -1,9 +1,9 @@
 import { z } from "zod";
 
-export const runClubSchema = z.object({
+export const submitRunClubSchema = z.object({
   name: z.string().min(1, { message: "Name of the run club is required." }),
   logo: z.any().optional(),
-  runDays: z.string().min(1, { message: "Regular running days are required." }),
+  runDays: z.array(z.string()).min(1, "Select at least one day"),
   distance: z.string().min(1, { message: "Distance is required." }),
   distanceDescription: z.string().optional(),
   startTime: z.string().min(1, { message: "Start time is required." }),
@@ -20,5 +20,3 @@ export const runClubSchema = z.object({
   createdAt: z.any(),
   updatedAt: z.any(),
 });
-
-export type RunClubSubmission = z.infer<typeof runClubSchema>;
