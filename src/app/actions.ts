@@ -70,7 +70,7 @@ export async function createRunClub(
     // Build submission object
     const submission: Record<string, unknown> = {
       name: formData.get("name") as string,
-      runDays: formData.getAll("runDays"),
+      runDays: formData.getAll("runDays") as string[],
       distance: formData.get("distance") as string,
       startTime: formData.get("startTime") as string,
       city: formData.get("city") as string,
@@ -81,6 +81,8 @@ export async function createRunClub(
       createdAt: Timestamp.now(),
       updatedAt: Timestamp.now(),
     };
+
+    console.log("Form submission data:", submission);
 
     // Add logo URL if uploaded
     if (logoUrl) {

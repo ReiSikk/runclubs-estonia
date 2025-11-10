@@ -1,4 +1,4 @@
-import * as React from "react";
+import React, {useEffect} from "react";
 import { Toast } from "radix-ui";
 import styles from "./Toast.module.css";
 import { LucideX } from "lucide-react";
@@ -13,9 +13,11 @@ interface FormToastProps {
 export default function FormToast({ message, type, open, onOpenChange}: FormToastProps) {
 	const timerRef = React.useRef(0);
 
-	React.useEffect(() => {
-		return () => clearTimeout(timerRef.current);
-	}, []);
+	  useEffect(() => {
+      const timer = timerRef.current;
+      
+      return () => clearTimeout(timer);
+    }, []);
 
 	return (
 	    <Toast.Provider swipeDirection="right">
