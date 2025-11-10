@@ -11,6 +11,9 @@
   --footer-5: var(--accent);
   --footer-6: #f8e7ce;
   --divider: 1px solid rgba(0, 0, 0, 0.2);
+  /* Feedback color */
+  --success: #4BB543;
+  --error: #FF0000;
 }
 
 html {
@@ -216,13 +219,21 @@ ol {
 /*
    Buttons
    ========================================================================== */
+   button {
+    cursor: pointer;
+    outline: none;
+    padding: clamp(8px, 1vw, 14px) clamp(16px, 3vw, 24px);
+    font-size: 1.4rem;
+    font-weight: 500;
+   }
+
 .btn_main {
   position: relative;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: clamp(8px, 1vw, 14px) clamp(16px, 3vw, 24px);
-  font-size: 1.4rem;
+  padding: clamp(10px, 2vw, 13.5px) clamp(16px, 3vw, 24px);
+  font-size: 1.6rem;
   font-weight: 500;
   border: 1px solid transparent;
   border-radius: 999px;
@@ -371,6 +382,9 @@ ol {
     opacity: 1;
   }
 
+  .btn_main:hover {
+    background: var(--cream);
+  }
   .btn_main .icon-carousel-anim {
     transition:
       opacity 0.2s ease,

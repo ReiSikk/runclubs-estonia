@@ -8,7 +8,7 @@ import AllClubsList from './AllClubsList'
 import SearchBar from './SearchBar'
 import { FilterSelect } from './FilterSelect';
 // Types
-import { RunClub } from '../../../lib/types';
+import { RunClub } from '@/app/lib/types/runClub'
 
 interface HomeMainAsideProps {
   selectedCity: string;

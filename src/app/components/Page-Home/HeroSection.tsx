@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import styles from './HeroSection.module.css';
 
 function HeroSection () {
@@ -15,17 +16,12 @@ function HeroSection () {
               >
                 Find a Club
               </a>
-              <a
-                href="https://tally.so/r/w87zDO"
-                target="_blank"
-                rel="noopener noreferrer" 
+              <Link
+                href="/submit"
                 className={`${styles.hero__submitButton} btn_main`}
-                data-attr="hero-submit-club-click"
-                data-umami-event="CTA to Tally form"
-                data-custom-id="cta-to-tallyForm"
               >
                 Submit a new club
-              </a>
+              </Link>
             </div>
           </div>
         </div>

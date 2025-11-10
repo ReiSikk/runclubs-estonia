@@ -3,7 +3,7 @@ import styles from "./AllClubsList.module.css"
 // Components
 import AllClubsListItem from '../Section-AllClubs/AllClubsListItem'
 // Types
-import { RunClub } from '../../../lib/types'
+import { RunClub } from '@/app/lib/types/runClub'
 // Icons
 import { Search } from 'lucide-react';
 

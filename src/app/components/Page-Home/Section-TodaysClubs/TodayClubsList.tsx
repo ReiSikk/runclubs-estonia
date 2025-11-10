@@ -5,7 +5,7 @@ import TodaysClubsListItem from './TodayClubsListItem';
 // Utils
 import { convertDaysToAbbs } from "@/app/lib/utils/convertDays";
 // Types
-import { RunClub } from '@/app/lib/types';
+import { RunClub } from '@/app/lib/types/runClub';
 // Icons
 import { Search } from 'lucide-react';
 

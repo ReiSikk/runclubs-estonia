@@ -1,5 +1,5 @@
 import sanityClient from '@/sanity/client';
-import { RunClub } from '../types';
+import { RunClub } from '@/app/lib/types/runClub'
 
 const runClubsQuery = `*[_type == "runClub"] | order(orderRank)`
 
