@@ -7,6 +7,7 @@ import { LucideUpload } from "lucide-react";
 import { createRunClub } from "@/app/actions";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
+import { set } from "zod";
 
 // Match server action's return type
 type FormState =
@@ -26,6 +27,7 @@ export default function RunClubRegistrationForm() {
   const [mounted, setMounted] = useState(false);
   const [state, setState] = useState<FormState>(initialState);
   const [isPending, startTransition] = useTransition();
+  const [countdown, setCountdown] = useState<number | null>(null);
 
   // Feedback toast state
   const [toastOpen, setToastOpen] = useState(false);
@@ -94,6 +96,8 @@ export default function RunClubRegistrationForm() {
             }
           }
 
+          // Start countdown for redirect
+          setCountdown(3);
           // Redirect after showing success message
           setTimeout(() => {
             router.push("/");
@@ -109,6 +113,17 @@ export default function RunClubRegistrationForm() {
       }
     });
   };
+
+  // Countdown timer effect
+  useEffect(() => {
+    if (countdown === null || countdown <= 0) return;
+
+    const timer = setTimeout(() => {
+      setCountdown(countdown - 1);
+    }, 1000);
+
+    return () => clearTimeout(timer);
+  }, [countdown]);
 
   useEffect(() => {
     setMounted(true);
@@ -141,7 +156,11 @@ export default function RunClubRegistrationForm() {
     <form onSubmit={handleSubmit} ref={formRef} className={`${styles.rcForm} fp-col`}>
       {state?.message && (
         <FormToast
-          message={state?.message}
+          message={
+            state.success && countdown !== null && countdown > 0
+              ? `${state.message} Redirecting in ${countdown}...`
+              : state.message
+          }
           type={state?.success ? "success" : "error"}
           open={toastOpen}
           onOpenChange={setToastOpen}
