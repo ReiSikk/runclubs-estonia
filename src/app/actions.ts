@@ -140,7 +140,7 @@ export async function createRunClub(
     }
 
     // Clean data - remove undefined/null/empty values
-    const cleanData: Record<string, any> = {};
+    const cleanData: Record<string, unknown> = {};
     Object.entries(validatedFields.data).forEach(([key, value]) => {
       if (value !== undefined && value !== null && value !== "") {
         cleanData[key] = value;

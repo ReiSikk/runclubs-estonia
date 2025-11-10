@@ -7,6 +7,7 @@ import { Form } from "radix-ui";
 import { LucideUpload } from "lucide-react";
 import { createRunClub } from "@/app/actions"
 import { useRouter } from 'next/navigation'
+import Image from 'next/image';
 
 
 // Match server action's return type
@@ -186,7 +187,7 @@ export default function RunClubRegistrationForm() {
                   )}
                 {filePreview && (
                   <div style={{ marginTop: '0.8rem' }}>
-                    <img 
+                    <Image 
                       src={filePreview} 
                       alt="Logo preview" 
                       style={{ maxWidth: '250px', maxHeight: '250px', borderRadius: '0.8rem', objectFit: 'cover' }}
@@ -408,7 +409,7 @@ export default function RunClubRegistrationForm() {
 
             <Form.Field name="email" className={`${styles.customInput} fp-col`}>
               <Form.Label className={`${styles.rcForm__label} h4`}>
-                Contact person's email *
+                Contact person&apos;s email *
               </Form.Label>
               <Form.Control asChild>
                 <input
