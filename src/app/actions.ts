@@ -53,7 +53,6 @@ export async function createRunClub(
         });
         logoUrl = await getDownloadURL(logoRef);
         
-        console.log("Logo uploaded successfully:", logoUrl);
       } catch (storageError) {
         console.error("Storage upload error:", storageError);
         return {

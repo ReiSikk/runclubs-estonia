@@ -11,7 +11,7 @@ import { RunClub } from '../types/runClub';
  */
 export const runClubConverter: FirestoreDataConverter<RunClub> = {
   toFirestore: (club: RunClub) => {
-    const { id, ...data } = club;
+    const { ...data } = club;
     return data;
   },
   fromFirestore: (snapshot: QueryDocumentSnapshot): RunClub => {

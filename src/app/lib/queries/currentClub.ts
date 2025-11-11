@@ -17,12 +17,10 @@ export async function getCurrentRunClub(slug: string): Promise<RunClub | null> {
     const querySnapshot = await getDocs(q);
 
     if (querySnapshot.empty) {
-      console.log(`[Server] No club found with slug: ${slug}`);
       return null;
     }
 
     const club = querySnapshot.docs[0].data();
-    console.log(`[Server] Found club: ${club.name}`);
     return club;
 
   } catch (error) {

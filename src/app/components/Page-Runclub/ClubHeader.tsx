@@ -15,9 +15,9 @@ export default function ClubHeader({ club }: ClubHeaderProps) {
     {
       id: 'schedule',
       label: 'Schedule',
-      title: club?.days?.map(day => day.charAt(0).toUpperCase() + day.slice(1)).join(', '),
+      title: club?.runDays?.map(day => day.charAt(0).toUpperCase() + day.slice(1)).join(', '),
       description: null,
-      show: club?.days && club.days.length > 0
+      show: club?.runDays && club.runDays.length > 0
     },
     {
       id: 'location',

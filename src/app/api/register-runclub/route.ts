@@ -55,7 +55,6 @@ export async function POST(request: NextRequest) {
         });
         logoUrl = await getDownloadURL(logoRef);
         
-        console.log("Logo uploaded successfully:", logoUrl);
       } catch (storageError) {
         console.error("Storage upload error:", storageError);
         return NextResponse.json(
