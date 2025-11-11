@@ -7,6 +7,8 @@ import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { boolean } from "zod";
 import getOptionalField  from "@/app/lib/utils/getOptionalField";
 import normalizeToSlug from "@/app/lib/utils/generateSlugFromName";
+// Mitigate XSS attacks by sanitizing file input
+import DOMPurify from 'isomorphic-dompurify';
 
 
 type ActionResult = 
@@ -33,15 +35,42 @@ export async function createRunClub(
       }
 
       // Validate file type
-      const allowedTypes = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
+      const allowedTypes = ["image/jpeg", "image/jpg", "image/png", "image/webp", "image/svg+xml"];
       if (!allowedTypes.includes(logoFile.type)) {
         return {
           success: false,
-          message: "Accepted formats: JPG, JPEG, PNG, WEBP.",
-          errors: { logo: ["Accepted formats: JPG, JPEG, PNG, WEBP."] }
+          message: "Accepted formats: JPG, JPEG, PNG, WEBP, SVG.",
+          errors: { logo: ["Accepted formats: JPG, JPEG, PNG, WEBP, SVG."] }
         };
       }
 
+      if (logoFile.type === "image/svg+xml") {
+      try {
+        const svgContent = await logoFile.text();
+        const sanitizedSvg = DOMPurify.sanitize(svgContent, { 
+          USE_PROFILES: { svg: true, svgFilters: true } 
+        });
+        
+        // Create new file with sanitized content
+        const sanitizedBlob = new Blob([sanitizedSvg], { type: "image/svg+xml" });
+        const buffer = await sanitizedBlob.arrayBuffer();
+        
+        const fileName = `${Date.now()}-${logoFile.name.replace(/[^a-zA-Z0-9.-]/g, '_')}`;
+        const logoRef = ref(storage, `runclub-logos/${fileName}`);
+        
+        await uploadBytes(logoRef, Buffer.from(buffer), { 
+          contentType: "image/svg+xml" 
+        });
+        logoUrl = await getDownloadURL(logoRef);
+      } catch (svgError) {
+        console.error("SVG processing error:", svgError);
+        return {
+          success: false,
+          message: "Invalid SVG file. Please try another image.",
+          errors: { logo: ["Invalid SVG file."] }
+        };
+      }
+    } else {
       try {
         // Upload to Firebase Storage
         const buffer = await logoFile.arrayBuffer();
@@ -61,6 +90,7 @@ export async function createRunClub(
           errors: { logo: ["Uploading the logo failed. Please try again."] }
         };
       }
+    }
     }
 
     // Build submission object

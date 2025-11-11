@@ -46,7 +46,7 @@ test.describe('Club Filtering', () => {
     
     const searchInput = page.getByRole('searchbox');
     await searchInput.clear();
-    await searchInput.pressSequentially('Nõmme', { delay: 100 });
+    await searchInput.pressSequentially('klubi', { delay: 100 });
     
     await expect(async () => {
       const currentCount = await clubLinks.count();
@@ -55,7 +55,7 @@ test.describe('Club Filtering', () => {
     }).toPass({ timeout: 5000 });
     
     const firstClubText = await clubLinks.first().textContent();
-    expect(firstClubText?.toLowerCase()).toContain('nõmme');
+    expect(firstClubText?.toLowerCase()).toContain('klubi');
   });
 
   test('should combine city filter and search', async ({ page }) => {
@@ -70,7 +70,7 @@ test.describe('Club Filtering', () => {
     const filterSelect = page.getByRole('button', { name: /All Cities|Tallinn|Tartu/i });
     await filterSelect.click();
     
-    const tartuOption = page.getByRole('option', { name: /Tartu/i });
+    const tartuOption = page.getByRole('option', { name: /Tallinn/i });
     await expect(tartuOption).toBeVisible();
     await tartuOption.click({ force: true });
     
@@ -78,13 +78,13 @@ test.describe('Club Filtering', () => {
     await page.waitForTimeout(500);
     
     await expect(async () => {
-      const heading = page.getByRole('heading', { name: /Run clubs in Tartu/i });
+      const heading = page.getByRole('heading', { name: /Run clubs in Tallinn/i });
       await expect(heading).toBeVisible();
     }).toPass({ timeout: 5000 });
     
     const searchInput = page.getByRole('searchbox');
     await searchInput.clear();
-    await searchInput.pressSequentially('6:45', { delay: 100 });
+    await searchInput.pressSequentially('Pühaste', { delay: 100 });
     
     // Extra wait for search to process
     await page.waitForTimeout(300);
@@ -95,7 +95,7 @@ test.describe('Club Filtering', () => {
     }).toPass({ timeout: 5000 });
     
     const resultText = await clubLinks.first().textContent();
-    expect(resultText).toContain('6:45');
+    expect(resultText).toContain('Pühaste');
   });
 
   test('should show no results when filter returns nothing', async ({ page }) => {

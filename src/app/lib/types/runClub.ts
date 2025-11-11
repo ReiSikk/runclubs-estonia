@@ -4,7 +4,7 @@
   slug: string;
   logo?: string;
   city: string;
-  location: string;
+  area: string;
   address: string;
   description: string;
   distance: string;

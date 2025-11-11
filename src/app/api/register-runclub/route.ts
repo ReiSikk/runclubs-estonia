@@ -37,10 +37,10 @@ export async function POST(request: NextRequest) {
       }
 
       // Validate file type
-      const allowedTypes = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
+      const allowedTypes = ["image/jpeg", "image/jpg", "image/png", "image/webp", "image/svg+xml"];
       if (!allowedTypes.includes(logoFile.type)) {
         return NextResponse.json(
-          { error: "Accepted formats: JPG, JPEG, PNG, WEBP." },
+          { error: "Accepted formats: JPG, JPEG, PNG, WEBP, SVG" },
           { status: 400 }
         );
       }

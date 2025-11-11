@@ -68,6 +68,7 @@ export function FilterSelect({
           {options.map((option) => (
             <li
               key={option.value}
+              data-testid="city-filter-select"
               onClick={() => {
                 onValueChange(option.value);
                 setIsOpen(false);

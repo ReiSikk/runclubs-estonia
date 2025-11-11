@@ -20,11 +20,11 @@ export default function ClubHeader({ club }: ClubHeaderProps) {
       show: club?.runDays && club.runDays.length > 0
     },
     {
-      id: 'location',
+      id: 'area',
       label: 'Meeting Point',
-      title: club?.location,
+      title: club?.area,
       description: club?.address,
-      show: club?.location || club?.address
+      show: club?.area || club?.address
     },
     {
       id: 'distance',
