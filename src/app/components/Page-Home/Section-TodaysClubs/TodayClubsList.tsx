@@ -2,8 +2,6 @@
 import styles from './TodayClubsList.module.css';
 // Components
 import TodaysClubsListItem from './TodayClubsListItem';
-// Utils
-import { convertDaysToAbbs } from "@/app/lib/utils/convertDays";
 // Types
 import { RunClub } from '@/app/lib/types/runClub';
 // Icons
@@ -29,13 +27,7 @@ export function TodayClubsList({ todaysClubs, isLoading, isError  }: TodayClubsL
     return <div className={`${styles.todayClubsList} error`}>Error loading clubs</div>
   }
 
-  // Format the clubs
-const formattedClubs: FormattedRunClub[] = todaysClubs.map((club: RunClub): FormattedRunClub => ({
-  ...club,
-  days: convertDaysToAbbs(club.days).join(', ')
-}));
-
-  if (formattedClubs.length === 0) {
+  if (todaysClubs.length === 0) {
     return (
       <div className={`${styles.todayClubsList} ${styles.no_clubs}`}>
         <div className={`${styles.todayClubsList__item} fp-col`}>
@@ -56,7 +48,7 @@ const formattedClubs: FormattedRunClub[] = todaysClubs.map((club: RunClub): Form
   return (
     <ul className={styles.todayClubsList}>
       {todaysClubs.map((club) => (
-        <TodaysClubsListItem key={club._id} club={club}  formattedDays={convertDaysToAbbs(club.days).join(', ')}/>
+        <TodaysClubsListItem key={club.id} club={club}/>
       ))}
     </ul>
   );

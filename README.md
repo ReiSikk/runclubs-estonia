@@ -22,7 +22,7 @@ I handled everything from concept to design, development, testing, and infrastru
 - **React 19**
 
 ### Content & Data
-- **Sanity CMS** - Headless CMS for club data management
+- **Google Firestore** - BaaS used for database and file storing
 - **TanStack Query** - Server state management, caching, prefetching
 
 ### Styling

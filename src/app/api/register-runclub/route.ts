@@ -5,13 +5,8 @@ import { submitRunClubSchema } from "@/app/lib/types/submitRunClub";
 import { db, storage } from "@/app/lib/firebase";
 import { collection, addDoc, Timestamp } from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
-
-function getOptionalField(formData: FormData, key: string): string | undefined {
-  const value = formData.get(key);
-  if (!value || value === null) return undefined;
-  const strValue = value.toString().trim();
-  return strValue.length > 0 ? strValue : undefined;
-}
+import getOptionalField  from "@/app/lib/utils/getOptionalField";
+import normalizeToSlug from "@/app/lib/utils/generateSlugFromName";
 
 function addOptionalFields(
   submission: Record<string, unknown>,
@@ -42,10 +37,10 @@ export async function POST(request: NextRequest) {
       }
 
       // Validate file type
-      const allowedTypes = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
+      const allowedTypes = ["image/jpeg", "image/jpg", "image/png", "image/webp", "image/svg+xml"];
       if (!allowedTypes.includes(logoFile.type)) {
         return NextResponse.json(
-          { error: "Accepted formats: JPG, JPEG, PNG, WEBP." },
+          { error: "Accepted formats: JPG, JPEG, PNG, WEBP, SVG" },
           { status: 400 }
         );
       }
@@ -60,7 +55,6 @@ export async function POST(request: NextRequest) {
         });
         logoUrl = await getDownloadURL(logoRef);
         
-        console.log("Logo uploaded successfully:", logoUrl);
       } catch (storageError) {
         console.error("Storage upload error:", storageError);
         return NextResponse.json(
@@ -73,6 +67,7 @@ export async function POST(request: NextRequest) {
     // Build submission object
     const submission: Record<string, unknown> = {
       name: formData.get("name") as string,
+      slug: normalizeToSlug(formData.get("name") as string),
       runDays: formData.get("runDays") as string,
       distance: formData.get("distance") as string,
       startTime: formData.get("startTime") as string,
@@ -80,7 +75,7 @@ export async function POST(request: NextRequest) {
       area: formData.get("area") as string,
       description: formData.get("description") as string,
       email: formData.get("email") as string,
-      status: "pending",
+      approvedForPublication: false,
       createdAt: Timestamp.now(),
       updatedAt: Timestamp.now(),
     };

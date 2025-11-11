@@ -47,7 +47,7 @@ export default function RunClubRegistrationForm() {
     }
 
     const maxSize = 5 * 1024 * 1024; // 5MB
-    const allowedTypes = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
+    const allowedTypes = ["image/jpeg", "image/jpg", "image/png", "image/webp", "image/svg+xml"];
 
     // Validate file size
     if (file.size > maxSize) {
@@ -59,7 +59,7 @@ export default function RunClubRegistrationForm() {
 
     // Validate file type
     if (!allowedTypes.includes(file.type)) {
-      setFileError("Accepted formats: JPG, JPEG, PNG, WEBP.");
+      setFileError("Accepted formats: JPG, JPEG, PNG, WEBP, SVG.");
       setFilePreview(null);
       event.target.value = "";
       return;
@@ -209,7 +209,7 @@ export default function RunClubRegistrationForm() {
 
             <div className={`${styles.customInput} ${styles.customInput__file} fp-col`}>
               <label htmlFor="logo" className={`${styles.rcForm__label} h4`}>
-                Logo (JPG, PNG, WEBP, max 5MB)
+                Logo (JPG, PNG, WEBP, SVG,  max 5MB)
               </label>
               <div className={styles.rcForm__uploadIcon}>
                 <LucideUpload size={16} strokeWidth={2} aria-hidden="true" focusable="false" />
@@ -219,7 +219,7 @@ export default function RunClubRegistrationForm() {
                 name="logo"
                 ref={fileInputRef}
                 type="file"
-                accept="image/jpeg,image/jpg,image/png,image/webp"
+                accept="image/jpeg,image/jpg,image/png,image/webp,image/svg+xml"
                 className={styles.rcForm__file}
                 onChange={handleFileChange}
               />

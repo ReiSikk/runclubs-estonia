@@ -15,7 +15,7 @@ const nextConfig: NextConfig = {
         new URL('https://cdn.weatherapi.com/**'),
         {
           protocol: 'https',
-          hostname: 'cdn.sanity.io',
+          hostname: 'firebasestorage.googleapis.com',
         },
       ],
     },

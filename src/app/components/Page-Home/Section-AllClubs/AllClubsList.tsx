@@ -33,7 +33,7 @@ function AllClubsList({clubs, isLoading, isError, }: { clubs: RunClub[], isLoadi
     <ul className={`${styles.allClubsList} list-grid`} data-testid="all-clubs-section">
       {clubs.length > 0 ? (
         clubs.map(club => (
-          <AllClubsListItem key={club._id} club={club} />
+          <AllClubsListItem key={club.name} club={club} />
         ))
       ) : (
         <li className={`${styles.noResults} fp-col`}>

@@ -2,27 +2,19 @@ import React from 'react'
 // Next.js
 import Image from 'next/image'
 import Link from 'next/link'
-// Sanity
-import { urlFor } from "@/sanity/client";
 // Styles
 import styles from './AllClubsList.module.css'
 // Types
 import { RunClub } from '@/app/lib/types/runClub'
 // Icons
 import { LucideArrowRight } from 'lucide-react'
+import { convertDaysToAbbs } from '@/app/lib/utils/convertDays'
 
 
 function AllClubsListItem({ club }: { club: RunClub }) {
-  const slug = club?.slug?.current;
+  const slug = club?.slug;
   const logo = club?.logo;
-
-  // Format days for label list
-  const daysList = club.days?.map((day) => {
-    const trimmedDay = day.trim();
-    const abbreviatedDay = trimmedDay.slice(0, 3);
-
-    return abbreviatedDay.charAt(0).toUpperCase() + abbreviatedDay.slice(1).toLowerCase();
-  });
+  const daysList = convertDaysToAbbs(club.runDays);
 
 
   if (!club) {
@@ -34,13 +26,12 @@ function AllClubsListItem({ club }: { club: RunClub }) {
   }
 
   return (
-     <li className={styles.allClubsList__item}>
+     <li className={styles.allClubsList__item} key={club.id}>
         <Link href={`runclubs/${slug}`} className={`${styles.allClubsList__link} fp-col`}  data-testid="club-link">
           {logo ? (
             <div className={styles.allClubsList__imageWrapper}>
               <Image
-                src={urlFor(logo)
-                  .url()}
+                src={logo}
                 alt={`${club.name} logo`}
                 width={880}
                 height={880}

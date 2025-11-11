@@ -1,21 +1,22 @@
-import { SanityImageSource } from "@sanity/image-url/lib/types/types";
-  
-export interface RunClub {
-  _id: string;
+ export interface RunClub {
+  id: string;
   name: string;
-  logo?: SanityImageSource | '';
+  slug: string;
+  logo?: string;
   city: string;
-  location: string;
+  area: string;
   address: string;
   description: string;
   distance: string;
   distanceDescription?: string;
-  days: string[];
-  slug?: { current: string };
+  runDays: string[];
+  status: "pending" | "approved" | "rejected";
   facebook?: string;
   instagram?: string;
   strava?: string;
   website?: string;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export type RunClubs = RunClub[];

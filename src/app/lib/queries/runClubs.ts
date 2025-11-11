@@ -1,9 +1,28 @@
-import sanityClient from '@/sanity/client';
-import { RunClub } from '@/app/lib/types/runClub'
+import { 
+  collection, 
+  query, 
+  where, 
+  orderBy, 
+  getDocs,
+} from 'firebase/firestore';
+import { db } from "../firebase";
+import { RunClub } from "../types/runClub";
+import { runClubConverter } from "../utils/fireStoreConverter";
 
-const runClubsQuery = `*[_type == "runClub"] | order(orderRank)`
-
-// Fetch all run clubs from Sanity
 export async function getRunClubs(): Promise<RunClub[]> {
-  return await sanityClient.fetch<RunClub[]>(runClubsQuery);
+  try {
+    const approvedClubsQuery = query(
+      collection(db, "runclubs").withConverter(runClubConverter),
+      where("approvedForPublication", "==", true),
+      orderBy("createdAt", "desc")
+    );
+
+    const querySnapshot = await getDocs(approvedClubsQuery);
+    const clubs = querySnapshot.docs.map((doc) => doc.data());
+
+    return clubs;
+  } catch (error) {
+    console.error("Error fetching run clubs:", error);
+    return [];
+  }
 }

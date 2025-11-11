@@ -2,7 +2,7 @@ import { z } from "zod";
 
 export const submitRunClubSchema = z.object({
   name: z.string().min(1, "Name of the run club is required.").max(256, "Name must be less than 256 characters."),
-
+  slug: z.any(),
   logo: z.any().optional(),
 
   runDays: z
@@ -44,7 +44,7 @@ export const submitRunClubSchema = z.object({
 
   email: z.string().min(1, "Email is required.").max(254, "Email must be less than 254 characters."),
 
-  status: z.enum(["pending", "approved", "rejected"]),
+  approvedForPublication: z.boolean().default(false),
   createdAt: z.any(),
   updatedAt: z.any(),
 });

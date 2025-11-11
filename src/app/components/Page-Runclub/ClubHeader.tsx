@@ -5,8 +5,6 @@ import SocialsList from './SocialsList';
 import { RunClub } from '@/app/lib/types/runClub';
 // Styles
 import styles from '../../runclubs/[slug]/page.module.css';
-// Sanity
-import { urlFor } from "@/sanity/client";
 
 interface ClubHeaderProps {
   club: RunClub;
@@ -17,16 +15,16 @@ export default function ClubHeader({ club }: ClubHeaderProps) {
     {
       id: 'schedule',
       label: 'Schedule',
-      title: club?.days?.map(day => day.charAt(0).toUpperCase() + day.slice(1)).join(', '),
+      title: club?.runDays?.map(day => day.charAt(0).toUpperCase() + day.slice(1)).join(', '),
       description: null,
-      show: club?.days && club.days.length > 0
+      show: club?.runDays && club.runDays.length > 0
     },
     {
-      id: 'location',
+      id: 'area',
       label: 'Meeting Point',
-      title: club?.location,
+      title: club?.area,
       description: club?.address,
-      show: club?.location || club?.address
+      show: club?.area || club?.address
     },
     {
       id: 'distance',
@@ -41,7 +39,7 @@ export default function ClubHeader({ club }: ClubHeaderProps) {
     <header className={`${styles.pageHeader} container fp`}>
       {club.logo ? (
         <Image
-          src={urlFor(club.logo).url()}
+          src={club.logo}
           alt={`${club.name} logo`}
           width={614}
           height={416}
