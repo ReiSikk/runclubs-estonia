@@ -5,8 +5,6 @@ import SocialsList from './SocialsList';
 import { RunClub } from '@/app/lib/types/runClub';
 // Styles
 import styles from '../../runclubs/[slug]/page.module.css';
-// Sanity
-import { urlFor } from "@/sanity/client";
 
 interface ClubHeaderProps {
   club: RunClub;
@@ -41,7 +39,7 @@ export default function ClubHeader({ club }: ClubHeaderProps) {
     <header className={`${styles.pageHeader} container fp`}>
       {club.logo ? (
         <Image
-          src={urlFor(club.logo).url()}
+          src={club.logo}
           alt={`${club.name} logo`}
           width={614}
           height={416}

@@ -2,8 +2,6 @@ import React from 'react'
 // Next.js
 import Image from 'next/image'
 import Link from 'next/link'
-// Sanity
-import { urlFor } from "@/sanity/client";
 // Styles
 import styles from './AllClubsList.module.css'
 // Types
@@ -34,13 +32,12 @@ function AllClubsListItem({ club }: { club: RunClub }) {
   }
 
   return (
-     <li className={styles.allClubsList__item}>
+     <li className={styles.allClubsList__item} key={club.id}>
         <Link href={`runclubs/${slug}`} className={`${styles.allClubsList__link} fp-col`}  data-testid="club-link">
           {logo ? (
             <div className={styles.allClubsList__imageWrapper}>
               <Image
-                src={urlFor(logo)
-                  .url()}
+                src={logo}
                 alt={`${club.name} logo`}
                 width={880}
                 height={880}

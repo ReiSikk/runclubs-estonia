@@ -44,7 +44,7 @@ export const submitRunClubSchema = z.object({
 
   email: z.string().min(1, "Email is required.").max(254, "Email must be less than 254 characters."),
 
-  status: z.enum(["pending", "approved", "rejected"]),
+  approvedForPublication: z.boolean().default(false),
   createdAt: z.any(),
   updatedAt: z.any(),
 });

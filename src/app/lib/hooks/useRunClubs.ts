@@ -5,7 +5,7 @@ import { getRunClubs } from '../queries/runClubs';
 
 export default function useRunClubs() {
   return useQuery({
-    queryKey: ['runClubs'],
+    queryKey: ['runclubs'],
     queryFn: getRunClubs,
     staleTime: 5 * 60 * 1000, // 5 mins
   });

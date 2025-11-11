@@ -1,9 +1,7 @@
-import { SanityImageSource } from "@sanity/image-url/lib/types/types";
-  
-export interface RunClub {
-  _id: string;
+ export interface RunClub {
+  id: string;
   name: string;
-  logo?: SanityImageSource | '';
+  logo?: string;
   city: string;
   location: string;
   address: string;
@@ -11,6 +9,7 @@ export interface RunClub {
   distance: string;
   distanceDescription?: string;
   days: string[];
+  status: "pending" | "approved" | "rejected";
   slug?: { current: string };
   facebook?: string;
   instagram?: string;

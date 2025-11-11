@@ -10,30 +10,28 @@ import {
   HydrationBoundary,
   QueryClient,
 } from '@tanstack/react-query'
+// Queries
 import { getRunClubs } from "./lib/queries/runClubs";
 
 export default async function Home() {
   const queryClient = new QueryClient()
 
-  // Prefetch data on server for instant loading
   await queryClient.prefetchQuery({
-    queryKey: ['runClubs'],
+    queryKey: ['runclubs'],
     queryFn: getRunClubs,
   })
 
-
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
-    <div className={`${styles.page}`} id="page-top">
-      <header className={`${styles.header} container`}>
-        {/* <WeatherWidget /> */}
-      </header>
-      <main className={`${styles.main}`}>
-        <HeroSection />
-        <MainSection />
-        <CtaSection />
-      </main>
-    </div>
+      <div className={`${styles.page}`} id="page-top">
+        <header className={`${styles.header} container`}>
+        </header>
+        <main className={`${styles.main}`}>
+          <HeroSection />
+          <MainSection />
+          <CtaSection />
+        </main>
+      </div>
     </HydrationBoundary>
   );
 }

@@ -4,6 +4,7 @@ import { submitRunClubSchema } from "@/app/lib/types/submitRunClub";
 import { collection, addDoc, Timestamp } from "firebase/firestore";
 import { db, storage } from "@/app/lib/firebase";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { boolean } from "zod";
 
 function getOptionalField(formData: FormData, key: string): string | undefined {
   const value = formData.get(key);
@@ -77,7 +78,7 @@ export async function createRunClub(
       area: formData.get("area") as string,
       description: formData.get("description") as string,
       email: formData.get("email") as string,
-      status: "pending",
+      approvedForPublication: boolean().default(false).parse(false),
       createdAt: Timestamp.now(),
       updatedAt: Timestamp.now(),
     };

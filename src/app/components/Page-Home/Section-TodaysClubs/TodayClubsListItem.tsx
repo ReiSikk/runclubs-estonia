@@ -4,8 +4,6 @@ import Link from 'next/link';
 import Image from 'next/image';
 // Styles
 import styles from './TodayClubsList.module.css';
-// Sanity
-import { urlFor } from '@/sanity/client';
 // Types
 import { RunClub } from '@/app/lib/types/runClub';
 // Icons
@@ -29,8 +27,7 @@ function TodaysClubsListItem({ club, formattedDays }: TodaysClubsListItemProps) 
             {club.logo && (
             <div className={styles.todayClubsList__image}>
                     <Image 
-                        src={urlFor(club.logo)
-                        .url()}
+                        src={club.logo}
                         alt={`${club.name} logo`}
                         width={200}
                         height={200}

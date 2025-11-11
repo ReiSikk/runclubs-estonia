@@ -80,7 +80,7 @@ export async function POST(request: NextRequest) {
       area: formData.get("area") as string,
       description: formData.get("description") as string,
       email: formData.get("email") as string,
-      status: "pending",
+      approvedForPublication: false,
       createdAt: Timestamp.now(),
       updatedAt: Timestamp.now(),
     };

@@ -56,7 +56,7 @@ const formattedClubs: FormattedRunClub[] = todaysClubs.map((club: RunClub): Form
   return (
     <ul className={styles.todayClubsList}>
       {todaysClubs.map((club) => (
-        <TodaysClubsListItem key={club._id} club={club}  formattedDays={convertDaysToAbbs(club.days).join(', ')}/>
+        <TodaysClubsListItem key={club.id} club={club}  formattedDays={convertDaysToAbbs(club.days).join(', ')}/>
       ))}
     </ul>
   );
