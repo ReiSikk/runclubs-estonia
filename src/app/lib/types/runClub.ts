@@ -1,6 +1,7 @@
  export interface RunClub {
   id: string;
   name: string;
+  slug: string;
   logo?: string;
   city: string;
   location: string;
@@ -8,13 +9,14 @@
   description: string;
   distance: string;
   distanceDescription?: string;
-  days: string[];
+  runDays: string[];
   status: "pending" | "approved" | "rejected";
-  slug?: { current: string };
   facebook?: string;
   instagram?: string;
   strava?: string;
   website?: string;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export type RunClubs = RunClub[];

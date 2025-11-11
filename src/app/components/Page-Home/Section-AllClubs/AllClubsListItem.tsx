@@ -8,19 +8,13 @@ import styles from './AllClubsList.module.css'
 import { RunClub } from '@/app/lib/types/runClub'
 // Icons
 import { LucideArrowRight } from 'lucide-react'
+import { convertDaysToAbbs } from '@/app/lib/utils/convertDays'
 
 
 function AllClubsListItem({ club }: { club: RunClub }) {
-  const slug = club?.slug?.current;
+  const slug = club?.slug;
   const logo = club?.logo;
-
-  // Format days for label list
-  const daysList = club.days?.map((day) => {
-    const trimmedDay = day.trim();
-    const abbreviatedDay = trimmedDay.slice(0, 3);
-
-    return abbreviatedDay.charAt(0).toUpperCase() + abbreviatedDay.slice(1).toLowerCase();
-  });
+  const daysList = convertDaysToAbbs(club.runDays);
 
 
   if (!club) {

@@ -5,13 +5,9 @@ import { collection, addDoc, Timestamp } from "firebase/firestore";
 import { db, storage } from "@/app/lib/firebase";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { boolean } from "zod";
+import getOptionalField  from "@/app/lib/utils/getOptionalField";
+import normalizeToSlug from "@/app/lib/utils/generateSlugFromName";
 
-function getOptionalField(formData: FormData, key: string): string | undefined {
-  const value = formData.get(key);
-  if (!value || value === null) return undefined;
-  const strValue = value.toString().trim();
-  return strValue.length > 0 ? strValue : undefined;
-}
 
 type ActionResult = 
   | { success: true; message: string }
@@ -71,6 +67,7 @@ export async function createRunClub(
     // Build submission object
     const submission: Record<string, unknown> = {
       name: formData.get("name") as string,
+      slug: normalizeToSlug(formData.get("name") as string),
       runDays: formData.getAll("runDays") as string[],
       distance: formData.get("distance") as string,
       startTime: formData.get("startTime") as string,
@@ -82,8 +79,6 @@ export async function createRunClub(
       createdAt: Timestamp.now(),
       updatedAt: Timestamp.now(),
     };
-
-    console.log("Form submission data:", submission);
 
     // Add logo URL if uploaded
     if (logoUrl) {

@@ -5,13 +5,8 @@ import { submitRunClubSchema } from "@/app/lib/types/submitRunClub";
 import { db, storage } from "@/app/lib/firebase";
 import { collection, addDoc, Timestamp } from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
-
-function getOptionalField(formData: FormData, key: string): string | undefined {
-  const value = formData.get(key);
-  if (!value || value === null) return undefined;
-  const strValue = value.toString().trim();
-  return strValue.length > 0 ? strValue : undefined;
-}
+import getOptionalField  from "@/app/lib/utils/getOptionalField";
+import normalizeToSlug from "@/app/lib/utils/generateSlugFromName";
 
 function addOptionalFields(
   submission: Record<string, unknown>,
@@ -73,6 +68,7 @@ export async function POST(request: NextRequest) {
     // Build submission object
     const submission: Record<string, unknown> = {
       name: formData.get("name") as string,
+      slug: normalizeToSlug(formData.get("name") as string),
       runDays: formData.get("runDays") as string,
       distance: formData.get("distance") as string,
       startTime: formData.get("startTime") as string,

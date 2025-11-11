@@ -8,15 +8,12 @@ import styles from './TodayClubsList.module.css';
 import { RunClub } from '@/app/lib/types/runClub';
 // Icons
 import { ArrowUpRight } from 'lucide-react';
+import { convertDaysToAbbs } from '@/app/lib/utils/convertDays';
 
 
-interface TodaysClubsListItemProps {
-  club: RunClub;
-  formattedDays?: string;
-}
-
-function TodaysClubsListItem({ club, formattedDays }: TodaysClubsListItemProps) {
-  const slug = club?.slug?.current;
+function TodaysClubsListItem({ club }: {club: RunClub}) {
+  const slug = club?.slug;
+  const daysList = convertDaysToAbbs(club.runDays);
 
   return (
     <li className={`${styles.todayClubsList__item} fp`}>
@@ -48,7 +45,7 @@ function TodaysClubsListItem({ club, formattedDays }: TodaysClubsListItemProps) 
                         <p>Avg. distance: {club.distance}km</p>
                     </div>
                     <ul className={styles.todayClubsList__row}>
-                        {formattedDays?.split(', ').map((day) => (
+                        {daysList.map((day) => (
                             <li key={day} className={`${styles.todayClubsList__day} card-label--small`}>
                                 {day}
                             </li>

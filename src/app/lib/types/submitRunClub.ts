@@ -2,7 +2,7 @@ import { z } from "zod";
 
 export const submitRunClubSchema = z.object({
   name: z.string().min(1, "Name of the run club is required.").max(256, "Name must be less than 256 characters."),
-
+  slug: z.any(),
   logo: z.any().optional(),
 
   runDays: z

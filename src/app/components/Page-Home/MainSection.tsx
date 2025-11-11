@@ -63,8 +63,8 @@ function MainSection() {
   // Filter clubs that run today
   const todaysClubs = filteredClubs.filter(
     (club) =>
-      club.days &&
-      club.days.some(
+      club.runDays &&
+      club.runDays.some(
         (day: string) => day.toLowerCase().includes(today) || day.toLowerCase().includes(today.substring(0, 3)) // Check for abbreviations
       )
   );
