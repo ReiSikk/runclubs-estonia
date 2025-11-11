@@ -39,7 +39,7 @@ function TodaysClubsListItem({ club }: {club: RunClub}) {
 
                 <div className={`${styles.todayClubsList__meta} txt-small`}>
                     <div className={`${styles.todayClubsList__row}`}>
-                        <p>{club.city}, {club.location}</p>
+                        <p>{club.city}, {club.area}</p>
                     </div>
                     <div className={`${styles.todayClubsList__row} txt-small`}>
                         <p>Avg. distance: {club.distance}km</p>

@@ -50,7 +50,7 @@ function MainSection() {
       : cityFiltered.filter(
           (club) =>
             club.name?.toLowerCase().includes(searchTerm) ||
-            club.location?.toLowerCase().includes(searchTerm) ||
+            club.area?.toLowerCase().includes(searchTerm) ||
             club.city?.toLowerCase().includes(searchTerm)
         );
   };
