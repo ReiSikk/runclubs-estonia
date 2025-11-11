@@ -25,7 +25,7 @@ export default function FormToast({ message, type, open, onOpenChange}: FormToas
         className={`${styles.Root} ${type === "success" ? styles.success : styles.error}`}
         open={open}
         onOpenChange={onOpenChange}
-        duration={3000}
+        duration={5000}
       >
         <div className={`${styles.overlay} ${type === "success" ? styles.success : styles.error}`}></div>
         <Toast.Title className={`${styles.Title} h5`}>
