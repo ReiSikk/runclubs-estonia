@@ -7,7 +7,6 @@ import { LucideUpload } from "lucide-react";
 import { createRunClub } from "@/app/actions";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { set } from "zod";
 
 // Match server action's return type
 type FormState =
@@ -96,12 +95,12 @@ export default function RunClubRegistrationForm() {
             }
           }
 
-          // Start countdown for redirect
-          setCountdown(3);
+          // Start countdown timer
+          setCountdown(5);
           // Redirect after showing success message
           setTimeout(() => {
             router.push("/");
-          }, 2000);
+          }, 5000);
         }
       } catch (error) {
         console.error("Form submission error:", error);
@@ -158,7 +157,7 @@ export default function RunClubRegistrationForm() {
         <FormToast
           message={
             state.success && countdown !== null && countdown > 0
-              ? `${state.message} Redirecting in ${countdown}...`
+              ? `${state.message} Redirecting in (${countdown})...`
               : state.message
           }
           type={state?.success ? "success" : "error"}
