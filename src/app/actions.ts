@@ -53,12 +53,12 @@ export async function createRunClub(
         
         // Create new file with sanitized content
         const sanitizedBlob = new Blob([sanitizedSvg], { type: "image/svg+xml" });
-        const buffer = await sanitizedBlob.arrayBuffer();
+        const arrayBuffer = await sanitizedBlob.arrayBuffer();
         
         const fileName = `${Date.now()}-${logoFile.name.replace(/[^a-zA-Z0-9.-]/g, '_')}`;
         const logoRef = ref(storage, `runclub-logos/${fileName}`);
         
-        await uploadBytes(logoRef, Buffer.from(buffer), { 
+        await uploadBytes(logoRef, arrayBuffer, { 
           contentType: "image/svg+xml" 
         });
         logoUrl = await getDownloadURL(logoRef);
@@ -73,11 +73,11 @@ export async function createRunClub(
     } else {
       try {
         // Upload to Firebase Storage
-        const buffer = await logoFile.arrayBuffer();
+        const arrayBuffer = await logoFile.arrayBuffer();
         const fileName = `${Date.now()}-${logoFile.name.replace(/[^a-zA-Z0-9.-]/g, '_')}`;
         const logoRef = ref(storage, `runclub-logos/${fileName}`);
         
-        await uploadBytes(logoRef, Buffer.from(buffer), { 
+        await uploadBytes(logoRef, arrayBuffer, { 
           contentType: logoFile.type 
         });
         logoUrl = await getDownloadURL(logoRef);
