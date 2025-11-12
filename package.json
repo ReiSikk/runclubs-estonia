@@ -19,6 +19,7 @@
     "next": "15.5.2",
     "radix-ui": "^1.4.3",
     "react": "19.1.0",
+    "react-accessible-time-picker": "^1.0.3",
     "react-dom": "19.1.0",
     "zod": "^4.1.12"
   },
