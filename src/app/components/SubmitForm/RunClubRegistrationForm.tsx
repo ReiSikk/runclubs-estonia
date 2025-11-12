@@ -322,20 +322,10 @@ export default function RunClubRegistrationForm() {
 
             <div className={`${styles.customInput} fp-col`}>
               <label htmlFor="startTime" className={`${styles.rcForm__label} h5`}>
-                At what time do the runs usually start? <span>*</span>
+                At what time do the runs usually start?
               </label>
-              {/* <input
-                id="startTime"
-                name="startTime"
-                type="time"
-                placeholder="18:30"
-                required
-                className={`${styles.rcForm__input} h5`}
-                maxLength={256}
-              /> */}
               <TimePicker 
                 id="startTime"
-                required
                 label=""
                 value={time}
                 onChange={handleTimeChange}
@@ -353,13 +343,7 @@ export default function RunClubRegistrationForm() {
                 popoverItem: styles.rcForm__popoverItem,
                 popoverActiveItem: styles.popoverActiveItem,
               }}
-                aria-invalid={!!(state && !state.success && state.errors?.startTime)}
               />
-              {state && !state.success && state.errors?.startTime && (
-                <p id="startTime-error" className={styles.rcForm__hint} role="alert">
-                  {state.errors.startTime[0]}
-                </p>
-              )}
             </div>
           </section>
         </div>

@@ -3,6 +3,7 @@
   name: string;
   slug: string;
   logo?: string;
+  startTime?: string;
   city: string;
   area: string;
   address: string;
