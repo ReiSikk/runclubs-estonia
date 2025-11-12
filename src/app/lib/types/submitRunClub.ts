@@ -20,7 +20,7 @@ export const submitRunClubSchema = z.object({
 
   distanceDescription: z.string().max(1000, "Description must be less than 1000 characters.").optional(),
 
-  startTime: z.string().min(1, "Start time is required.").max(256, "Start time must be less than 256 characters."),
+  startTime: z.string().optional(),
 
   city: z.string().min(1, "City is required.").max(256, "City must be less than 256 characters."),
 

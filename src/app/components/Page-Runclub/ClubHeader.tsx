@@ -16,7 +16,7 @@ export default function ClubHeader({ club }: ClubHeaderProps) {
       id: 'schedule',
       label: 'Schedule',
       title: club?.runDays?.map(day => day.charAt(0).toUpperCase() + day.slice(1)).join(', '),
-      description: null,
+      description: club?.startTime ? `Usually starts at ${club.startTime}` : null,
       show: club?.runDays && club.runDays.length > 0
     },
     {

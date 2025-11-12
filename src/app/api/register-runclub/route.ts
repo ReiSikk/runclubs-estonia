@@ -70,7 +70,6 @@ export async function POST(request: NextRequest) {
       slug: normalizeToSlug(formData.get("name") as string),
       runDays: formData.get("runDays") as string,
       distance: formData.get("distance") as string,
-      startTime: formData.get("startTime") as string,
       city: formData.get("city") as string,
       area: formData.get("area") as string,
       description: formData.get("description") as string,
@@ -87,6 +86,7 @@ export async function POST(request: NextRequest) {
 
     // Add optional fields
     addOptionalFields(submission, formData, [
+      "startTime",
       "distanceDescription",
       "address",
       "instagram",
