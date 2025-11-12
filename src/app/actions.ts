@@ -99,7 +99,7 @@ export async function createRunClub(
       slug: normalizeToSlug(formData.get("name") as string),
       runDays: formData.getAll("runDays") as string[],
       distance: formData.get("distance") as string,
-      startTime: formData.get("startTime") as string,
+      startTime: formData.get("startTime") as object,
       city: formData.get("city") as string,
       area: formData.get("area") as string,
       description: formData.get("description") as string,

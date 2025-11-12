@@ -61,11 +61,11 @@
 .label {
   width: 150px;
   margin-bottom: clamp(8px, 2vw, 12px);
-  color: #858585;
+  color: var(--gray);
 }
 .card_main {
   p {
-    color: #858585;
+    color: var(--gray);
   }
 }
 .cardTitle {

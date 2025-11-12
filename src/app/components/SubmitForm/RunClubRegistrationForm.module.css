@@ -18,38 +18,128 @@
   margin-bottom: clamp(2.4rem, 4vw, 4rem);
 }
 .rcForm__wrapper {
-  gap: 2.4rem;
-  margin-block: 8px 16px;
+  gap: 3.2rem;
+  margin-block: clamp(16px, 2vw, 24px) clamp(32px, 4vw, 40px);
 }
 .rcForm__block {
-  gap: 0.8rem;
+  gap: 1.2rem;
   width: 100%;
   max-width: 600px;
 }
+.rcForm__step {
+  gap: 0.8rem 1.2rem;
+  align-items: center;
+  color: var(--form-label);
+
+  .icon {
+    font-size: 1.4rem;
+    font-weight: 700;
+    padding-block: 3px 2px;
+    padding-inline: 15px 14px;
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--cream);
+    backdrop-filter: blur(10px);
+    border: 0.5px solid var(--cream);
+    border-radius: 999px;
+    text-wrap: nowrap;
+  }
+}
 .rcForm__section {
-  padding: 2rem;
-  border-radius: 12px;
+  padding-inline: 2rem;
+  padding-block: 2.4rem;
+  border-radius: 16px;
   gap: 1rem;
   width: 100%;
   background: var(--cream);
   color: var(--dark);
-
-  h3 {
-    margin-bottom: 6px;
-  }
 }
 /** *Form elements* */
+.rcForm__timePicker {
+  background: var(--cream);
+
+  .rcForm__label {
+    font-family: var(--font-inter-tight);
+    font-size: 1.6rem;
+    font-weight: 500;
+    color: var(--dark);
+
+    span {
+      color: var(--accent);
+    }
+  }
+
+  .pickerInput {
+    background: var(--cream);
+    border: 1px solid var(--dark);
+    border-radius: 8px;
+    &:hover {
+      border-color: var(--dark);
+    }
+    .number {
+      font-family: var(--font-inter-tight);
+      font-size: 1.4rem;
+      font-weight: 500;
+      &::placeholder {
+        color: var(--gray);
+      }
+    }
+    .trigger {
+      &:hover {
+        background: var(--white);
+      }
+
+      svg {
+        width: 24px;
+        height: 24px;
+      }
+    }
+  }
+}
+/* Time picker modal */
+.rcForm__pickerPopover {
+  background: var(--cream) !important;
+  border: 1px solid var(--dark) !important;
+  border-radius: 8px !important;
+  padding: 1rem !important;
+  width: 225px !important;
+  height: 225px !important;
+
+  .rcForm__popoverColTitle {
+    font-family: var(--font-inter-tight);
+    font-size: 1.4rem;
+    opacity: 1;
+    font-weight: 600;
+    margin-bottom: 0.8rem;
+    border-bottom: 1px solid var(--accent);
+  }
+  .rcForm__popoverItem {
+    font-family: var(--font-inter-tight);
+    padding: 0.8rem;
+    color: var(--dark);
+
+    &.popoverActiveItem {
+      background: var(--dark);
+      color: var(--cream);
+    }
+
+    &:hover {
+      background: var(--dark);
+      color: var(--cream);
+    }
+  }
+}
 .customInput {
   width: 100%;
 
   .rcForm__input {
-    border-radius: 999px;
+    border-radius: 12px;
     padding-block: 8px;
     padding-inline: 16px 8px;
     border: 1px solid var(--dark);
     background: var(--cream);
     color: var(--dark);
     width: 100%;
+    transition: all 0.2s ease;
   }
 
   &:not(:last-of-type) {
@@ -68,6 +158,7 @@
 
   label {
     margin-bottom: 0;
+    text-align: center;
   }
   .rcForm__uploadIcon {
     display: flex;
@@ -108,11 +199,14 @@
 }
 .rcForm__label {
   margin-bottom: 4px;
-  font-weight: 500;
+  font-size: 1.6rem;
+
+  span {
+    color: var(--accent);
+  }
 }
 .rcForm__hint {
   margin-top: 4px;
-  margin-left: 4px;
   font-size: 1.3rem;
   color: var(--error);
   opacity: 0.8;
@@ -133,11 +227,12 @@
     background: var(--cream);
     color: var(--dark);
     width: 100%;
-    max-width: 100%;
+    max-width: 550px;
   }
 }
 .rcForm__checkboxGroup {
   gap: 1.2rem;
+  margin-top: 8px;
 }
 .rcForm__checkboxLabel {
   display: flex;
@@ -167,7 +262,7 @@
 
 .rcForm__submit {
   margin-left: auto;
-  border: none;
+  border: 1px solid transparent;
   width: 100%;
 
   @media only screen and (min-width: 768px) and (max-width: 1024px), only screen and (min-width: 1025px) {
