@@ -8,9 +8,14 @@ import NavBar from '@/app/components/Navbar/NavBar';
 import { getCurrentRunClub } from '../../lib/queries/currentClub';
 import ClubHeader from '@/app/components/Page-Runclub/ClubHeader';
 
+type PageProps = {
+  params: Promise<{ slug: string }>
+}
 
-async function SingleRunClubPage({ params }: { params: { slug: string } }) {
+
+export default async function SingleRunClubPage({ params }: PageProps) {
   const { slug } = await params;
+  // Fetch current club data
   const club = await getCurrentRunClub(slug);
 
   if (!club) {
@@ -29,5 +34,3 @@ async function SingleRunClubPage({ params }: { params: { slug: string } }) {
     </div>
   )
 }
-
-export default SingleRunClubPage
