@@ -76,11 +76,13 @@
       border-color: var(--dark);
     }
     .number {
+      min-height: 24px;
+      min-width: 32px;
       font-family: var(--font-inter-tight);
       font-size: 1.4rem;
       font-weight: 500;
       &::placeholder {
-        color: var(--gray);
+        color: var(--dark);
       }
     }
     .trigger {

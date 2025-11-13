@@ -2,7 +2,7 @@ import { notFound } from 'next/navigation'
 // Styles
 import styles from './page.module.css'
 // Components
-import CtaSection from '@/app/components/Page-Home/CtaSection/CtaSection';
+import CtaSection from '@/app/components/CtaSection/CtaSection';
 import NavBar from '@/app/components/Navbar/NavBar';
 // Queries
 import { getCurrentRunClub } from '../../lib/queries/currentClub';

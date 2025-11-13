@@ -1,8 +1,5 @@
 .ctaSection {
   padding-block: clamp(16px, 6vw, 60px) 0;
-  &:global(.container) {
-    padding-inline: 0;
-  }
 }
 .ctaSection__wrapper {
   display: flex;
@@ -45,33 +42,49 @@
   line-height: 1.1;
 }
 .ctaSection__text {
-  margin-top: clamp(12px, 2vw, 16px);
+  margin-top: 1.2rem;
   max-width: 488px;
   color: var(--dark);
 }
-.ctaSection__btn {
-  margin-left: auto;
-  margin-top: 48px;
-  max-width: fit-content;
-  padding-inline: 16px 8px;
-  padding-block: 4px;
-  font-size: 1.4rem;
-  font-weight: 600;
-  gap: 8px;
-  
-  div {
-    padding: 7px;
-  }
+.ctaSection__actions {
+  align-items: center;
+  gap: 1rem;
+  margin-top: clamp(40px, 5vw, 48px);
 
   @media only screen and (min-width: 768px) and (max-width: 1024px), only screen and (min-width: 1025px) {
     margin-top: auto;
     margin-left: 0;
   }
+
+  .ctaSection__btn {
+    padding-inline: 16px 8px;
+    padding-block: 4px;
+    text-wrap: nowrap;
+    gap: 8px;
+    width: 100%;
+
+    div {
+      padding: 7px;
+    }
+
+    &:first-of-type {
+      border: 1px solid var(--dark);
+      div {
+        &::after {
+          display: none;
+        }
+      }
+    }
+
+    @media only screen and (min-width: 768px) and (max-width: 1024px), only screen and (min-width: 1025px) {
+      max-width: fit-content;
+    }
+  }
 }
 .ctaSection__side {
   display: flex;
   justify-content: flex-end;
-  margin-bottom: 24px;
+  margin-bottom: 16px;
 
   @media only screen and (min-width: 768px) and (max-width: 1024px), only screen and (min-width: 1025px) {
     margin-bottom: 0;
