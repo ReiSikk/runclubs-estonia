@@ -7,8 +7,7 @@ import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { boolean } from "zod";
 import getOptionalField  from "@/app/lib/utils/getOptionalField";
 import normalizeToSlug from "@/app/lib/utils/generateSlugFromName";
-// Mitigate XSS attacks by sanitizing file input
-import DOMPurify from 'isomorphic-dompurify';
+import sanitizeSVGs from "@/app/lib/utils/sanitizeSvgs";
 
 
 type ActionResult = 
@@ -47,9 +46,10 @@ export async function createRunClub(
       if (logoFile.type === "image/svg+xml") {
       try {
         const svgContent = await logoFile.text();
-        const sanitizedSvg = DOMPurify.sanitize(svgContent, { 
-          USE_PROFILES: { svg: true, svgFilters: true } 
-        });
+        const sanitizedSvg = sanitizeSVGs(svgContent);
+        if (!sanitizedSvg) {
+          throw new Error("Sanitization failed");
+        }
         
         // Create new file with sanitized content
         const sanitizedBlob = new Blob([sanitizedSvg], { type: "image/svg+xml" });
