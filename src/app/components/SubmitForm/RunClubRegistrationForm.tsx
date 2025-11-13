@@ -261,7 +261,68 @@ export default function RunClubRegistrationForm() {
         </div>
 
         <div className={`${styles.rcForm__block} fp-col`}>
-          <div className={`${styles.rcForm__step} h4 fp`}><span className={styles.icon}>2 of 5</span>Information about runs & schedule</div>
+          <div className={`${styles.rcForm__step} h4 fp`}><span className={styles.icon}>2 of 5</span>Location details</div>
+            <section className={`${styles.rcForm__section} fp-col`}>
+              <div className={`${styles.customInput} fp-col`}>
+                <label htmlFor="city" className={`${styles.rcForm__label} h5`}>
+                  City <span>*</span>
+                </label>
+                <input
+                  id="city"
+                  name="city"
+                  type="text"
+                  placeholder="E.g. Tallinn"
+                  required
+                  className={`${styles.rcForm__input} h5`}
+                  maxLength={256}
+                  aria-invalid={!!(state && !state.success && state.errors?.city)}
+                />
+                {state && !state.success && state.errors?.city && (
+                  <p id="city-error" className={styles.rcForm__hint} role="alert">
+                    {state.errors.city[0]}
+                  </p>
+                )}
+              </div>
+
+              <div className={`${styles.customInput} fp-col`}>
+                <label htmlFor="area" className={`${styles.rcForm__label} h5`}>
+                  Where do you usually gather and start your runs? <span>*</span>
+                </label>
+                <input
+                  id="area"
+                  name="area"
+                  type="text"
+                  placeholder="E.g. Rotermanni kvartal"
+                  required
+                  className={`${styles.rcForm__input} h5`}
+                  maxLength={256}
+                  aria-invalid={!!(state && !state.success && state.errors?.area)}
+                />
+                {state && !state.success && state.errors?.area && (
+                  <p id="area-error" className={styles.rcForm__hint} role="alert">
+                    {state.errors.area[0]}
+                  </p>
+                )}
+              </div>
+
+              <div className={`${styles.customInput} fp-col`}>
+                <label htmlFor="address" className={`${styles.rcForm__label} h5`}>
+                  Starting location address (if applicable)
+                </label>
+                <input
+                  id="address"
+                  name="address"
+                  type="text"
+                  placeholder="E.g. Rotermanni 2, Tallinn"
+                  className={`${styles.rcForm__input} h5`}
+                  maxLength={256}
+                />
+              </div>
+            </section>
+        </div>
+
+        <div className={`${styles.rcForm__block} fp-col`}>
+          <div className={`${styles.rcForm__step} h4 fp`}><span className={styles.icon}>3 of 5</span>Information about runs & schedule</div>
           <section className={`${styles.rcForm__section} fp-col`}>
             <div className={`${styles.customInput} fp-col`}>
               <span className={`${styles.rcForm__label} h5`}>What days do you usually run on? <span>*</span></span>
@@ -343,67 +404,6 @@ export default function RunClubRegistrationForm() {
                 popoverItem: styles.rcForm__popoverItem,
                 popoverActiveItem: styles.popoverActiveItem,
               }}
-              />
-            </div>
-          </section>
-        </div>
-
-        <div className={`${styles.rcForm__block} fp-col`}>
-          <div className={`${styles.rcForm__step} h4 fp`}><span className={styles.icon}>3 of 5</span>Location details</div>
-          <section className={`${styles.rcForm__section} fp-col`}>
-            <div className={`${styles.customInput} fp-col`}>
-              <label htmlFor="city" className={`${styles.rcForm__label} h5`}>
-                City <span>*</span>
-              </label>
-              <input
-                id="city"
-                name="city"
-                type="text"
-                placeholder="E.g. Tallinn"
-                required
-                className={`${styles.rcForm__input} h5`}
-                maxLength={256}
-                aria-invalid={!!(state && !state.success && state.errors?.city)}
-              />
-              {state && !state.success && state.errors?.city && (
-                <p id="city-error" className={styles.rcForm__hint} role="alert">
-                  {state.errors.city[0]}
-                </p>
-              )}
-            </div>
-
-            <div className={`${styles.customInput} fp-col`}>
-              <label htmlFor="area" className={`${styles.rcForm__label} h5`}>
-                Where do you usually gather and start your runs? <span>*</span>
-              </label>
-              <input
-                id="area"
-                name="area"
-                type="text"
-                placeholder="E.g. Rotermanni kvartal"
-                required
-                className={`${styles.rcForm__input} h5`}
-                maxLength={256}
-                aria-invalid={!!(state && !state.success && state.errors?.area)}
-              />
-              {state && !state.success && state.errors?.area && (
-                <p id="area-error" className={styles.rcForm__hint} role="alert">
-                  {state.errors.area[0]}
-                </p>
-              )}
-            </div>
-
-            <div className={`${styles.customInput} fp-col`}>
-              <label htmlFor="address" className={`${styles.rcForm__label} h5`}>
-                Starting location address (if applicable)
-              </label>
-              <input
-                id="address"
-                name="address"
-                type="text"
-                placeholder="E.g. Rotermanni 2, Tallinn"
-                className={`${styles.rcForm__input} h5`}
-                maxLength={256}
               />
             </div>
           </section>

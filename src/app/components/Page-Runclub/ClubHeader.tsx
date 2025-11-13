@@ -38,14 +38,16 @@ export default function ClubHeader({ club }: ClubHeaderProps) {
   return (
     <header className={`${styles.pageHeader} container fp`}>
       {club.logo ? (
-        <Image
-          src={club.logo}
-          alt={`${club.name} logo`}
-          width={614}
-          height={416}
-          className={styles.pageHeader__image}
-          priority
-        />
+        <div className={styles.pageHeader__imgwrapper}>
+          <Image
+            src={club.logo}
+            alt={`${club.name} logo`}
+            width={614}
+            height={416}
+            className={styles.pageHeader__image}
+            priority
+          />
+        </div>
       ) : (
         <Image
           unoptimized
