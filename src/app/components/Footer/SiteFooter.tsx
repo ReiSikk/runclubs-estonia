@@ -18,7 +18,7 @@ function SiteFooter() {
             <span className='h4'>All rights reserved.
               <br />© {new Date().getFullYear()}</span>
           </div>
-          <div className={`${styles.siteFooter__cell} ${styles.siteFooter__cell_3} ${styles.hover_brightness} fp-col`}>
+          <div className={`${styles.siteFooter__cell} ${styles.siteFooter__cell_3} fp-col`}>
               <p className="h4">
                   This helps cover hosting & domain costs.<br />
                   Thank you 🙏

@@ -26,7 +26,11 @@
     gap: 8px;
     height: fit-content;
     background: var(--footer-3);
-    transition: opacity 0.2s ease;
+    transition: all 0.2s ease;
+
+     &:hover {
+      background: var(--cream);
+    }
 
     .coffeeImage {
       height: 32px;
@@ -37,10 +41,9 @@
       text-decoration: none;
       text-transform: none;
       color: var(--dark);
-    }
-
-    &:hover {
-      opacity: 0.8;
+      font-weight: 600;
+      letter-spacing: 0.4px;
+      font-family: var(--font-inter-tight);
     }
   }
 }
