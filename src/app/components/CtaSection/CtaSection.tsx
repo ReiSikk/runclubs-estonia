@@ -18,19 +18,34 @@ function CtaSection({ variant }: { variant?: string }) {
             Help us build the most comprehensive directory of run clubs in Estonia. Submit your club or suggest one you
             know about.
           </p>
+          <div className={`${styles.ctaSection__actions} fp`}>
             <Link href="/submit" 
             className={`${styles.ctaSection__btn} btn_main `} target="_blank" 
             data-attr="hero-find-club-click"
             data-custom-id="cta-find-club"
             data-umami-event="Clicked on CTA to submit run club"
             >
-              Let us know!
+              Submit details
               <div className="icon-carousel-anim">
                 <LucideSendHorizonal width={24} height={24} strokeWidth={1.5}  className="icon-main"/>
                 <LucideSendHorizonal width={24} height={24} strokeWidth={1.5}  className="icon-hovered"/>
               </div>
             </Link>
+            <a 
+            href="mailto:sikkrei@gmail.com?subject=Run Club Submission&body=I would like to submit a run club to Run Clubs Estonia directory." 
+            className={`${styles.ctaSection__btn} btn_main white `}
+            data-custom-id="cta-submit-club-email"
+            data-umami-event="Clicked on button to submit run club via email"
+            >
+              Email suggestion
+              <div className="icon-carousel-anim">
+                <LucideSendHorizonal width={24} height={24} strokeWidth={1.5}  className="icon-main"/>
+                <LucideSendHorizonal width={24} height={24} strokeWidth={1.5}  className="icon-hovered"/>
+              </div>
+            </a>
+          </div>
         </div>
+
         <div className={`${styles.ctaSection__side} col-m-12 col-t-6 col-d-6`}>
           <Image
             src={ctaImage}

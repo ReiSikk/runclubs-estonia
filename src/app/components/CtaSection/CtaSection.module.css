@@ -49,29 +49,44 @@
   max-width: 488px;
   color: var(--dark);
 }
-.ctaSection__btn {
+.ctaSection__actions {
+  margin-top: clamp(40px, 5vw, 48px);
+  align-items: center;
+  gap: 1rem;
   margin-left: auto;
-  margin-top: 48px;
-  max-width: fit-content;
-  padding-inline: 16px 8px;
-  padding-block: 4px;
-  font-size: 1.4rem;
-  font-weight: 600;
-  gap: 8px;
-  
-  div {
-    padding: 7px;
-  }
 
-  @media only screen and (min-width: 768px) and (max-width: 1024px), only screen and (min-width: 1025px) {
-    margin-top: auto;
-    margin-left: 0;
+  .ctaSection__btn {
+    padding-inline: 16px 8px;
+    padding-block: 4px;
+    font-size: 1.4rem;
+    font-weight: 600;
+    gap: 8px;
+    width: 100%;
+    
+    div {
+      padding: 7px;
+    }
+
+    &:last-of-type {
+      div {
+        &::after {
+          display: none;
+        }
+      }
+    }
+  
+    @media only screen and (min-width: 768px) and (max-width: 1024px), only screen and (min-width: 1025px) {
+      margin-top: auto;
+      margin-left: 0;
+      max-width: fit-content;
+
+    }
   }
 }
 .ctaSection__side {
   display: flex;
   justify-content: flex-end;
-  margin-bottom: 24px;
+  margin-bottom: 16px;
 
   @media only screen and (min-width: 768px) and (max-width: 1024px), only screen and (min-width: 1025px) {
     margin-bottom: 0;
