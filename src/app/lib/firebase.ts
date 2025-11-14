@@ -3,6 +3,13 @@ import { getFirestore } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
 import { initializeAppCheck, ReCaptchaEnterpriseProvider } from "firebase/app-check";
 
+// Extend Window interface for type safety
+declare global {
+  interface Window {
+    FIREBASE_APPCHECK_DEBUG_TOKEN?: string | boolean;
+  }
+}
+
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -24,11 +31,10 @@ if (typeof window !== 'undefined') {
   const isDev = process.env.NODE_ENV === 'development';
 
   if ((isDev || isCI) && debugToken) {
-    (self as any).FIREBASE_APPCHECK_DEBUG_TOKEN = debugToken;
-    console.log('🔧 App Check Debug Mode Enabled:', isCI ? 'CI' : 'Development');
+    self.FIREBASE_APPCHECK_DEBUG_TOKEN = debugToken;
   } else if (isDev && !debugToken) {
     // Auto-generate token in development if not provided
-    (self as any).FIREBASE_APPCHECK_DEBUG_TOKEN = true;
+    self.FIREBASE_APPCHECK_DEBUG_TOKEN = true;
     console.log('🔧 App Check Debug Mode: Auto-generating token');
   }
 
