@@ -69,12 +69,7 @@
 }
 
 .hero__actions {
-  margin-top: 2.4rem;
   gap: clamp(2.4rem, 3vw, 3.2rem);
-
-  @media only screen and (min-width: 768px) and (max-width: 1024px), only screen and (min-width: 1025px) {
-    margin-top: auto;
-  }
 }
 
 .buttons {

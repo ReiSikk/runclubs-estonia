@@ -48,7 +48,9 @@ function SiteFooter() {
           <LucideSend size={96} strokeWidth={1} />
           <a href="mailto:sikkrei@gmail.com?subject=Feature request for Run Clubs Estonia" className='h4'>
             Have a feature request?<br />
-            Message us.
+            Want to suggest a club?<br />
+            Have feedback?<br />
+            <span>Message us.</span>
           </a>
         </div>
         <div className={`${styles.siteFooter__cell} ${styles.siteFooter__cell_5} ${styles.hover_brightness} fp`}>

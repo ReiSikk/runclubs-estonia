@@ -93,6 +93,11 @@
   grid-area: span 3 / span 1;
   will-change: contents;
 
+  span {
+    display: block;
+    padding-top: 12px;
+  }
+
   a {
     margin-bottom: auto;
     &::before {

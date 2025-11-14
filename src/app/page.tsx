@@ -12,6 +12,7 @@ import {
 } from '@tanstack/react-query'
 // Queries
 import { getRunClubs } from "./lib/queries/runClubs";
+import Link from "next/link";
 
 export default async function Home() {
   const queryClient = new QueryClient()
@@ -24,10 +25,13 @@ export default async function Home() {
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
       <div className={`${styles.page}`} id="page-top">
-        <header className={`${styles.header} container`}>
-        </header>
+          <nav className={`${styles.pageNav} container`}>
+            <Link href="/submit" className={`${styles.pageNav__link}`} aria-label="Register your running club">
+              Add your club
+            </Link>
+          </nav>
+        <HeroSection />
         <main className={`${styles.main}`}>
-          <HeroSection />
           <MainSection />
           <CtaSection />
         </main>

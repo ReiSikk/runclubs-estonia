@@ -193,12 +193,6 @@ export default function RunClubRegistrationForm() {
         </p>
       </div>
 
-      <p>
-        <i>
-          All fields marked with <strong>*</strong> are <strong>required</strong>
-        </i>
-      </p>
-
       <div className={`${styles.rcForm__wrapper} fp-col`}>
         <div className={`${styles.rcForm__block} fp-col`}>
           <div className={`${styles.rcForm__step} h4 fp`}><span className={styles.icon}>1 of 5</span>Name & Logo</div>
@@ -223,12 +217,18 @@ export default function RunClubRegistrationForm() {
               )}
             </div>
 
+            <label htmlFor="logo" className={`${styles.rcForm__label} h5`}>
+              Logo <span className={styles.small}>(JPG, PNG, WEBP, SVG,  max 5MB)</span>
+            </label>
             <div className={`${styles.customInput} ${styles.customInput__file} fp-col`}>
-              <label htmlFor="logo" className={`${styles.rcForm__label} h5`}>
-                Logo (JPG, PNG, WEBP, SVG,  max 5MB)
-              </label>
-              <div className={styles.rcForm__uploadIcon}>
-                <LucideUpload size={16} strokeWidth={2} aria-hidden="true" focusable="false" />
+              <span className={`${styles.rcForm__label} h5`}>
+                Drop your file here or...
+              </span>
+              <div className={`${styles.rcForm__uploadBtn} btn_main`}>
+                Select file
+                <div className={`${styles.icon} fp`}>
+                  <LucideUpload size={16} strokeWidth={2} aria-hidden="true" focusable="false"/>
+                </div>
               </div>
               <input
                 id="logo"
