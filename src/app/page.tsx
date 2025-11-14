@@ -11,15 +11,15 @@ import {
   QueryClient,
 } from '@tanstack/react-query'
 // Queries
-import { getRunClubsServer } from "./lib/queries/runClubsServer";
 import Link from "next/link";
+import { getRunClubs } from "./lib/queries/runClubs";
 
 export default async function Home() {
   const queryClient = new QueryClient()
 
   await queryClient.prefetchQuery({
     queryKey: ['runclubs'],
-    queryFn: getRunClubsServer,
+    queryFn: getRunClubs,
   })
 
   return (
