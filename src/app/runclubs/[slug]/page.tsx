@@ -5,7 +5,7 @@ import styles from './page.module.css'
 import CtaSection from '@/app/components/CtaSection/CtaSection';
 import NavBar from '@/app/components/Navbar/NavBar';
 // Queries
-import { getCurrentRunClub } from '../../lib/queries/currentClub';
+import { getCurrentClub } from '../../lib/queries/currentClub';
 import ClubHeader from '@/app/components/Page-Runclub/ClubHeader';
 
 type PageProps = {
@@ -16,7 +16,7 @@ type PageProps = {
 export default async function SingleRunClubPage({ params }: PageProps) {
   const { slug } = await params;
   // Fetch current club data
-  const club = await getCurrentRunClub(slug);
+  const club = await getCurrentClub(slug);
 
   if (!club) {
     return (

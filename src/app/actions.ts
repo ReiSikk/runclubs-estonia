@@ -1,35 +1,34 @@
-'use server';
+"use server";
 
 import { submitRunClubSchema } from "@/app/lib/types/submitRunClub";
-import { collection, addDoc, Timestamp } from "firebase/firestore";
-import { db, storage } from "@/app/lib/firebase";
-import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { adminApp, adminDb } from "@/app/lib/firebaseAdmin";
+import { getStorage } from "firebase-admin/storage";
 import { boolean } from "zod";
-import getOptionalField  from "@/app/lib/utils/getOptionalField";
+import getOptionalField from "@/app/lib/utils/getOptionalField";
 import normalizeToSlug from "@/app/lib/utils/generateSlugFromName";
 import sanitizeSVGs from "@/app/lib/utils/sanitizeSvgs";
+import { Timestamp } from "firebase-admin/firestore";
 
-
-type ActionResult = 
+type ActionResult =
   | { success: true; message: string }
   | { success: false; message: string; errors?: Record<string, string[]> };
 
 export async function createRunClub(
-  prevState: ActionResult | undefined, 
+  prevState: ActionResult | undefined,
   formData: FormData
 ): Promise<ActionResult> {
   try {
-    // Handle logo file upload
     const logoFile = formData.get("logo") as File | null;
     let logoUrl = "";
 
+    // File upload with Admin SDK
     if (logoFile && logoFile.size > 0) {
       // Validate file size
       if (logoFile.size > 5 * 1024 * 1024) {
         return {
           success: false,
           message: "File is too large (max 5MB).",
-          errors: { logo: ["File is too large (max 5MB)."] }
+          errors: { logo: ["File is too large (max 5MB)."] },
         };
       }
 
@@ -39,58 +38,68 @@ export async function createRunClub(
         return {
           success: false,
           message: "Accepted formats: JPG, JPEG, PNG, WEBP, SVG.",
-          errors: { logo: ["Accepted formats: JPG, JPEG, PNG, WEBP, SVG."] }
+          errors: { logo: ["Accepted formats: JPG, JPEG, PNG, WEBP, SVG."] },
         };
       }
 
+      // File upload with Admin SDK
+      const bucket = getStorage(adminApp).bucket(process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET);
+      const fileName = `${Date.now()}-${logoFile.name.replace(/[^a-zA-Z0-9.-]/g, "_")}`;
+      const file = bucket.file(`runclub-logos/${fileName}`);
+
       if (logoFile.type === "image/svg+xml") {
-      try {
-        const svgContent = await logoFile.text();
-        const sanitizedSvg = sanitizeSVGs(svgContent);
-        if (!sanitizedSvg) {
-          throw new Error("Sanitization failed");
+        try {
+          const svgContent = await logoFile.text();
+          const sanitizedSvg = sanitizeSVGs(svgContent);
+
+          if (!sanitizedSvg) {
+            return {
+              success: false,
+              message: "Invalid or unsafe SVG file.",
+              errors: { logo: ["SVG sanitization failed."] },
+            };
+          }
+
+          // Upload sanitized SVG with Admin SDK
+          await file.save(sanitizedSvg, {
+            contentType: "image/svg+xml",
+            metadata: {
+              contentType: "image/svg+xml",
+            },
+          });
+        } catch (svgError) {
+          console.error("SVG processing error:", svgError);
+          return {
+            success: false,
+            message: "Failed to process SVG file.",
+            errors: { logo: ["Invalid SVG file."] },
+          };
         }
-        
-        // Create new file with sanitized content
-        const sanitizedBlob = new Blob([sanitizedSvg], { type: "image/svg+xml" });
-        const arrayBuffer = await sanitizedBlob.arrayBuffer();
-        
-        const fileName = `${Date.now()}-${logoFile.name.replace(/[^a-zA-Z0-9.-]/g, '_')}`;
-        const logoRef = ref(storage, `runclub-logos/${fileName}`);
-        
-        await uploadBytes(logoRef, arrayBuffer, { 
-          contentType: "image/svg+xml" 
-        });
-        logoUrl = await getDownloadURL(logoRef);
-      } catch (svgError) {
-        console.error("SVG processing error:", svgError);
-        return {
-          success: false,
-          message: "Invalid SVG file. Please try another image.",
-          errors: { logo: ["Invalid SVG file."] }
-        };
+      } else {
+        try {
+          // Upload regular image with Admin SDK
+          const arrayBuffer = await logoFile.arrayBuffer();
+          const buffer = Buffer.from(arrayBuffer);
+
+          await file.save(buffer, {
+            contentType: logoFile.type,
+            metadata: {
+              contentType: logoFile.type,
+            },
+          });
+        } catch (uploadError) {
+          console.error("Upload error:", uploadError);
+          return {
+            success: false,
+            message: "Failed to upload logo.",
+            errors: { logo: ["Upload failed."] },
+          };
+        }
       }
-    } else {
-      try {
-        // Upload to Firebase Storage
-        const arrayBuffer = await logoFile.arrayBuffer();
-        const fileName = `${Date.now()}-${logoFile.name.replace(/[^a-zA-Z0-9.-]/g, '_')}`;
-        const logoRef = ref(storage, `runclub-logos/${fileName}`);
-        
-        await uploadBytes(logoRef, arrayBuffer, { 
-          contentType: logoFile.type 
-        });
-        logoUrl = await getDownloadURL(logoRef);
-        
-      } catch (storageError) {
-        console.error("Storage upload error:", storageError);
-        return {
-          success: false,
-          message: "Uploading the logo failed. Please try again.",
-          errors: { logo: ["Uploading the logo failed. Please try again."] }
-        };
-      }
-    }
+
+      // Make file publicly accessible and get URL
+      await file.makePublic();
+      logoUrl = `https://storage.googleapis.com/${bucket.name}/${file.name}`;
     }
 
     // Build submission object
@@ -108,69 +117,51 @@ export async function createRunClub(
       updatedAt: Timestamp.now(),
     };
 
-    // Add logo URL if uploaded
     if (logoUrl) {
       submission.logo = logoUrl;
     }
 
     // Add optional fields
     const startTime = getOptionalField(formData, "startTime");
-    if (startTime) {
-      submission.startTime = startTime;
-    }
+    if (startTime) submission.startTime = startTime;
 
     const distanceDescription = getOptionalField(formData, "distanceDescription");
-    if (distanceDescription) {
-      submission.distanceDescription = distanceDescription;
-    }
+    if (distanceDescription) submission.distanceDescription = distanceDescription;
 
     const address = getOptionalField(formData, "address");
-    if (address) {
-      submission.address = address;
-    }
+    if (address) submission.address = address;
 
     const instagram = getOptionalField(formData, "instagram");
-    if (instagram) {
-      submission.instagram = instagram;
-    }
+    if (instagram) submission.instagram = instagram;
 
     const facebook = getOptionalField(formData, "facebook");
-    if (facebook) {
-      submission.facebook = facebook;
-    }
+    if (facebook) submission.facebook = facebook;
 
     const strava = getOptionalField(formData, "strava");
-    if (strava) {
-      submission.strava = strava;
-    }
+    if (strava) submission.strava = strava;
 
     const website = getOptionalField(formData, "website");
-    if (website) {
-      submission.website = website;
-    }
+    if (website) submission.website = website;
 
-    // Validate with Zod schema
+    // Validate with Zod
     const validatedFields = submitRunClubSchema.safeParse(submission);
 
-    // Return validation errors if any
     if (!validatedFields.success) {
       const errors: Record<string, string[]> = {};
       validatedFields.error.issues.forEach((issue) => {
-        const path = issue.path.join('.');
-        if (!errors[path]) {
-          errors[path] = [];
-        }
+        const path = issue.path.join(".");
+        if (!errors[path]) errors[path] = [];
         errors[path].push(issue.message);
       });
 
       return {
         success: false,
-        message: 'Please fix the validation errors',
+        message: "Please fix the validation errors",
         errors,
       };
     }
 
-    // Clean data - remove undefined/null/empty values
+    // Clean data
     const cleanData: Record<string, unknown> = {};
     Object.entries(validatedFields.data).forEach(([key, value]) => {
       if (value !== undefined && value !== null && value !== "") {
@@ -178,19 +169,17 @@ export async function createRunClub(
       }
     });
 
-    // Save to Firestore
-    await addDoc(collection(db, "runclubs"), cleanData);
+    // Save to Firestore using Admin SDK
+    await adminDb.collection("runclubs").add(cleanData);
 
     return {
       success: true,
       message: "Success! Your club has been registered and is pending approval.",
     };
-
-
   } catch (error: unknown) {
     console.error("Registration error:", error);
     const errorMessage = error instanceof Error ? error.message : "An unexpected error occurred";
-    
+
     return {
       success: false,
       message: errorMessage,
