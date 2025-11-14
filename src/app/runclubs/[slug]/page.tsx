@@ -15,7 +15,6 @@ type PageProps = {
 
 export default async function SingleRunClubPage({ params }: PageProps) {
   const { slug } = await params;
-  // Fetch current club data
   const club = await getCurrentClub(slug);
 
   if (!club) {
