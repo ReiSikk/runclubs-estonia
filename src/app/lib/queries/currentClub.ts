@@ -1,27 +1,30 @@
+import { adminDb } from '../firebaseAdmin';
+import { RunClub } from '../types/runClub';
+import { convertTimestamp } from '../utils/fireStoreConverter';
 
-import { collection, query, where, getDocs, limit } from "firebase/firestore";
-import { db } from "../firebase";
-import { RunClub } from "../types/runClub";
-import { runClubConverter } from "../utils/fireStoreConverter";
+export async function getCurrentClub(slug: string): Promise<RunClub | null> {
+  try {
+    const snapshot = await adminDb
+      .collection('runclubs')
+      .where('slug', '==', slug)
+      .where('approvedForPublication', '==', true)
+      .limit(1)
+      .get();
 
-export async function getCurrentRunClub(slug: string): Promise<RunClub | null> {
-    try {
-    const clubsRef = collection(db, "runclubs").withConverter(runClubConverter);
-    const q = query(
-      clubsRef,
-      where("slug", "==", slug),
-      where("approvedForPublication", "==", true),
-      limit(1)
-    );
-
-    const querySnapshot = await getDocs(q);
-
-    if (querySnapshot.empty) {
+    if (snapshot.empty) {
       return null;
     }
 
-    const club = querySnapshot.docs[0].data();
-    return club;
+    const doc = snapshot.docs[0];
+    const data = doc.data();
+
+    // Convert timestamps to serializable format
+    return {
+      id: doc.id,
+      ...data,
+      createdAt: convertTimestamp(data.createdAt),
+      updatedAt: convertTimestamp(data.updatedAt),
+    } as RunClub;
 
   } catch (error) {
     console.error(`[Server] Error fetching club with slug ${slug}:`, error);
