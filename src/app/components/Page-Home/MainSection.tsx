@@ -75,7 +75,7 @@ function MainSection() {
         <div className={`${styles.mainSection__main} col-m-12 col-t-4 col-d-4`}>
           <h2 className={`${styles.mainSection__title} h3`}>
             {todaysClubs.length > 0
-              ? `${todaysClubs.length} clubs running in ${selectedCity === "all" ? "Estonia" : selectedCity} today`
+              ? `${todaysClubs.length} ${todaysClubs.length === 1 ? "club" : "clubs"} running in ${selectedCity === "all" ? "Estonia" : selectedCity} today`
               : "No clubs matching your search running today"}
           </h2>
           <div className={styles.mainSection__clubsList} id="home-clubs-list">

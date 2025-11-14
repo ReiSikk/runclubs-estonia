@@ -42,7 +42,7 @@ function TodaysClubsListItem({ club }: {club: RunClub}) {
                         <p>{club.city}, {club.area}</p>
                     </div>
                     <div className={`${styles.todayClubsList__row} txt-small`}>
-                        <p>Avg. distance: {club.distance}km</p>
+                        <p>Avg. distance: {club.distance}</p>
                     </div>
                     <ul className={styles.todayClubsList__row}>
                         {daysList.map((day) => (

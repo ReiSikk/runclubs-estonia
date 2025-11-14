@@ -2,7 +2,7 @@
   /** Colors **/
   --dark: #100f0e;
   --gray: #858585;
-  --form-label: #D7D7D7;
+  --form-label: #d7d7d7;
   --accent: #e2572c;
   --white: #fffaf0;
   --cream: #faf3e0;
@@ -14,8 +14,8 @@
   --footer-6: #f8e7ce;
   --divider: 1px solid rgba(0, 0, 0, 0.2);
   /* Feedback color */
-  --success: #4BB543;
-  --error: #FF0000;
+  --success: #4bb543;
+  --error: #ff0000;
 }
 
 html {
@@ -221,13 +221,13 @@ ol {
 /*
    Buttons
    ========================================================================== */
-   button {
-    cursor: pointer;
-    outline: none;
-    padding: clamp(8px, 1vw, 14px) clamp(16px, 3vw, 24px);
-    font-size: 1.4rem;
-    font-weight: 500;
-   }
+button {
+  cursor: pointer;
+  outline: none;
+  padding: clamp(8px, 1vw, 14px) clamp(16px, 3vw, 24px);
+  font-size: 1.4rem;
+  font-weight: 500;
+}
 
 .btn_main {
   position: relative;
@@ -305,9 +305,7 @@ ol {
   cursor: pointer;
   text-align: center;
   text-decoration: none;
-  transition:
-    background-color 0.3s ease,
-    color 0.3s ease;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 .btn-txt-anim {
@@ -319,15 +317,46 @@ ol {
   transition: all 0.2s ease;
 }
 
+/* ** Icon Carousel Animation for back link ****/
+.icon-carousel-anim.left .icon-main {
+  transform: translateX(0);
+  opacity: 1;
+}
+.icon-carousel-anim.left .icon-hovered {
+  transform: translateX(200%);
+  opacity: 0;
+}
+
+/* ** Main btn with icon ***/
 .icon-carousel-anim {
   position: relative;
   overflow: hidden;
   display: inline-flex;
   align-items: center;
-  transition:
-    opacity 0.2s ease,
-    transform 0.3s ease;
+  transition: opacity 0.2s ease, transform 0.3s ease;
   padding-inline: 8px;
+}
+.btn_main .icon-carousel-anim {
+  transition: opacity 0.2s ease, transform 0.6s ease-in-out;
+
+  &::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 6px;
+    height: 100%;
+    z-index: 2;
+    pointer-events: none;
+    background: linear-gradient(to left, var(--dark), rgba(255, 255, 255, 0));
+  }
+}
+
+.btn_main > .icon-carousel-anim > .icon-hovered {
+  transform: translateX(-200%);
+}
+.btn_main > .icon-carousel-anim > .icon-main {
+  transform: translateX(0);
 }
 
 .back-link {
@@ -366,16 +395,6 @@ ol {
     transform: scale(0.95);
   }
 
-  /* ** Icon Carousel Animation for back link ****/
-  .icon-carousel-anim.left .icon-main {
-    transform: translateX(0);
-    opacity: 1;
-  }
-  .icon-carousel-anim.left .icon-hovered {
-    transform: translateX(200%);
-    opacity: 0;
-  }
-
   .back-link:hover,
   .back-link:active {
     border: 2px solid var(--accent);
@@ -388,30 +407,6 @@ ol {
   .back-link:hover .icon-carousel-anim.left .icon-hovered {
     transform: translateX(0);
     opacity: 1;
-  }
-  .btn_main .icon-carousel-anim {
-    transition:
-      opacity 0.2s ease,
-      transform 0.6s ease-in-out;
-
-    &::after {
-      content: "";
-      position: absolute;
-      top: 0;
-      right: 0;
-      width: 6px;
-      height: 100%;
-      z-index: 2;
-      pointer-events: none;
-      background: linear-gradient(to left, var(--dark), rgba(255, 255, 255, 0));
-    }
-  }
-
-  .btn_main > .icon-carousel-anim > .icon-hovered {
-    transform: translateX(-200%);
-  }
-  .btn_main > .icon-carousel-anim > .icon-main {
-    transform: translateX(0);
   }
   .btn_main:hover .icon-main {
     transform: translateX(200%);
@@ -433,12 +428,12 @@ ol {
   }
 
   /* White alt button */
-   .btn_main.white:hover {
+  .btn_main.white:hover {
     &.white--alt {
       background: var(--dark);
       color: var(--cream);
       border: 1px solid var(--cream);
-      }
+    }
   }
 }
 
@@ -451,9 +446,7 @@ ol {
   justify-content: center;
   gap: 0.8rem;
 
-  transition:
-    transform 0.3s ease,
-    opacity 0.1s ease;
+  transition: transform 0.3s ease, opacity 0.1s ease;
 }
 .btn-txt-anim .txt-main,
 .icon-carousel-anim .icon-main {
@@ -654,8 +647,5 @@ ol {
 
 .siteNav--scrolled {
   padding-block: 16px;
-  box-shadow:
-    0 8px 10px -5px rgb(0 0 0 / 16%),
-    0 16px 24px 2px rgb(0 0 0 / 11%),
-    0 6px 30px 5px rgb(0 0 0 / 10%);
+  box-shadow: 0 8px 10px -5px rgb(0 0 0 / 16%), 0 16px 24px 2px rgb(0 0 0 / 11%), 0 6px 30px 5px rgb(0 0 0 / 10%);
 }
