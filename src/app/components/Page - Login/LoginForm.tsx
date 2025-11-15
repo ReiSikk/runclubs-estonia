@@ -44,13 +44,13 @@ export default function LoginWithUsername({ updateLoginOption}: LoginWithUsernam
           aria-live="polite"
         />
       <div className={styles.loginForm__header}>
-        <h1 className={styles.loginForm__title}>Sign in to your account</h1>
+        <h1 className={`${styles.loginForm__title} h2`}>Sign in to your account</h1>
       </div>
-      <form onSubmit={handleSubmit} className={styles.loginForm}>
-        <div className="form__row">
-          <label className="form__label" htmlFor="email">Email:</label>
+      <form onSubmit={handleSubmit} className={`${styles.loginForm} bradius-m`}>
+        <div className="inputRow">
+          <label className="rcForm__label h5" htmlFor="email">Email</label>
           <input
-            className="form__input"
+            className="rcForm__input"
             id="email"
             type="email" 
             value={data?.email} 
@@ -59,10 +59,10 @@ export default function LoginWithUsername({ updateLoginOption}: LoginWithUsernam
             onChange={(e) => setData({...data, email: e.target.value})} 
           />
         </div>
-        <div className="form__row">
-          <label className="form__label" htmlFor="password">Password:</label>
+        <div className="inputRow">
+          <label className="rcForm__label h5" htmlFor="password">Password</label>
           <input
-            className="form__input"
+            className="rcForm__input"
             id="password"
             type="password" 
             value={data?.password} 
@@ -71,7 +71,7 @@ export default function LoginWithUsername({ updateLoginOption}: LoginWithUsernam
           />
         </div>
         {error && <p className="input__error">{`${error} !`}</p>}
-        <button type="submit" className={styles.loginBtn}>
+        <button type="submit" className="btn_main">
           Sign in
         </button>
       </form>

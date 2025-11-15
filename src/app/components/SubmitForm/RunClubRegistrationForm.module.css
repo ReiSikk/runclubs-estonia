@@ -45,9 +45,8 @@
   }
 }
 .rcForm__section {
-  padding-inline: 2rem;
-  padding-block: 2.4rem;
-  border-radius: 16px;
+  padding-inline: clamp(1.2rem, 2vw, 2rem);
+  padding-block: clamp(1.6rem, 3vw, 2.4rem);
   gap: 1rem;
   width: 100%;
   background: var(--cream);

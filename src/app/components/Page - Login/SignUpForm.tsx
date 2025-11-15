@@ -44,7 +44,7 @@ export default function SignUpForm() {
   return (
     <div className={styles.loginForm__wrap}>
       <div className={styles.loginForm__header}>
-        <h1 className={styles.loginForm__title}>Register an account</h1>
+        <h1 className={`${styles.loginForm__title} h2`}>Register an account</h1>
       </div>
       {userCreated && (
         <div className="signup__success">
@@ -52,11 +52,11 @@ export default function SignUpForm() {
           <span>Redirecting to home page...</span>
         </div>
       )}
-      <Form.Root onSubmit={signUpNewUser} className={styles.loginForm}>
-        <Form.Field name="name" className="form__row">
-          <Form.Label className="form__label">First and last name</Form.Label>
+      <Form.Root onSubmit={signUpNewUser} className={`${styles.loginForm} bradius-m`}>
+        <Form.Field name="name" className="inputRow">
+          <Form.Label className="rcForm__label">First and last name</Form.Label>
           <Form.Control
-            className="form__input"
+            className="rcForm__input"
             id="name"
             type="text"
             value={name}
@@ -72,10 +72,10 @@ export default function SignUpForm() {
           </Form.Message>
           {/* {error && <p className="input__error">{`${error.message}!`}</p>} */}
         </Form.Field>
-        <Form.Field name="email" className="form__row">
-          <Form.Label className="form__label">Email</Form.Label>
+        <Form.Field name="email" className="inputRow">
+          <Form.Label className="rcForm__label">Email</Form.Label>
           <Form.Control
-            className="form__input"
+            className="rcForm__input"
             id="email"
             type="email"
             value={email}
@@ -90,12 +90,12 @@ export default function SignUpForm() {
           </Form.Message>
           {/* {error && <p className="input__error">{`${error.message}!`}</p>} */}
         </Form.Field>
-        <Form.Field name="password" className="form__row">
-          <Form.Label className="form__label" htmlFor="password">
+        <Form.Field name="password" className="inputRow">
+          <Form.Label className="rcForm__label" htmlFor="password">
             Password:
           </Form.Label>
           <Form.Control
-            className="form__input"
+            className="rcForm__input"
             id="password"
             type="password"
             placeholder="Enter a password"
@@ -110,12 +110,12 @@ export default function SignUpForm() {
             Must contain at least one number and one uppercase and lowercase letter, and at least 8 or more characters
           </Form.Message>
         </Form.Field>
-        <Form.Field className="form__row" name="confirm-password">
-          <Form.Label className="form__label" htmlFor="confirm-password">
+        <Form.Field className="inputRow" name="confirm-password">
+          <Form.Label className="rcForm__label" htmlFor="confirm-password">
             Confirm Password:
           </Form.Label>
           <input
-            className="form__input"
+            className="rcForm__input"
             id="confirm-password"
             type="password"
             placeholder="Confirm your password"
@@ -129,14 +129,14 @@ export default function SignUpForm() {
           </Form.Message>
         </Form.Field>
         {error && <p className="input__error">{`${error}!`}</p>}
-        <Form.Submit className={styles.loginBtn}>Sign Up</Form.Submit>
-        <p className={styles.login__text}>
-          Already have an account?{" "}
-          <Link href="/login" className={styles.login__link}>
-            Sign In
-          </Link>{" "}
-        </p>
+        <Form.Submit className="btn_main">Sign Up</Form.Submit>
       </Form.Root>
+      <p className={styles.login__text}>
+        Already have an account?{" "}
+        <Link href="/login" className={styles.login__link}>
+          Sign In
+        </Link>{" "}
+      </p>
     </div>
   );
 }

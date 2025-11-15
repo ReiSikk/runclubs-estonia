@@ -18,7 +18,6 @@
 }
 .allClubsList__item {
   background-color: var(--cream);
-  border-radius: 16px;
   color: var(--dark);
   transition:
     background-color 0.2s ease-out,

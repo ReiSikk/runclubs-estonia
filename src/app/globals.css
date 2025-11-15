@@ -13,6 +13,10 @@
   --footer-5: var(--accent);
   --footer-6: #f8e7ce;
   --divider: 1px solid rgba(0, 0, 0, 0.2);
+  /* Border radius */
+  --bradius-s: 8px;
+  --bradius-m: 16px;
+  --bradius-l: 32px;
   /* Feedback color */
   --success: #4bb543;
   --error: #ff0000;
@@ -608,6 +612,22 @@ button {
     color-scheme: dark;
   }
 }
+
+
+/*
+   Common helpers
+   ========================================================================== */
+   .bradius-s {
+    border-radius: var(--bradius-s);
+   }
+   .bradius-m {
+    border-radius: var(--bradius-m);
+   }
+    .bradius-l {
+      border-radius: var(--bradius-l);
+    }
+    
+
 
 /*
    Site Nav Bar

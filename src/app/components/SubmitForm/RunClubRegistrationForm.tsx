@@ -196,7 +196,7 @@ export default function RunClubRegistrationForm() {
       <div className={`${styles.rcForm__wrapper} fp-col`}>
         <div className={`${styles.rcForm__block} fp-col`}>
           <div className={`${styles.rcForm__step} h4 fp`}><span className={styles.icon}>1 of 5</span>Name & Logo</div>
-          <section className={`${styles.rcForm__section} fp-col`}>
+          <section className={`${styles.rcForm__section} bradius-m fp-col`}>
             <div className={`inputRow fp-col`}>
               <label htmlFor="name" className={`rcForm__label h5`}>
                 Name of the run club <span className="rcForm__required">*</span>
@@ -262,7 +262,7 @@ export default function RunClubRegistrationForm() {
 
         <div className={`${styles.rcForm__block} fp-col`}>
           <div className={`${styles.rcForm__step} h4 fp`}><span className={styles.icon}>2 of 5</span>Location details</div>
-            <section className={`${styles.rcForm__section} fp-col`}>
+            <section className={`${styles.rcForm__section} bradius-m fp-col`}>
               <div className={`inputRow fp-col`}>
                 <label htmlFor="city" className={`rcForm__label h5`}>
                   City <span className="rcForm__required">*</span>
@@ -323,7 +323,7 @@ export default function RunClubRegistrationForm() {
 
         <div className={`${styles.rcForm__block} fp-col`}>
           <div className={`${styles.rcForm__step} h4 fp`}><span className={styles.icon}>3 of 5</span>Information about runs & schedule</div>
-          <section className={`${styles.rcForm__section} fp-col`}>
+          <section className={`${styles.rcForm__section} bradius-m fp-col`}>
             <div className={`inputRow fp-col`}>
               <span className={`rcForm__label h5`}>What days do you usually run on? <span className="rcForm__required">*</span></span>
               <div className={`rcForm__checkboxGroup fp-col`} role="group" aria-labelledby="runDays-label">
@@ -411,7 +411,7 @@ export default function RunClubRegistrationForm() {
 
         <div className={`${styles.rcForm__block} fp-col`}>
           <div className={`${styles.rcForm__step} h4 fp`}><span className={styles.icon}>4 of 5</span>Introduction</div>
-          <section className={`${styles.rcForm__section} fp-col`}>
+          <section className={`${styles.rcForm__section} bradius-m fp-col`}>
             <div className={`textareaRow fp-col`}>
               <label htmlFor="description" className={`rcForm__label h5`}>
                 Introduction <span className="rcForm__required">*</span>
@@ -437,7 +437,7 @@ export default function RunClubRegistrationForm() {
 
         <div className={`${styles.rcForm__block} fp-col`}>
           <div className={`${styles.rcForm__step} h4 fp`}><span className={styles.icon}>5 of 5</span>Contact & social media links</div>
-          <section className={`${styles.rcForm__section} fp-col`}>
+          <section className={`${styles.rcForm__section} bradius-m fp-col`}>
             <div className={`inputRow fp-col`}>
               <label htmlFor="instagram" className={`rcForm__label h5`}>
                 Instagram

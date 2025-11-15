@@ -1,9 +1,14 @@
-.loginForm__section {
-  padding-block: 48px;
+.loginPage__main {
+  color: var(--dark);
+  margin-top: 16px;
+  display: block;
+  padding-inline: 16px 12px;
+}
+.loginPage__wrapper {
+  padding-block: clamp(8rem, 14vw, 14.8rem);
+  padding-inline: 1.6rem;
   background: var(--cream);
-  @media only screen and (min-width: 768px) and (max-width: 1024px), only screen and (min-width: 1025px) {
-    padding-block: 3.3333vw;
-  }
+
 }
 
 /* Login Form */
@@ -11,41 +16,41 @@
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
   display: flex;
   flex-direction: column;
-  color: var(--dark);
   gap: 1.5rem;
   border: 1px solid var(--dark);
-  border-radius: 10px;
-  padding: 24px;
+  padding-inline: clamp(1.2rem, 2vw, 2rem);
+  padding-block: clamp(1.6rem, 2vw, 2.4rem);
+  width: 100%;
+}
+
+.loginForm__header {
+  margin-bottom: 16px;
+  @media only screen and (min-width: 768px) and (max-width: 1024px), only screen and (min-width: 1025px) {
+    margin-bottom: 1.6666vw;
   }
+}
+.loginForm__header > p {
+  text-align: center;
+}
 
-  .loginForm__header {
-    margin-bottom: 16px;
-    @media only screen and (min-width: 768px) and (max-width: 1024px), only screen and (min-width: 1025px) {
-        margin-bottom: 1.6666vw;
-    }
-  }
-  .loginForm__header > p {
-    text-align: center;
-  }
-
-  .loginForm__title {
-    text-align: center;
-    margin-bottom: 8px;
-  }
-
-
-
-
-
+.loginForm__title {
+  text-align: center;
+  margin-bottom: 8px;
+  color: var(--dark);
+}
+.login__text {
+  margin-top: 1.2rem;
+  text-align: center;
+}
 
 /*
    Tab switcher
    ========================================================================== */
 .tabs__root {
   margin-inline: auto;
+  max-width: 580px;
+  width: 100%;
 }
-
-
 
 .tabs__list {
   position: relative;
@@ -57,14 +62,13 @@
   justify-content: space-between;
   padding-inline: 3px;
   padding-block: 3px;
-  margin-block: 0 4.1025vw;
+  margin-block: 0 clamp(1.6rem, 3vw, 2.4rem);
   margin-inline: auto;
 
   @media only screen and (min-width: 768px) and (max-width: 1024px), only screen and (min-width: 1025px) {
     width: 100%;
     max-width: 375px;
     min-width: 200px;
-    margin-block: 0 1.111vw;
   }
 
   &:before {
