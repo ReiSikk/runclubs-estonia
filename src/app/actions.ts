@@ -1,5 +1,7 @@
 "use server";
 
+import 'server-only'; // Ensure these server actions don't get bundled into client
+
 import { submitRunClubSchema } from "@/app/lib/types/submitRunClub";
 import { adminApp, adminDb } from "@/app/lib/firebaseAdmin";
 import { getStorage } from "firebase-admin/storage";

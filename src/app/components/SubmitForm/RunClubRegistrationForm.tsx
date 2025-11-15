@@ -197,9 +197,9 @@ export default function RunClubRegistrationForm() {
         <div className={`${styles.rcForm__block} fp-col`}>
           <div className={`${styles.rcForm__step} h4 fp`}><span className={styles.icon}>1 of 5</span>Name & Logo</div>
           <section className={`${styles.rcForm__section} fp-col`}>
-            <div className={`${styles.customInput} fp-col`}>
-              <label htmlFor="name" className={`${styles.rcForm__label} h5`}>
-                Name of the run club <span>*</span>
+            <div className={`inputRow fp-col`}>
+              <label htmlFor="name" className={`rcForm__label h5`}>
+                Name of the run club <span className="rcForm__required">*</span>
               </label>
               <input
                 id="name"
@@ -207,26 +207,26 @@ export default function RunClubRegistrationForm() {
                 type="text"
                 placeholder="E.g. Kesklinna Jooksuklubi"
                 required
-                className={`${styles.rcForm__input} h5`}
+                className={`rcForm__input h5`}
                 aria-invalid={!!(state && !state.success && state.errors?.name)}
               />
               {state && !state.success && state.errors?.name && (
-                <p id="name-error" className={styles.rcForm__hint} role="alert">
+                <p id="name-error" className="rcForm__hint" role="alert">
                   {state.errors.name[0]}
                 </p>
               )}
             </div>
 
-            <label htmlFor="logo" className={`${styles.rcForm__label} h5`}>
+            <label htmlFor="logo" className={`rcForm__label h5`}>
               Logo <span className={styles.small}>(JPG, PNG, WEBP, SVG,  max 5MB)</span>
             </label>
-            <div className={`${styles.customInput} ${styles.customInput__file} fp-col`}>
-              <span className={`${styles.rcForm__label} h5`}>
+            <div className={`inputRow inputRow__file fp-col`}>
+              <span className={`rcForm__label h5`}>
                 Drop your file here or...
               </span>
-              <div className={`${styles.rcForm__uploadBtn} btn_main`}>
+              <div className={`rcForm__uploadBtn btn_main`}>
                 Select file
-                <div className={`${styles.icon} fp`}>
+                <div className={`icon fp`}>
                   <LucideUpload size={16} strokeWidth={2} aria-hidden="true" focusable="false"/>
                 </div>
               </div>
@@ -236,11 +236,11 @@ export default function RunClubRegistrationForm() {
                 ref={fileInputRef}
                 type="file"
                 accept="image/jpeg,image/jpg,image/png,image/webp,image/svg+xml"
-                className={styles.rcForm__file}
+                className="rcForm__file"
                 onChange={handleFileChange}
               />
               {fileError && (
-                <p id="logo-error" className={styles.rcForm__hint} role="alert">
+                <p id="logo-error" className="rcForm__hint" role="alert">
                   {fileError}
                 </p>
               )}
@@ -263,9 +263,9 @@ export default function RunClubRegistrationForm() {
         <div className={`${styles.rcForm__block} fp-col`}>
           <div className={`${styles.rcForm__step} h4 fp`}><span className={styles.icon}>2 of 5</span>Location details</div>
             <section className={`${styles.rcForm__section} fp-col`}>
-              <div className={`${styles.customInput} fp-col`}>
-                <label htmlFor="city" className={`${styles.rcForm__label} h5`}>
-                  City <span>*</span>
+              <div className={`inputRow fp-col`}>
+                <label htmlFor="city" className={`rcForm__label h5`}>
+                  City <span className="rcForm__required">*</span>
                 </label>
                 <input
                   id="city"
@@ -273,20 +273,20 @@ export default function RunClubRegistrationForm() {
                   type="text"
                   placeholder="E.g. Tallinn"
                   required
-                  className={`${styles.rcForm__input} h5`}
+                  className={`rcForm__input h5`}
                   maxLength={256}
                   aria-invalid={!!(state && !state.success && state.errors?.city)}
                 />
                 {state && !state.success && state.errors?.city && (
-                  <p id="city-error" className={styles.rcForm__hint} role="alert">
+                  <p id="city-error" className="rcForm__hint" role="alert">
                     {state.errors.city[0]}
                   </p>
                 )}
               </div>
 
-              <div className={`${styles.customInput} fp-col`}>
-                <label htmlFor="area" className={`${styles.rcForm__label} h5`}>
-                  Where do you usually gather and start your runs? <span>*</span>
+              <div className={`inputRow fp-col`}>
+                <label htmlFor="area" className={`rcForm__label h5`}>
+                  Where do you usually gather and start your runs? <span className="rcForm__required">*</span>
                 </label>
                 <input
                   id="area"
@@ -294,19 +294,19 @@ export default function RunClubRegistrationForm() {
                   type="text"
                   placeholder="E.g. Rotermanni kvartal"
                   required
-                  className={`${styles.rcForm__input} h5`}
+                  className={`rcForm__input h5`}
                   maxLength={256}
                   aria-invalid={!!(state && !state.success && state.errors?.area)}
                 />
                 {state && !state.success && state.errors?.area && (
-                  <p id="area-error" className={styles.rcForm__hint} role="alert">
+                  <p id="area-error" className="rcForm__hint" role="alert">
                     {state.errors.area[0]}
                   </p>
                 )}
               </div>
 
-              <div className={`${styles.customInput} fp-col`}>
-                <label htmlFor="address" className={`${styles.rcForm__label} h5`}>
+              <div className={`inputRow fp-col`}>
+                <label htmlFor="address" className={`rcForm__label h5`}>
                   Starting location address (if applicable)
                 </label>
                 <input
@@ -314,7 +314,7 @@ export default function RunClubRegistrationForm() {
                   name="address"
                   type="text"
                   placeholder="E.g. Rotermanni 2, Tallinn"
-                  className={`${styles.rcForm__input} h5`}
+                  className={`rcForm__input h5`}
                   maxLength={256}
                 />
               </div>
@@ -324,31 +324,31 @@ export default function RunClubRegistrationForm() {
         <div className={`${styles.rcForm__block} fp-col`}>
           <div className={`${styles.rcForm__step} h4 fp`}><span className={styles.icon}>3 of 5</span>Information about runs & schedule</div>
           <section className={`${styles.rcForm__section} fp-col`}>
-            <div className={`${styles.customInput} fp-col`}>
-              <span className={`${styles.rcForm__label} h5`}>What days do you usually run on? <span>*</span></span>
-              <div className={`${styles.rcForm__checkboxGroup} fp-col`} role="group" aria-labelledby="runDays-label">
+            <div className={`inputRow fp-col`}>
+              <span className={`rcForm__label h5`}>What days do you usually run on? <span className="rcForm__required">*</span></span>
+              <div className={`rcForm__checkboxGroup fp-col`} role="group" aria-labelledby="runDays-label">
                 {["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"].map((day) => (
-                  <label key={day} className={`${styles.rcForm__checkboxLabel} txt-body`}>
+                  <label key={day} className={`rcForm__checkboxLabel txt-body`}>
                     <input
                       type="checkbox"
                       name="runDays"
                       value={day}
-                      className={styles.rcForm__checkbox}
+                      className="rcForm__checkbox"
                     />
                     <span>{day}</span>
                   </label>
                 ))}
               </div>
               {state && !state.success && state.errors?.runDays && (
-                <p id="runDays-error" className={styles.rcForm__hint} role="alert">
+                <p id="runDays-error" className="rcForm__hint" role="alert">
                   {state.errors.runDays[0]}
                 </p>
               )}
             </div>
 
-            <div className={`${styles.customInput} fp-col`}>
-              <label htmlFor="distance" className={`${styles.rcForm__label} h5`}>
-                How long are the runs on average? <span>*</span>
+            <div className={`inputRow fp-col`}>
+              <label htmlFor="distance" className={`rcForm__label h5`}>
+                How long are the runs on average? <span className="rcForm__required">*</span>
               </label>
               <input
                 id="distance"
@@ -356,19 +356,19 @@ export default function RunClubRegistrationForm() {
                 type="text"
                 placeholder="E.g. 5-8 km"
                 required
-                className={`${styles.rcForm__input} h5`}
+                className={`rcForm__input h5`}
                 maxLength={256}
                 aria-invalid={!!(state && !state.success && state.errors?.distance)}
               />
               {state && !state.success && state.errors?.distance && (
-                <p id="distance-error" className={styles.rcForm__hint} role="alert">
+                <p id="distance-error" className="rcForm__hint" role="alert">
                   {state.errors.distance[0]}
                 </p>
               )}
             </div>
 
-            <div className={`${styles.customTextArea} fp-col`}>
-              <label htmlFor="distanceDescription" className={`${styles.rcForm__label} h5`}>
+            <div className={`textareaRow fp-col`}>
+              <label htmlFor="distanceDescription" className={`rcForm__label h5`}>
                 Describe the pace groups available (if any) and their average paces
               </label>
               <textarea
@@ -381,8 +381,8 @@ export default function RunClubRegistrationForm() {
               />
             </div>
 
-            <div className={`${styles.customInput} fp-col`}>
-              <label htmlFor="startTime" className={`${styles.rcForm__label} h5`}>
+            <div className={`inputRow fp-col`}>
+              <label htmlFor="startTime" className={`rcForm__label h5`}>
                 At what time do the runs usually start?
               </label>
               <TimePicker 
@@ -412,9 +412,9 @@ export default function RunClubRegistrationForm() {
         <div className={`${styles.rcForm__block} fp-col`}>
           <div className={`${styles.rcForm__step} h4 fp`}><span className={styles.icon}>4 of 5</span>Introduction</div>
           <section className={`${styles.rcForm__section} fp-col`}>
-            <div className={`${styles.customTextArea} fp-col`}>
-              <label htmlFor="description" className={`${styles.rcForm__label} h5`}>
-                Introduction <span>*</span>
+            <div className={`textareaRow fp-col`}>
+              <label htmlFor="description" className={`rcForm__label h5`}>
+                Introduction <span className="rcForm__required">*</span>
               </label>
               <textarea
                 id="description"
@@ -427,7 +427,7 @@ export default function RunClubRegistrationForm() {
                 aria-invalid={!!(state && !state.success && state.errors?.description)}
               />
               {state && !state.success && state.errors?.description && (
-                <p id="description-error" className={styles.rcForm__hint} role="alert">
+                <p id="description-error" className="rcForm__hint" role="alert">
                   {state.errors.description[0]}
                 </p>
               )}
@@ -438,8 +438,8 @@ export default function RunClubRegistrationForm() {
         <div className={`${styles.rcForm__block} fp-col`}>
           <div className={`${styles.rcForm__step} h4 fp`}><span className={styles.icon}>5 of 5</span>Contact & social media links</div>
           <section className={`${styles.rcForm__section} fp-col`}>
-            <div className={`${styles.customInput} fp-col`}>
-              <label htmlFor="instagram" className={`${styles.rcForm__label} h5`}>
+            <div className={`inputRow fp-col`}>
+              <label htmlFor="instagram" className={`rcForm__label h5`}>
                 Instagram
               </label>
               <input
@@ -447,13 +447,13 @@ export default function RunClubRegistrationForm() {
                 name="instagram"
                 type="url"
                 placeholder="https://instagram.com/..."
-                className={`${styles.rcForm__input} h5`}
+                className={`rcForm__input h5`}
                 maxLength={2048}
               />
             </div>
 
-            <div className={`${styles.customInput} fp-col`}>
-              <label htmlFor="facebook" className={`${styles.rcForm__label} h5`}>
+            <div className={`inputRow fp-col`}>
+              <label htmlFor="facebook" className={`rcForm__label h5`}>
                 Facebook
               </label>
               <input
@@ -461,13 +461,13 @@ export default function RunClubRegistrationForm() {
                 name="facebook"
                 type="url"
                 placeholder="https://facebook.com/..."
-                className={`${styles.rcForm__input} h5`}
+                className={`rcForm__input h5`}
                 maxLength={2048}
               />
             </div>
 
-            <div className={`${styles.customInput} fp-col`}>
-              <label htmlFor="strava" className={`${styles.rcForm__label} h5`}>
+            <div className={`inputRow fp-col`}>
+              <label htmlFor="strava" className={`rcForm__label h5`}>
                 Strava
               </label>
               <input
@@ -475,13 +475,13 @@ export default function RunClubRegistrationForm() {
                 name="strava"
                 type="url"
                 placeholder="https://strava.com/clubs/..."
-                className={`${styles.rcForm__input} h5`}
+                className={`rcForm__input h5`}
                 maxLength={2048}
               />
             </div>
 
-            <div className={`${styles.customInput} fp-col`}>
-              <label htmlFor="website" className={`${styles.rcForm__label} h5`}>
+            <div className={`inputRow fp-col`}>
+              <label htmlFor="website" className={`rcForm__label h5`}>
                 Website
               </label>
               <input
@@ -489,14 +489,14 @@ export default function RunClubRegistrationForm() {
                 name="website"
                 type="url"
                 placeholder="https://..."
-                className={`${styles.rcForm__input} h5`}
+                className={`rcForm__input h5`}
                 maxLength={2048}
               />
             </div>
 
-            <div className={`${styles.customInput} fp-col`}>
-              <label htmlFor="email" className={`${styles.rcForm__label} h5`}>
-                Contact person&apos;s email <span>*</span>
+            <div className={`inputRow fp-col`}>
+              <label htmlFor="email" className={`rcForm__label h5`}>
+                Contact person&apos;s email <span className="rcForm__required">*</span>
               </label>
               <input
                 id="email"
@@ -504,12 +504,12 @@ export default function RunClubRegistrationForm() {
                 type="email"
                 placeholder="contact@runclub.ee"
                 required
-                className={`${styles.rcForm__input} h5`}
+                className={`rcForm__input h5`}
                 maxLength={254}
                 aria-invalid={!!(state && !state.success && state.errors?.email)}
               />
               {state && !state.success && state.errors?.email && (
-                <p id="email-error" className={styles.rcForm__hint} role="alert">
+                <p id="email-error" className="rcForm__hint" role="alert">
                   {state.errors.email[0]}
                 </p>
               )}
@@ -520,7 +520,7 @@ export default function RunClubRegistrationForm() {
 
       <button
         type="submit"
-        className={`${styles.rcForm__submit} btn_main white white--alt`}
+        className={`rcForm__submit btn_main white white--alt`}
         data-umami-event="Submitted Run Club Registration Form"
         disabled={isPending || !!fileError}
         style={{

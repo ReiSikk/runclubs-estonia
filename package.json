@@ -22,6 +22,7 @@
     "react": "19.1.0",
     "react-accessible-time-picker": "^1.0.3",
     "react-dom": "19.1.0",
+    "server-only": "^0.0.1",
     "zod": "^4.1.12"
   },
   "devDependencies": {
