@@ -27,18 +27,41 @@ const interTight = Inter_Tight({
 });
 
 export const metadata: Metadata = {
-  title: "Run Clubs Estonia",
-  description: "Find running clubs in Estonia",
+  title: "Run Clubs Estonia | Find Run clubs in Tallinn, Tartu and across Estonia",
+  description: "Find and join running clubs across Estonia. Connect with local running communities in Tallinn, Tartu, Pärnu and other cities. Free directory of Estonian run clubs.",
   keywords: "running, runclubs, run clubs, Estonia, Eesti run clubs, Estonia run clubs, Run clubs in Estonia, Run clubs in Tallinn, Run Clubs in Tartu, Tartu, Tallinn, jooksuklubid, jooksmine, jooksijad eestis, Eesti run club, Eesti runners, run groups Estonia, run groups Tallinn, run groups Tartu, running club, running clubs, running clubs in Estonia, running clubs in Tallinn, running clubs in Tartu, running clubs in Pärnu",
   authors: [{ name: "Rei Sikk", url: "https://reihopsti.ee" }],
   creator: "Rei Sikk",
   openGraph: {
-    title: "Run Clubs Estonia",
-    description: "Find running clubs in Estonia",
+    title: "Run Clubs Estonia | Find Your Running Community",
+    description: "Discover and join running clubs across Estonia. Connect with runners in Tallinn, Tartu, Pärnu and beyond.",
+    type: 'website',
+    siteName: "Run Clubs Estonia",
     url: "https://runclubs.ee",
+    images: [
+      {
+        url: "../app/opengraph-image.jpg",
+        width: 1200,
+        height: 630,
+        alt: "Run Clubs Estonia",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Run Clubs Estonia | Find Your Running Community",
+    description: "Discover running clubs across Estonia. Find and join a running community near you.",
+    images: ["../app/opengraph-image.jpg"], 
+  },
+  robots: {
+    index: true,
+    follow: true,
   },
   icons: {
     icon: "/favicon.ico",
+  },
+  alternates: {
+    canonical: "https://runclubs.ee",
   },
 };
 
