@@ -3,46 +3,41 @@
 import { useState } from 'react'
 import styles from '@/app/login/page.module.css'
 import Link from 'next/link'
-import FormToast from '../Toast/Toast'
+import { signInWithEmailAndPassword } from 'firebase/auth';
+import { auth } from '@/app/lib/firebase';
 
 interface LoginWithUsernameProps {
-  updateLoginOption: (option: string) => void;
+  showToast: (msg: string, type?: "success" | "error") => void;
+  showCountdownToast: (msg: string, seconds: number, onComplete?: () => void) => void;
+  mapAuthError: (error: any) => string;
 }
 
-export default function LoginWithUsername({ updateLoginOption}: LoginWithUsernameProps) {
+export default function LoginWithUsername({ showToast, showCountdownToast, mapAuthError }: LoginWithUsernameProps) {
 
   const [data, setData] = useState({
     email: '',
     password: ''
   })
   const [error, setError] = useState<string | null>(null)
-  const [success, setSuccess] = useState(false )
 
-  // Toast State
-  const [toastMessage, setToastMessage] = useState('')
-    // Feedback toast state
-  const [toastOpen, setToastOpen] = useState(false);
-  const [countdown, setCountdown] = useState<number | null>(null);
+const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  e.preventDefault();
+  setError(null);;
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
-    console.log('Submitting form with data:', data);
+  try {
+    await signInWithEmailAndPassword(auth, data.email, data.password);
+    showCountdownToast("Login successful!", 3, () => {
+        window.location.href = "/";
+      });
+  } catch (error: any) {
+      const msg = mapAuthError(error);
+      showToast(msg, "error");
   }
+};
 
 
   return (
     <div className={styles.loginForm__wrap}>
-  <FormToast
-          message={
-            success && countdown !== null && countdown > 0
-              ? ` Redirecting in (${countdown})...`
-              : toastMessage
-          }
-          type={success ? "success" : "error"}
-          open={success || Boolean(error)}
-          onOpenChange={setToastOpen}
-          aria-live="polite"
-        />
       <div className={styles.loginForm__header}>
         <h1 className={`${styles.loginForm__title} h2`}>Sign in to your account</h1>
       </div>

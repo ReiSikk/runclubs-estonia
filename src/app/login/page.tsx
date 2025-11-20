@@ -1,20 +1,91 @@
 "use client";
 
 import { useRouter, useSearchParams } from "next/navigation";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, use } from "react";
 import * as Tabs from "@radix-ui/react-tabs";
 import LoginWithUsername from "@/app/components/Page - Login/LoginForm";
 import SignUpForm from "@/app/components/Page - Login/SignUpForm";
 import styles from "./page.module.css";
+import FormToast from "../components/Toast/Toast";
 
-export default function LoginPage() {
+function mapAuthError(error: any): string {
+  console.log("Mapping auth error:", error);
+  if (!error) return "An unknown error occurred.";
+  if (error.code === "auth/email-already-in-use" || error.message === "EMAIL_EXISTS") {
+    return "This email is already registered.";
+  } else if (error.code === "auth/invalid-email") {
+    return "Invalid email address.";
+  } else if (error.code === "auth/weak-password") {
+    return "Password is too weak.";
+  } else if (error.code === "auth/invalid-credential") {
+    return "Invalid email or password provided. Please try again.";
+  }
+  return error.message || "Sign up failed";
+}
+
+export default function LoginPage({ params }: { params: { id: string } }) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const isLoggedIn = false; //TODO:: Replace with actual auth state!!!
-  const id = searchParams.get("id");
-  const [activeTab, setActiveTab] = useState(id === "signup" ? "tab2" : "tab1");
 
+  // Form tabs state
+  const [activeTab, setActiveTab] = useState("tab1");
   const [loginOption, setLoginOption] = useState("userAndPass");
+
+  // Toast feedback handlers
+  const [toastOpen, setToastOpen] = useState(false);
+  const [toastMessage, setToastMessage] = useState("");
+  const [toastType, setToastType] = useState<"success" | "error">("success");
+  const [countdown, setCountdown] = useState<number | null>(null);
+  const countdownInterval = useRef<NodeJS.Timeout | null>(null);
+
+  // Update activeTab based on searchParams
+  useEffect(() => {
+    const id = searchParams.get("id");
+    if (id === "signup") {
+      setActiveTab("tab2");
+    } else {
+      setActiveTab("tab1");
+    }
+  }, [searchParams]);
+
+  // Call this for a regular toast
+  const showToast = (message: string, type: "success" | "error" = "success") => {
+    setToastMessage(message);
+    setToastType(type);
+    setCountdown(null);
+    setToastOpen(true);
+  };
+
+  // Call this for a success toast with countdown
+  const showCountdownToast = (message: string, seconds: number, onComplete?: () => void) => {
+    setToastType("success");
+    setCountdown(seconds);
+    setToastOpen(true);
+
+    if (countdownInterval.current) clearInterval(countdownInterval.current);
+
+    countdownInterval.current = setInterval(() => {
+      setCountdown((prev) => {
+        if (prev && prev > 1) {
+          return prev - 1;
+        } else {
+          clearInterval(countdownInterval.current!);
+          setToastOpen(false);
+          if (onComplete) onComplete();
+          return null;
+        }
+      });
+    }, 1000);
+
+    setToastMessage(message);
+  };
+
+  // Compose the toast message
+  const composedMessage =
+    toastType === "success" && countdown !== null && countdown > 0
+      ? `${toastMessage} Redirecting in (${countdown})...`
+      : toastMessage;
 
   const updateLoginOption = (option: string) => {
     setLoginOption(option);
@@ -29,6 +100,13 @@ export default function LoginPage() {
 
   return (
     <main className={`${styles.loginPage__main} container`}>
+        <FormToast
+          open={toastOpen}
+          onOpenChange={setToastOpen}
+          message={composedMessage}
+          type={toastType}
+          aria-live="polite"
+        />
       <div className={`${styles.loginPage__wrapper} bradius-m`}>
         <Tabs.Root className={styles.tabs__root} defaultValue="tab1" value={activeTab} onValueChange={setActiveTab}>
           <Tabs.List
@@ -43,10 +121,15 @@ export default function LoginPage() {
             </Tabs.Trigger>
           </Tabs.List>
           <Tabs.Content className={styles.tabs__content} value="tab1">
-            {loginOption === "userAndPass" && <LoginWithUsername updateLoginOption={updateLoginOption} />}
+            {loginOption === "userAndPass" && <LoginWithUsername showToast={showToast} showCountdownToast={showCountdownToast} mapAuthError={mapAuthError}/>}
           </Tabs.Content>
           <Tabs.Content className={styles.tabs__content} value="tab2">
-            <SignUpForm />
+            <SignUpForm 
+              showToast={showToast}
+              showCountdownToast={showCountdownToast}
+              setActiveTab={setActiveTab}
+              mapAuthError={mapAuthError}
+            />
           </Tabs.Content>
         </Tabs.Root>
       </div>

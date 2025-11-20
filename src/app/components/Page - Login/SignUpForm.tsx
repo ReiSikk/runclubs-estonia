@@ -1,43 +1,51 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import { useState } from "react";
 import styles from "@/app/login/page.module.css";
 import Link from "next/link";
 import * as Form from "@radix-ui/react-form";
+import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
+import { auth } from "@/app/lib/firebase";
 
-export default function SignUpForm() {
-  const router = useRouter();
+interface SignUpFormProps {
+  showToast: (msg: string, type?: "success" | "error") => void;
+  showCountdownToast: (msg: string, seconds: number, onComplete?: () => void) => void;
+  setActiveTab: (tab: string) => void;
+  mapAuthError: (error: any) => string;
+}
 
+export default function SignUpForm({ showToast, showCountdownToast, setActiveTab, mapAuthError }: SignUpFormProps) {
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [error, setError] = useState<string | null>(null);
-  const [userCreated, setUserCreated] = useState(false);
 
   //User creation logic
   const signUpNewUser = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log("Submitting form with data:", { name, email, password, confirmPassword });
 
     try {
-      // Check if passwords match
       if (password !== confirmPassword) {
-        setError("Passwords do not match");
+        showToast("Passwords do not match", "error");
         return;
       }
 
-      //TODO sign in here with firebase!!!
+      // Create user with Firebase Auth
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
 
-      setUserCreated(true),
-        setTimeout(() => {
-          router.push("/home");
-          setUserCreated(false);
-        }, 2000);
-    } catch (error: unknown) {
-      console.error("Form submission error:", error);
-      //TODO: SET ERROR MESSAGE TO DISPLAY TO USER into state
+      // Optionally update display name
+      if (userCredential.user && name) {
+        await updateProfile(userCredential.user, { displayName: name });
+      }
+
+      // Show success toast with countdown and redirect to login
+      showCountdownToast("Sign up successful!", 3, () => {
+        setActiveTab("tab1");
+      });
+
+    } catch (error: any) {
+      const msg = mapAuthError(error);
+      showToast(msg, "error");
     }
   };
 
@@ -46,12 +54,6 @@ export default function SignUpForm() {
       <div className={styles.loginForm__header}>
         <h1 className={`${styles.loginForm__title} h2`}>Register an account</h1>
       </div>
-      {userCreated && (
-        <div className="signup__success">
-          <p>You have successfully signed up!</p>
-          <span>Redirecting to home page...</span>
-        </div>
-      )}
       <Form.Root onSubmit={signUpNewUser} className={`${styles.loginForm} bradius-m`}>
         <Form.Field name="name" className="inputRow">
           <Form.Label className="rcForm__label">First and last name</Form.Label>
@@ -88,7 +90,6 @@ export default function SignUpForm() {
           <Form.Message match="typeMismatch" className="input__message">
             Please enter a valid email address
           </Form.Message>
-          {/* {error && <p className="input__error">{`${error.message}!`}</p>} */}
         </Form.Field>
         <Form.Field name="password" className="inputRow">
           <Form.Label className="rcForm__label" htmlFor="password">
@@ -128,7 +129,7 @@ export default function SignUpForm() {
             Please repeat your password
           </Form.Message>
         </Form.Field>
-        {error && <p className="input__error">{`${error}!`}</p>}
+        {/* {error && <p className="input__error">{`${error.props.title}!`}</p>} */}
         <Form.Submit className="btn_main">Sign Up</Form.Submit>
       </Form.Root>
       <p className={styles.login__text}>

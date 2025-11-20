@@ -57,6 +57,7 @@ export const metadata: Metadata = {
     index: true,
     follow: true,
   },
+  metadataBase: new URL("https://runclubs.ee"),
   icons: {
     icon: "/favicon.ico",
   },

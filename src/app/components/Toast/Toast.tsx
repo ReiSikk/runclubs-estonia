@@ -20,7 +20,7 @@ export default function FormToast({ message, type, open, onOpenChange}: FormToas
     }, []);
 
 	return (
-	    <Toast.Provider swipeDirection="right">
+	    <Toast.Provider swipeDirection="down">
       <Toast.Root
         className={`${styles.Root} ${type === "success" ? styles.success : styles.error}`}
         open={open}
@@ -34,7 +34,7 @@ export default function FormToast({ message, type, open, onOpenChange}: FormToas
         <Toast.Description className={`${styles.Description} txt-body`}>
           {message}
         </Toast.Description>
-        <Toast.Close className={styles.Close}>
+        <Toast.Close className={styles.Close} aria-label="Close">
           <LucideX size={24} strokeWidth={2}/>
         </Toast.Close>
       </Toast.Root>
