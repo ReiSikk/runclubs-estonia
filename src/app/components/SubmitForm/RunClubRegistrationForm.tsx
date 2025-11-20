@@ -8,6 +8,7 @@ import { createRunClub } from "@/app/actions";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import TimePicker, { TimePickerValue } from "react-accessible-time-picker";
+import { auth } from "@/app/lib/firebase";
 
 // Match server action's return type
 type FormState =
@@ -38,7 +39,7 @@ export default function RunClubRegistrationForm() {
   const [filePreview, setFilePreview] = useState<string | null>(null);
   const [fileError, setFileError] = useState<string | null>(null);
   // TimePicker state
-  const [time, setTime] = useState({ hour: '', minute: ''});
+  const [time, setTime] = useState({ hour: "", minute: "" });
 
   // Handle time picker values
   const handleTimeChange = (value: TimePickerValue) => {
@@ -91,10 +92,42 @@ export default function RunClubRegistrationForm() {
     const formData = new FormData(event.currentTarget);
 
     // Format time as HH:MM
-    const formattedTime = time.hour && time.minute 
-    ? `${time.hour.padStart(2, '0')}:${time.minute.padStart(2, '0')}`
-    : '';
-     formData.set('startTime', formattedTime);
+    const formattedTime =
+      time.hour && time.minute ? `${time.hour.padStart(2, "0")}:${time.minute.padStart(2, "0")}` : "";
+
+    // Get current user id token
+    const user = auth.currentUser;
+    if (!user) {
+      setState({
+        success: false,
+        message: "You must be logged in to submit a run club.",
+        errors: {},
+      });
+      return;
+    }
+
+    let idToken: string | null = null;
+    try {
+      idToken = await user.getIdToken(true); // Force refresh to get latest token
+    } catch (error) {
+      setState({
+        success: false,
+        message: "Failed to get authentication token.",
+        errors: {},
+      });
+      return;
+    }
+
+    if (!idToken) {
+      setState({
+        success: false,
+        message: "Authentication token missing. Please log in again.",
+        errors: {},
+      });
+      return;
+    }
+
+    formData.append("idToken", idToken);
 
     startTransition(async () => {
       try {
@@ -107,7 +140,7 @@ export default function RunClubRegistrationForm() {
             formRef.current.reset();
             setFilePreview(null);
             setFileError(null);
-            handleTimeChange({ hour: '', minute: '' });
+            handleTimeChange({ hour: "", minute: "" });
             if (fileInputRef.current) {
               fileInputRef.current.value = "";
             }
@@ -195,7 +228,9 @@ export default function RunClubRegistrationForm() {
 
       <div className={`${styles.rcForm__wrapper} fp-col`}>
         <div className={`${styles.rcForm__block} fp-col`}>
-          <div className={`${styles.rcForm__step} h4 fp`}><span className={styles.icon}>1 of 5</span>Name & Logo</div>
+          <div className={`${styles.rcForm__step} h4 fp`}>
+            <span className={styles.icon}>1 of 5</span>Name & Logo
+          </div>
           <section className={`${styles.rcForm__section} bradius-m fp-col`}>
             <div className={`inputRow fp-col`}>
               <label htmlFor="name" className={`rcForm__label h5`}>
@@ -218,16 +253,14 @@ export default function RunClubRegistrationForm() {
             </div>
 
             <label htmlFor="logo" className={`rcForm__label h5`}>
-              Logo <span className={styles.small}>(JPG, PNG, WEBP, SVG,  max 5MB)</span>
+              Logo <span className={styles.small}>(JPG, PNG, WEBP, SVG, max 5MB)</span>
             </label>
             <div className={`inputRow inputRow__file fp-col`}>
-              <span className={`rcForm__label h5`}>
-                Drop your file here or...
-              </span>
+              <span className={`rcForm__label h5`}>Drop your file here or...</span>
               <div className={`rcForm__uploadBtn btn_main`}>
                 Select file
                 <div className={`icon fp`}>
-                  <LucideUpload size={16} strokeWidth={2} aria-hidden="true" focusable="false"/>
+                  <LucideUpload size={16} strokeWidth={2} aria-hidden="true" focusable="false" />
                 </div>
               </div>
               <input
@@ -261,80 +294,81 @@ export default function RunClubRegistrationForm() {
         </div>
 
         <div className={`${styles.rcForm__block} fp-col`}>
-          <div className={`${styles.rcForm__step} h4 fp`}><span className={styles.icon}>2 of 5</span>Location details</div>
-            <section className={`${styles.rcForm__section} bradius-m fp-col`}>
-              <div className={`inputRow fp-col`}>
-                <label htmlFor="city" className={`rcForm__label h5`}>
-                  City <span className="rcForm__required">*</span>
-                </label>
-                <input
-                  id="city"
-                  name="city"
-                  type="text"
-                  placeholder="E.g. Tallinn"
-                  required
-                  className={`rcForm__input h5`}
-                  maxLength={256}
-                  aria-invalid={!!(state && !state.success && state.errors?.city)}
-                />
-                {state && !state.success && state.errors?.city && (
-                  <p id="city-error" className="rcForm__hint" role="alert">
-                    {state.errors.city[0]}
-                  </p>
-                )}
-              </div>
+          <div className={`${styles.rcForm__step} h4 fp`}>
+            <span className={styles.icon}>2 of 5</span>Location details
+          </div>
+          <section className={`${styles.rcForm__section} bradius-m fp-col`}>
+            <div className={`inputRow fp-col`}>
+              <label htmlFor="city" className={`rcForm__label h5`}>
+                City <span className="rcForm__required">*</span>
+              </label>
+              <input
+                id="city"
+                name="city"
+                type="text"
+                placeholder="E.g. Tallinn"
+                required
+                className={`rcForm__input h5`}
+                maxLength={256}
+                aria-invalid={!!(state && !state.success && state.errors?.city)}
+              />
+              {state && !state.success && state.errors?.city && (
+                <p id="city-error" className="rcForm__hint" role="alert">
+                  {state.errors.city[0]}
+                </p>
+              )}
+            </div>
 
-              <div className={`inputRow fp-col`}>
-                <label htmlFor="area" className={`rcForm__label h5`}>
-                  Where do you usually gather and start your runs? <span className="rcForm__required">*</span>
-                </label>
-                <input
-                  id="area"
-                  name="area"
-                  type="text"
-                  placeholder="E.g. Rotermanni kvartal"
-                  required
-                  className={`rcForm__input h5`}
-                  maxLength={256}
-                  aria-invalid={!!(state && !state.success && state.errors?.area)}
-                />
-                {state && !state.success && state.errors?.area && (
-                  <p id="area-error" className="rcForm__hint" role="alert">
-                    {state.errors.area[0]}
-                  </p>
-                )}
-              </div>
+            <div className={`inputRow fp-col`}>
+              <label htmlFor="area" className={`rcForm__label h5`}>
+                Where do you usually gather and start your runs? <span className="rcForm__required">*</span>
+              </label>
+              <input
+                id="area"
+                name="area"
+                type="text"
+                placeholder="E.g. Rotermanni kvartal"
+                required
+                className={`rcForm__input h5`}
+                maxLength={256}
+                aria-invalid={!!(state && !state.success && state.errors?.area)}
+              />
+              {state && !state.success && state.errors?.area && (
+                <p id="area-error" className="rcForm__hint" role="alert">
+                  {state.errors.area[0]}
+                </p>
+              )}
+            </div>
 
-              <div className={`inputRow fp-col`}>
-                <label htmlFor="address" className={`rcForm__label h5`}>
-                  Starting location address (if applicable)
-                </label>
-                <input
-                  id="address"
-                  name="address"
-                  type="text"
-                  placeholder="E.g. Rotermanni 2, Tallinn"
-                  className={`rcForm__input h5`}
-                  maxLength={256}
-                />
-              </div>
-            </section>
+            <div className={`inputRow fp-col`}>
+              <label htmlFor="address" className={`rcForm__label h5`}>
+                Starting location address (if applicable)
+              </label>
+              <input
+                id="address"
+                name="address"
+                type="text"
+                placeholder="E.g. Rotermanni 2, Tallinn"
+                className={`rcForm__input h5`}
+                maxLength={256}
+              />
+            </div>
+          </section>
         </div>
 
         <div className={`${styles.rcForm__block} fp-col`}>
-          <div className={`${styles.rcForm__step} h4 fp`}><span className={styles.icon}>3 of 5</span>Information about runs & schedule</div>
+          <div className={`${styles.rcForm__step} h4 fp`}>
+            <span className={styles.icon}>3 of 5</span>Information about runs & schedule
+          </div>
           <section className={`${styles.rcForm__section} bradius-m fp-col`}>
             <div className={`inputRow fp-col`}>
-              <span className={`rcForm__label h5`}>What days do you usually run on? <span className="rcForm__required">*</span></span>
+              <span className={`rcForm__label h5`}>
+                What days do you usually run on? <span className="rcForm__required">*</span>
+              </span>
               <div className={`rcForm__checkboxGroup fp-col`} role="group" aria-labelledby="runDays-label">
                 {["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"].map((day) => (
                   <label key={day} className={`rcForm__checkboxLabel txt-body`}>
-                    <input
-                      type="checkbox"
-                      name="runDays"
-                      value={day}
-                      className="rcForm__checkbox"
-                    />
+                    <input type="checkbox" name="runDays" value={day} className="rcForm__checkbox" />
                     <span>{day}</span>
                   </label>
                 ))}
@@ -385,32 +419,34 @@ export default function RunClubRegistrationForm() {
               <label htmlFor="startTime" className={`rcForm__label h5`}>
                 At what time do the runs usually start?
               </label>
-              <TimePicker 
+              <TimePicker
                 id="startTime"
                 label=""
                 value={time}
                 onChange={handleTimeChange}
                 is24Hour
                 classes={{
-                container: styles.rcForm__timePicker,
-                timePicker: styles.pickerInput,
-                timeInput: styles.number,
-                timeTrigger: styles.trigger,
-                label: styles.rcForm__label,
-                popoverContent: styles.rcForm__pickerPopover,
-                popoverColumns: styles.rcForm__popoverColumns,
-                popoverColumn: styles.rcForm__popoverColumn,
-                popoverColumnTitle: styles.rcForm__popoverColTitle,
-                popoverItem: styles.rcForm__popoverItem,
-                popoverActiveItem: styles.popoverActiveItem,
-              }}
+                  container: styles.rcForm__timePicker,
+                  timePicker: styles.pickerInput,
+                  timeInput: styles.number,
+                  timeTrigger: styles.trigger,
+                  label: styles.rcForm__label,
+                  popoverContent: styles.rcForm__pickerPopover,
+                  popoverColumns: styles.rcForm__popoverColumns,
+                  popoverColumn: styles.rcForm__popoverColumn,
+                  popoverColumnTitle: styles.rcForm__popoverColTitle,
+                  popoverItem: styles.rcForm__popoverItem,
+                  popoverActiveItem: styles.popoverActiveItem,
+                }}
               />
             </div>
           </section>
         </div>
 
         <div className={`${styles.rcForm__block} fp-col`}>
-          <div className={`${styles.rcForm__step} h4 fp`}><span className={styles.icon}>4 of 5</span>Introduction</div>
+          <div className={`${styles.rcForm__step} h4 fp`}>
+            <span className={styles.icon}>4 of 5</span>Introduction
+          </div>
           <section className={`${styles.rcForm__section} bradius-m fp-col`}>
             <div className={`textareaRow fp-col`}>
               <label htmlFor="description" className={`rcForm__label h5`}>
@@ -436,7 +472,9 @@ export default function RunClubRegistrationForm() {
         </div>
 
         <div className={`${styles.rcForm__block} fp-col`}>
-          <div className={`${styles.rcForm__step} h4 fp`}><span className={styles.icon}>5 of 5</span>Contact & social media links</div>
+          <div className={`${styles.rcForm__step} h4 fp`}>
+            <span className={styles.icon}>5 of 5</span>Contact & social media links
+          </div>
           <section className={`${styles.rcForm__section} bradius-m fp-col`}>
             <div className={`inputRow fp-col`}>
               <label htmlFor="instagram" className={`rcForm__label h5`}>

@@ -10,6 +10,7 @@ import getOptionalField from "@/app/lib/utils/getOptionalField";
 import normalizeToSlug from "@/app/lib/utils/generateSlugFromName";
 import sanitizeSVGs from "@/app/lib/utils/sanitizeSvgs";
 import { Timestamp } from "firebase-admin/firestore";
+import { getAuth } from "firebase-admin/auth";
 
 type ActionResult =
   | { success: true; message: string }
@@ -19,6 +20,28 @@ export async function createRunClub(
   prevState: ActionResult | undefined,
   formData: FormData
 ): Promise<ActionResult> {
+
+  // Get ID token from formData
+  const idToken = formData.get("idToken") as string | undefined;
+  if (!idToken) {
+    return {
+      success: false,
+      message: "You must be logged in to submit a run club.",
+    };
+  }
+
+    // 2. Verify the token and get the UID
+  let creatorUid: string;
+  try {
+    const decodedToken = await getAuth(adminApp).verifyIdToken(idToken);
+    creatorUid = decodedToken.uid;
+  } catch (err) {
+    return {
+      success: false,
+      message: "Invalid or expired authentication token.",
+    };
+  }
+
   try {
     const logoFile = formData.get("logo") as File | null;
     let logoUrl = "";
@@ -117,6 +140,7 @@ export async function createRunClub(
       approvedForPublication: boolean().default(false).parse(false),
       createdAt: Timestamp.now(),
       updatedAt: Timestamp.now(),
+      creator_id: creatorUid,
     };
 
     if (logoUrl) {

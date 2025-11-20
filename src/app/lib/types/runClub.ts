@@ -18,6 +18,7 @@
   website?: string;
   createdAt?: string;
   updatedAt?: string;
+  creator_id?: string;
 }
 
 export type RunClubs = RunClub[];
