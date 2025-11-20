@@ -2,15 +2,29 @@
 
 import React from 'react'
 import { useEffect, useState } from 'react'
+import { useRouter } from "next/navigation";
+// Firebase
+import { onAuthStateChanged } from "firebase/auth";
+import { auth } from "@/app/lib/firebase";
 // Next.js
 import Image from 'next/image';
 import Link from 'next/link';
 // Assets
 import LogoImg from '@/app/assets/runclubs__logo.svg';
-import { LucideMoveLeft } from 'lucide-react';
+import { LucideLogOut, LucideMoveLeft } from 'lucide-react';
+
+interface FirebaseUser {
+    displayName: string;
+    email: string;
+    emailVerified: boolean;
+    phoneNumber: string | null;
+    photoURL: string | null;
+}
+
 
 function NavBar() {
     const [isScrolled, setScrolled] = useState(false);
+    const [user, setUser] = useState<FirebaseUser | null>(null);
 
     const handleScroll = () => {
     if(window.pageYOffset > 200) {
@@ -27,6 +41,29 @@ function NavBar() {
             window.removeEventListener('scroll', handleScroll);
         };
     }, []);
+
+
+  const router = useRouter();
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (!user) {
+        router.replace("/login");
+      } else {
+        setUser(user as FirebaseUser);
+      }
+    });
+    return () => unsubscribe();
+  }, [router]);
+
+  const handleLogout = async () => {
+    try {
+      await auth.signOut();
+      router.push("/login");
+    } catch (error) {
+      console.error("Error signing out:", error);
+    }
+  };
 
   return (
       <nav className={`siteNav fp container ${isScrolled ? 'siteNav--scrolled' : ''}`}>
@@ -47,6 +84,9 @@ function NavBar() {
             priority 
             /> 
         </Link>
+        {user &&
+          <button className="logout__btn btn_small" onClick={handleLogout}><LucideLogOut size={16} />Log out</button>
+        }
       </nav>
   )
 }

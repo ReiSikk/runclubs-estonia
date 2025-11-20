@@ -11,7 +11,7 @@ interface SignUpFormProps {
   showToast: (msg: string, type?: "success" | "error") => void;
   showCountdownToast: (msg: string, seconds: number, onComplete?: () => void) => void;
   setActiveTab: (tab: string) => void;
-  mapAuthError: (error: any) => string;
+  mapAuthError: (error: unknown) => string;
 }
 
 export default function SignUpForm({ showToast, showCountdownToast, setActiveTab, mapAuthError }: SignUpFormProps) {
@@ -20,7 +20,6 @@ export default function SignUpForm({ showToast, showCountdownToast, setActiveTab
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
-  //User creation logic
   const signUpNewUser = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
@@ -29,7 +28,6 @@ export default function SignUpForm({ showToast, showCountdownToast, setActiveTab
         showToast("Passwords do not match", "error");
         return;
       }
-
       // Create user with Firebase Auth
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
 
@@ -43,7 +41,7 @@ export default function SignUpForm({ showToast, showCountdownToast, setActiveTab
         setActiveTab("tab1");
       });
 
-    } catch (error: any) {
+    } catch (error: unknown) {
       const msg = mapAuthError(error);
       showToast(msg, "error");
     }
@@ -72,7 +70,6 @@ export default function SignUpForm({ showToast, showCountdownToast, setActiveTab
           <Form.Message match="patternMismatch" className="input__message">
             Please enter a valid name
           </Form.Message>
-          {/* {error && <p className="input__error">{`${error.message}!`}</p>} */}
         </Form.Field>
         <Form.Field name="email" className="inputRow">
           <Form.Label className="rcForm__label">Email</Form.Label>
@@ -129,12 +126,11 @@ export default function SignUpForm({ showToast, showCountdownToast, setActiveTab
             Please repeat your password
           </Form.Message>
         </Form.Field>
-        {/* {error && <p className="input__error">{`${error.props.title}!`}</p>} */}
         <Form.Submit className="btn_main">Sign Up</Form.Submit>
       </Form.Root>
       <p className={styles.login__text}>
         Already have an account?{" "}
-        <Link href="/login" className={styles.login__link}>
+        <Link href="/login" className={`${styles.login__link} underline`}>
           Sign In
         </Link>{" "}
       </p>

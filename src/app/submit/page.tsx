@@ -6,6 +6,7 @@ import styles from './page.module.css'
 import NavBar from '../components/Navbar/NavBar'
 
 function SubmitRunClubPage() {
+
   return (
     <div className={`${styles.page} page-submit-runclub container`} id='page-top'>
         <NavBar />

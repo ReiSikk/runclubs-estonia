@@ -1,0 +1,41 @@
+.dashboard {
+  padding-top: 16px;
+  border-radius: 12px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.07);
+  height: calc(100svh - 16px);
+  display: flex;
+  
+}
+.dashboard__side {
+    border-right: 1px solid  var(--gray);
+    padding-inline: 1.6rem 2.4rem;
+    padding-top: 1.2rem;
+    width: 210px;
+    height: 100%;
+
+    .info {
+    margin-top: 3.2rem;
+}
+    .info p {
+    margin: 0.5rem 0;
+    }
+}
+.dashboard__main {
+    padding-inline: clamp(1.6rem, 3vw, 2.4rem);
+}
+.dashboard__profile {
+    align-items: center;
+    gap: 0.8rem;
+}
+.avatar img, .placeholderAvatar {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  object-fit: cover;
+  background: #eee;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.5rem;
+  color: #888;
+}

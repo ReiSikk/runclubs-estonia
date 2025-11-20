@@ -42,6 +42,21 @@
   margin-top: 1.2rem;
   text-align: center;
 }
+.login__link {
+  cursor: pointer;
+  font-weight: 500;;
+}
+.loginForm__actions {
+  align-items: center;
+  gap: 1.6rem;
+  margin-top: 0.9rem;
+
+  button {
+    width: 100%;
+    max-width: 400px;
+    max-height: 40px;
+  }
+}
 
 /*
    Tab switcher

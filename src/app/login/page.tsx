@@ -1,36 +1,49 @@
 "use client";
 
-import { useRouter, useSearchParams } from "next/navigation";
-import { useState, useEffect, useRef, use } from "react";
+import { useRouter } from "next/navigation";
+import { useState, useEffect, useRef, Suspense, use } from "react";
 import * as Tabs from "@radix-ui/react-tabs";
 import LoginWithUsername from "@/app/components/Page - Login/LoginForm";
 import SignUpForm from "@/app/components/Page - Login/SignUpForm";
 import styles from "./page.module.css";
 import FormToast from "../components/Toast/Toast";
+// Firebase
+import { onAuthStateChanged } from "firebase/auth";
+import { auth } from "@/app/lib/firebase";
 
-function mapAuthError(error: any): string {
-  console.log("Mapping auth error:", error);
+function mapAuthError(error: unknown): string {
   if (!error) return "An unknown error occurred.";
-  if (error.code === "auth/email-already-in-use" || error.message === "EMAIL_EXISTS") {
-    return "This email is already registered.";
-  } else if (error.code === "auth/invalid-email") {
-    return "Invalid email address.";
-  } else if (error.code === "auth/weak-password") {
-    return "Password is too weak.";
-  } else if (error.code === "auth/invalid-credential") {
-    return "Invalid email or password provided. Please try again.";
+  if (
+    typeof error === "object" &&
+    error !== null &&
+    "code" in error &&
+    typeof error.code === "string"
+  ) {
+    if (error.code === "auth/email-already-in-use") {
+      return "This email is already registered.";
+    } else if (error.code === "auth/invalid-email") {
+      return "Invalid email address.";
+    } else if (error.code === "auth/weak-password") {
+      return "Password is too weak.";
+    } else if (error.code === "auth/invalid-credential") {
+      return "Invalid email or password provided. Please try again.";
+    }
   }
-  return error.message || "Sign up failed";
+  if (typeof error === "object" && error !== null && "message" in error && typeof error.message === "string") {
+    return error.message;
+  }
+  return "Sign up failed";
 }
 
-export default function LoginPage({ params }: { params: { id: string } }) {
+export default function LoginPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ q?: string }>
+}) {
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const isLoggedIn = false; //TODO:: Replace with actual auth state!!!
-
+  const params = use(searchParams)
   // Form tabs state
   const [activeTab, setActiveTab] = useState("tab1");
-  const [loginOption, setLoginOption] = useState("userAndPass");
 
   // Toast feedback handlers
   const [toastOpen, setToastOpen] = useState(false);
@@ -41,7 +54,7 @@ export default function LoginPage({ params }: { params: { id: string } }) {
 
   // Update activeTab based on searchParams
   useEffect(() => {
-    const id = searchParams.get("id");
+    const id = params.q;
     if (id === "signup") {
       setActiveTab("tab2");
     } else {
@@ -87,18 +100,20 @@ export default function LoginPage({ params }: { params: { id: string } }) {
       ? `${toastMessage} Redirecting in (${countdown})...`
       : toastMessage;
 
-  const updateLoginOption = (option: string) => {
-    setLoginOption(option);
-  };
-
-  // if user is logged in redirect to home page
-  useEffect(() => {
-    if (isLoggedIn) {
-      router.push("/");
-    }
-  }, [router, isLoggedIn]);
+  // Redirect if already logged in
+   useEffect(() => {
+     const unsubscribe = onAuthStateChanged(auth, (user) => {
+       if (!user) {
+         router.replace("/login");
+       }
+     });
+     return () => unsubscribe();
+   }, [router]);
 
   return (
+    <Suspense fallback={<main className={`${styles.loginPage__main} container`}>
+      <div className="loading">Loading...</div>
+    </main>}>
     <main className={`${styles.loginPage__main} container`}>
         <FormToast
           open={toastOpen}
@@ -121,7 +136,7 @@ export default function LoginPage({ params }: { params: { id: string } }) {
             </Tabs.Trigger>
           </Tabs.List>
           <Tabs.Content className={styles.tabs__content} value="tab1">
-            {loginOption === "userAndPass" && <LoginWithUsername showToast={showToast} showCountdownToast={showCountdownToast} mapAuthError={mapAuthError}/>}
+            <LoginWithUsername showToast={showToast} showCountdownToast={showCountdownToast} mapAuthError={mapAuthError} setActiveTab={setActiveTab}/>
           </Tabs.Content>
           <Tabs.Content className={styles.tabs__content} value="tab2">
             <SignUpForm 
@@ -134,5 +149,6 @@ export default function LoginPage({ params }: { params: { id: string } }) {
         </Tabs.Root>
       </div>
     </main>
+    </Suspense>
   );
 }
