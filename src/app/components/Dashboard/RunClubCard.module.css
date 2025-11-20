@@ -1,0 +1,64 @@
+.clubCard {
+  background: #18191b;
+  border-radius: 10px;
+  box-shadow: 0 1px 8px rgba(0,0,0,0.10);
+  padding: 1.5rem 1.5rem 1.2rem 1.5rem;
+  color: var(--cream);
+  transition: box-shadow 0.18s, border 0.18s;
+  border: 1px solid #232325;
+  cursor: pointer;
+  max-width: 370px;
+}
+
+.clubCard:hover {
+  box-shadow: 0 4px 24px rgba(0,0,0,0.18);
+  border-color: #2a2a2e;
+}
+
+.clubCard__content {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+
+.clubCard__header {
+  margin-bottom: 0.5rem;
+}
+
+.clubCard__title {
+  margin: 0 0 0.25rem 0;
+  color: var(--white);
+  letter-spacing: -0.01em;
+}
+
+.clubCard__description {
+  color: var(--gray);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.clubCard__meta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  margin-top: 0.5rem;
+}
+
+.clubCard__location,
+.clubCard__members,
+.clubCard__nextRun {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  font-size: 1.4rem;
+  color: #d1d1d6;
+}
+
+.clubCard__icon {
+  width: 16px;
+  height: 16px;
+  color: var(--gray);
+  flex-shrink: 0;
+  margin-right: 0.2rem;
+}

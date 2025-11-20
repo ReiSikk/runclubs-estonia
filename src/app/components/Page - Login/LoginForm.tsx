@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react'
 import styles from '@/app/login/page.module.css'
-import Link from 'next/link'
 import { signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, onAuthStateChanged } from 'firebase/auth';
 import { auth } from '@/app/lib/firebase';
 import { useRouter } from 'next/navigation';
@@ -24,7 +23,6 @@ export default function LoginWithUsername({ showToast, showCountdownToast, mapAu
 
   useEffect(() => {
   const unsubscribe = onAuthStateChanged(auth, (user) => {
-    console.log("Auth state changed. User:", user);
     if (user) {
       router.push("/dashboard");
     }

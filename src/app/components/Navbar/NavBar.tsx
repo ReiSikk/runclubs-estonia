@@ -12,19 +12,12 @@ import Link from 'next/link';
 // Assets
 import LogoImg from '@/app/assets/runclubs__logo.svg';
 import { LucideLogOut, LucideMoveLeft } from 'lucide-react';
-
-interface FirebaseUser {
-    displayName: string;
-    email: string;
-    emailVerified: boolean;
-    phoneNumber: string | null;
-    photoURL: string | null;
-}
+import { User } from "firebase/auth";
 
 
 function NavBar() {
     const [isScrolled, setScrolled] = useState(false);
-    const [user, setUser] = useState<FirebaseUser | null>(null);
+    const [user, setUser] = useState<User | null>(null);
 
     const handleScroll = () => {
     if(window.pageYOffset > 200) {
@@ -50,7 +43,7 @@ function NavBar() {
       if (!user) {
         router.replace("/login");
       } else {
-        setUser(user as FirebaseUser);
+        setUser(user as User);
       }
     });
     return () => unsubscribe();
