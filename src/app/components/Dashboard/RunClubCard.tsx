@@ -1,10 +1,15 @@
-import { Calendar, MapPin, Users } from "lucide-react";
+import { Calendar, LucidePencil, MapPin, Users } from "lucide-react";
 import styles from "./RunClubCard.module.css";
 import { RunClub } from "@/app/lib/types/runClub";
+import { convertDaysToAbbs } from "@/app/lib/utils/convertDays";
 
 interface RunClubCardProps extends RunClub {}
 
-const RunClubCard = ({ id, name, description, city } : RunClubCardProps) => {
+const RunClubCard = ({ id, name, distance, city, area, runDays } : RunClubCardProps) => {
+
+  // Convert run days to abbreviated format
+  const daysList = convertDaysToAbbs(runDays);
+
   return (
     <div
       onClick={() => window.location.href = `/club/${id}`}
@@ -12,25 +17,25 @@ const RunClubCard = ({ id, name, description, city } : RunClubCardProps) => {
     >
       <div className={styles.clubCard__content}>
         <div className={styles.clubCard__header}>
-          <h3 className={`${styles.clubCard__title} h4`}>
-            {name}
-          </h3>
-          <p className={styles.clubCard__description}>
-            {description}
+          <div className={`${styles.clubCard__editIcon} fp`}>
+            <h3 className={`${styles.clubCard__title} h4`}>
+              {name}
+            </h3>
+            <div className={styles.icon}>
+              <LucidePencil size={20} />
+            </div>
+          </div>
+          <p className={`${styles.clubCard__description} txt-small`}>
+            {city}, {area} • {distance} km
           </p>
         </div>
 
-        <div className={styles.clubCard__meta}>
-          {city && <div className={styles.clubCard__location}>
-            <MapPin className={styles.clubCard__icon} />
-            <span>{city}</span>
-          </div>
-          }
-
-          {/* <div className={styles.clubCard__members}>
-            <Users className={styles.clubCard__icon} />
-            <span>{memberCount} members</span>
-          </div> */}
+        <div className={` ${styles.clubCard__days} fp`}>
+          {daysList.map((day) => (
+              <li key={day} className={`${styles.day} fp card-label--small`}>
+                  {day}
+              </li>
+          ))}
         </div>
       </div>
     </div>
