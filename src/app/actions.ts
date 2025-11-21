@@ -35,7 +35,7 @@ export async function createRunClub(
   try {
     const decodedToken = await getAuth(adminApp).verifyIdToken(idToken);
     creatorUid = decodedToken.uid;
-  } catch (err) {
+  } catch {
     return {
       success: false,
       message: "Invalid or expired authentication token.",

@@ -23,7 +23,7 @@
 .card_dashboard {
   padding: clamp(16px, 2vw, 20px);
   border-radius: 12px;
-  box-shadow: 0 1px 8px rgba(0,0,0,0.10);
+  box-shadow: 0 1px 8px rgba(0, 0, 0, 0.1);
   background: var(--cream);
   color: var(--dark);
 
@@ -46,9 +46,8 @@
     grid-template-columns: repeat(2, 1fr);
   }
   @media only screen and (min-width: 1025px) {
-    grid-template-columns: repeat(3, 1fr);  
+    grid-template-columns: repeat(3, 1fr);
   }
-
 }
 .dashboardStats__item {
   aspect-ratio: 3 / 2;
@@ -59,13 +58,13 @@
     justify-content: space-between;
     color: var(--dark);
 
-    h3, h4 {
+    h3,
+    h4 {
       font-weight: 500;
     }
   }
 }
 .dashboardStats__label {
-
 }
 .dashboardStats__initials {
   margin-block: 0.4rem 0.8rem;
@@ -76,7 +75,6 @@
   color: var(--cream);
   align-items: center;
   justify-content: center;
-
 }
 .nameMember {
   width: 100%;
@@ -87,7 +85,6 @@
   .name {
   }
   .since {
-
   }
 }
 
@@ -123,10 +120,6 @@
       }
     }
   }
-
-  ul {
-    margin-top: 2.4rem;
-  }
 }
 .titlecount {
   justify-content: space-between;
@@ -142,9 +135,13 @@
     align-content: center;
   }
 }
+.clubsNevents__list {
+  margin-top: 2.4rem;
+  gap: 1.6rem;
+  
+}
 .createEvent {
   justify-content: space-between;
-
 }
 .createEvent__title {
   h5 {
@@ -159,20 +156,54 @@
   &:hover {
     opacity: 0.9;
   }
-
 }
-
 
 /*
    Dashboard Events Tab View
    ========================================================================== */
 .dashboardEvents {
-
+  .main {
+    h6 {
+      margin-bottom: 0.8rem;
+    }
+  }
+  .list {
+  }
 }
 .dashboardEvents__header {
-
+  margin-bottom: clamp(3.2rem, 4vw, 4rem);
+  justify-content: space-between;
+  flex-wrap: nowrap;
 }
 .dashboardEvents__content {
+  .list {
+  }
+  .list__item {
+  }
+  .list__divider {
 
+    align-items: center;
+    gap: 1.2rem;
+    position: relative;
+    width: 100%;
+  }
+
+  .list__divider span {
+
+  }
+
+  .list__divider::after {
+    content: "";
+    flex: 1;
+    height: 2px;
+    background: var(--cream);
+    opacity: 0.3;
+    margin-left: 1.2rem;
+    display: block;
+    border-radius: 2px;
+    z-index: 0;
+  }
 }
-
+.dashboardEvents__btn {
+  gap: 0.8rem;
+}

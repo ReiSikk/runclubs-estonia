@@ -91,10 +91,6 @@ export default function RunClubRegistrationForm() {
 
     const formData = new FormData(event.currentTarget);
 
-    // Format time as HH:MM
-    const formattedTime =
-      time.hour && time.minute ? `${time.hour.padStart(2, "0")}:${time.minute.padStart(2, "0")}` : "";
-
     // Get current user id token
     const user = auth.currentUser;
     if (!user) {
@@ -109,7 +105,7 @@ export default function RunClubRegistrationForm() {
     let idToken: string | null = null;
     try {
       idToken = await user.getIdToken(true); // Force refresh to get latest token
-    } catch (error) {
+    } catch {
       setState({
         success: false,
         message: "Failed to get authentication token.",

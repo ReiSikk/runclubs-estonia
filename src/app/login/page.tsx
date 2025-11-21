@@ -60,7 +60,7 @@ export default function LoginPage({
     } else {
       setActiveTab("tab1");
     }
-  }, [searchParams]);
+  }, [params.q]);
 
   // Call this for a regular toast
   const showToast = (message: string, type: "success" | "error" = "success") => {

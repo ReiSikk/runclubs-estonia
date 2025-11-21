@@ -11,6 +11,7 @@ import * as Tabs from "@radix-ui/react-tabs";
 import Link from "next/link";
 import SideBar from "../components/Dashboard/SideBar";
 import { useRouter } from "next/navigation";
+import { LucidePlus } from "lucide-react";
 
 
 function DashboardPage() {
@@ -106,7 +107,7 @@ function DashboardPage() {
                           <h5 className="h3">Your run clubs</h5>
                           <div className="txt-label card-label--small">{clubs.length}</div>
                         </div>
-                        <ul className="fp-col">
+                        <ul className={`${styles.clubsNevents__list} fp-col`}>
                           {isLoading && <p>Loading your clubs...</p>}
                           {isError && <p>Error loading your clubs. Please try again later.</p>}
                           {clubs.length === 0 && !isLoading && <p>You are not organizing any clubs yet.</p>}
@@ -128,12 +129,22 @@ function DashboardPage() {
                 </Tabs.Content>
                 <Tabs.Content className="tabs__content" value="events">
                   <div className={styles.dashboardEvents}>
-                    <div className={styles.dashboardEvents__header}>
-                      <h6 className="h2">My events</h6>
-                      <p className="txt-body">You have no upcoming events. Create one to get started!</p>
+                    <div className={`${styles.dashboardEvents__header} fp`}>
+                      <div className={`${styles.main}`}>
+                        <h6 className="h2">My events</h6>
+                        <p className="txt-body">You have no upcoming events. Create one to get started!</p>
+                      </div>
+                      <Link href={'/submit'} className={`${styles.dashboardEvents__btn} btn_main accent`}><LucidePlus size={16} />Create Event</Link>
                     </div>
                     <div className={styles.dashboardEvents__content}>
-                      {/* Future implementation for listing user's events */}
+                      <ul className={styles.list}>
+                        <li className={styles.list__item}>
+                          <div className={`${styles.list__divider} fp`}>
+                            <span className="h4">Tue, Nov 25</span>
+                          </div>
+                          Event card component here
+                        </li>
+                      </ul>
                     </div>
                   </div>
                 </Tabs.Content>
