@@ -322,7 +322,6 @@ button {
   &:hover {
     border-color: var(--accent);
   }
-
 }
 
 .btn-txt-anim {
@@ -487,6 +486,128 @@ button {
   opacity: 0;
 }
 
+/*
+   Tab switcher
+   ========================================================================== */
+.tabs__root {
+  margin-inline: auto;
+  max-width: 580px;
+  width: 100%;
+
+  &.tabs__root--fullW {
+    max-width: 100%;
+  }
+}
+
+.tabs__list {
+  position: relative;
+  display: flex;
+  background: var(--dark);
+  border-radius: 200px;
+  border: 1px solid var(--dark);
+  flex-wrap: nowrap;
+  justify-content: space-between;
+  padding-inline: 3px;
+  padding-block: 3px;
+  margin-block: 0 clamp(1.6rem, 3vw, 2.4rem);
+  margin-inline: auto;
+
+  &:before {
+    content: "";
+    display: block;
+    position: absolute;
+    user-select: none;
+    white-space: pre;
+    width: 50%;
+    height: calc(100% - 6px);
+    background-color: var(--cream);
+    z-index: 0;
+    left: 3px;
+    right: 3px;
+    border-radius: 200px;
+    transition: transform 300ms ease-in-out;
+  }
+
+  &.tabs__list--dark {
+    background: var(--cream);
+  }
+
+  @media only screen and (min-width: 768px) and (max-width: 1024px), only screen and (min-width: 1025px) {
+    width: 100%;
+    max-width: 375px;
+    min-width: 200px;
+  }
+}
+.tabs__list.tabs__list--dark {
+  .tabs__trigger {
+    color: var(--dark);
+    font-family: var(--font-inter-tight);
+    font-size: 1.6rem;
+    font-weight: 600;
+
+    &[data-state="active"] {
+      transition-delay: 200ms;
+      color: var(--cream);
+    }
+  }
+  &:before {
+    background-color: var(--dark);
+  }
+}
+
+.tabs__list.slide-right {
+  &::before {
+    transform: translateX(calc(100% - 6px));
+  }
+}
+
+.tabs__trigger {
+  display: flex;
+  position: relative;
+  flex-wrap: nowrap;
+  align-items: center;
+  justify-content: center;
+  color: var(--cream);
+  background: none;
+  border-radius: 200px;
+  border: none;
+  z-index: 1;
+  gap: 8px;
+  width: calc(50% + 8px);
+  padding-block: 14px 12px;
+  padding-inline: 0 3px;
+  cursor: pointer;
+  transition: color 0.3s ease, background 0.3s ease;
+
+  &[data-state="active"] {
+    transition-delay: 200ms;
+    color: var(--dark);
+  }
+
+  @media only screen and (min-width: 768px) and (max-width: 1024px), only screen and (min-width: 1025px) {
+    justify-content: center;
+  }
+}
+
+.tabs__content {
+  opacity: 0;
+  transform: translateY(10px);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.tabs__content[data-state="active"] {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .tabs__trigger {
+    &[data-state="inactive"]:hover {
+    background: rgba(0, 0, 0, 0.2);
+    }
+  }
+}
+
 /* Container */
 .container {
   position: relative;
@@ -626,21 +747,18 @@ button {
   }
 }
 
-
 /*
    Common helpers
    ========================================================================== */
-   .bradius-s {
-    border-radius: var(--bradius-s);
-   }
-   .bradius-m {
-    border-radius: var(--bradius-m);
-   }
-    .bradius-l {
-      border-radius: var(--bradius-l);
-    }
-    
-
+.bradius-s {
+  border-radius: var(--bradius-s);
+}
+.bradius-m {
+  border-radius: var(--bradius-m);
+}
+.bradius-l {
+  border-radius: var(--bradius-l);
+}
 
 /*
    Site Nav Bar
@@ -683,12 +801,10 @@ button {
   box-shadow: 0 8px 10px -5px rgb(0 0 0 / 16%), 0 16px 24px 2px rgb(0 0 0 / 11%), 0 6px 30px 5px rgb(0 0 0 / 10%);
 }
 
-
-
 /*
    Form elements
    ========================================================================== */
-   /** *Form elements* */
+/** *Form elements* */
 
 .inputRow {
   width: 100%;
@@ -854,12 +970,10 @@ button {
   }
 }
 
-
-
 /*
    Google Buttons
    ========================================================================== */
-   .gsi-material-button {
+.gsi-material-button {
   -moz-user-select: none;
   -webkit-user-select: none;
   -ms-user-select: none;
@@ -873,7 +987,7 @@ button {
   box-sizing: border-box;
   color: #e3e3e3;
   cursor: pointer;
-  font-family: 'Roboto', arial, sans-serif;
+  font-family: "Roboto", arial, sans-serif;
   font-size: 14px;
   height: 40px;
   letter-spacing: 0.25px;
@@ -882,8 +996,8 @@ button {
   padding: 0 12px;
   position: relative;
   text-align: center;
-  -webkit-transition: background-color .218s, border-color .218s, box-shadow .218s;
-  transition: background-color .218s, border-color .218s, box-shadow .218s;
+  -webkit-transition: background-color 0.218s, border-color 0.218s, box-shadow 0.218s;
+  transition: background-color 0.218s, border-color 0.218s, box-shadow 0.218s;
   vertical-align: middle;
   white-space: nowrap;
   width: auto;
@@ -916,7 +1030,7 @@ button {
 .gsi-material-button .gsi-material-button-contents {
   -webkit-flex-grow: 1;
   flex-grow: 1;
-  font-family: 'Roboto', arial, sans-serif;
+  font-family: "Roboto", arial, sans-serif;
   font-weight: 500;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -924,8 +1038,8 @@ button {
 }
 
 .gsi-material-button .gsi-material-button-state {
-  -webkit-transition: opacity .218s;
-  transition: opacity .218s;
+  -webkit-transition: opacity 0.218s;
+  transition: opacity 0.218s;
   bottom: 0;
   left: 0;
   opacity: 0;
@@ -952,23 +1066,21 @@ button {
   opacity: 38%;
 }
 
-.gsi-material-button:not(:disabled):active .gsi-material-button-state, 
+.gsi-material-button:not(:disabled):active .gsi-material-button-state,
 .gsi-material-button:not(:disabled):focus .gsi-material-button-state {
   background-color: white;
   opacity: 12%;
 }
 
 .gsi-material-button:not(:disabled):hover {
-  -webkit-box-shadow: 0 1px 2px 0 rgba(60, 64, 67, .30), 0 1px 3px 1px rgba(60, 64, 67, .15);
-  box-shadow: 0 1px 2px 0 rgba(60, 64, 67, .30), 0 1px 3px 1px rgba(60, 64, 67, .15);
+  -webkit-box-shadow: 0 1px 2px 0 rgba(60, 64, 67, 0.3), 0 1px 3px 1px rgba(60, 64, 67, 0.15);
+  box-shadow: 0 1px 2px 0 rgba(60, 64, 67, 0.3), 0 1px 3px 1px rgba(60, 64, 67, 0.15);
 }
 
 .gsi-material-button:not(:disabled):hover .gsi-material-button-state {
   background-color: white;
   opacity: 8%;
 }
-
-
 
 @media (hover: hover) and (pointer: fine) {
   .inputRow__file:hover {

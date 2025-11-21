@@ -49,15 +49,17 @@ export default function ClubHeader({ club }: ClubHeaderProps) {
           />
         </div>
       ) : (
-        <Image
-          unoptimized
-          src="https://placehold.co/200x200/svg?text=No+image+found"
-          alt={`${club.name} logo`}
-          width={614}
-          height={416}
-          className={styles.pageHeader__image}
-          priority
-        />
+        <div className={styles.pageHeader__imgwrapper}>
+          <Image
+            unoptimized
+            src="https://placehold.co/200x200/svg?text=No+image+found"
+            alt={`${club.name} logo`}
+            width={614}
+            height={416}
+            className={styles.pageHeader__image}
+            priority
+          />
+        </div>
       )}
       <div className={`${styles.pageHeader__titledes} fp-col`}>
         <h1 className={styles.pageHeader__title}>

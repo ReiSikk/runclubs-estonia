@@ -123,22 +123,22 @@ export default function LoginPage({
           aria-live="polite"
         />
       <div className={`${styles.loginPage__wrapper} bradius-m`}>
-        <Tabs.Root className={styles.tabs__root} defaultValue="tab1" value={activeTab} onValueChange={setActiveTab}>
+        <Tabs.Root className="tabs__root" defaultValue="tab1" value={activeTab} onValueChange={setActiveTab}>
           <Tabs.List
-            className={`${styles.tabs__list} ${activeTab === "tab1" ? "slide-left" : `${styles.slide_right}`}`}
+            className={`tabs__list ${activeTab === "tab1" ? "slide-left" : "slide-right"}`}
             aria-label="Manage your account"
           >
-            <Tabs.Trigger className={styles.tabs__trigger} value="tab1">
+            <Tabs.Trigger className="tabs__trigger" value="tab1">
               Sign In
             </Tabs.Trigger>
-            <Tabs.Trigger className={styles.tabs__trigger} value="tab2">
+            <Tabs.Trigger className="tabs__trigger" value="tab2">
               Sign Up
             </Tabs.Trigger>
           </Tabs.List>
-          <Tabs.Content className={styles.tabs__content} value="tab1">
+          <Tabs.Content className="tabs__content" value="tab1">
             <LoginWithUsername showToast={showToast} showCountdownToast={showCountdownToast} mapAuthError={mapAuthError} setActiveTab={setActiveTab}/>
           </Tabs.Content>
-          <Tabs.Content className={styles.tabs__content} value="tab2">
+          <Tabs.Content className="tabs__content" value="tab2">
             <SignUpForm 
               showToast={showToast}
               showCountdownToast={showCountdownToast}

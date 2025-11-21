@@ -6,6 +6,9 @@
   margin-top: clamp(32px, 4vw, 40px);
   display: block;
   width: 100%;
+  max-width: 1440px;
+  margin-inline: auto;
+  min-height: calc(75svh);
 }
 .card_dashboard {
   padding: 20px;
@@ -26,7 +29,7 @@
 .page__header {
   width: 100%;
   margin-top: clamp(3.2rem, 4vw, 4rem);
-  margin-left: clamp(1.2rem, 2vw, 1.6rem);
+  margin-inline: clamp(1.2rem, 2vw, 1.6rem);
   h1 {
     margin-bottom: 1.2rem;
   }
@@ -156,3 +159,18 @@
   }
 
 }
+
+
+/*
+   Dashboard Events Tab View
+   ========================================================================== */
+.dashboardEvents {
+
+}
+.dashboardEvents__header {
+
+}
+.dashboardEvents__content {
+
+}
+

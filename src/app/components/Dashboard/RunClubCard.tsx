@@ -1,18 +1,18 @@
-import { Calendar, LucidePencil, MapPin, Users } from "lucide-react";
+import { LucidePencil } from "lucide-react";
 import styles from "./RunClubCard.module.css";
 import { RunClub } from "@/app/lib/types/runClub";
 import { convertDaysToAbbs } from "@/app/lib/utils/convertDays";
+import Link from "next/link";
 
 interface RunClubCardProps extends RunClub {}
 
-const RunClubCard = ({ id, name, distance, city, area, runDays } : RunClubCardProps) => {
-
+const RunClubCard = ({ id, name, distance, city, area, runDays, slug } : RunClubCardProps) => {
   // Convert run days to abbreviated format
   const daysList = convertDaysToAbbs(runDays);
 
   return (
-    <div
-      onClick={() => window.location.href = `/club/${id}`}
+    <Link
+      href={`/runclubs/${slug}`}
       className={`${styles.clubCard} group cursor-pointer`}
     >
       <div className={styles.clubCard__content}>
@@ -38,7 +38,7 @@ const RunClubCard = ({ id, name, distance, city, area, runDays } : RunClubCardPr
           ))}
         </div>
       </div>
-    </div>
+    </Link>
   );
 };
 
