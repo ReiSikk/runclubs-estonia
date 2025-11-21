@@ -5,7 +5,7 @@
 
   &.no_clubs {
     .todayClubsList__item {
-      background: #1a1a1a;
+      background: var(--dark-gray);
       color: var(--white);
       text-align: center;
       display: flex;
