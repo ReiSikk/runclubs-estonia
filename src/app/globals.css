@@ -1112,3 +1112,12 @@ button {
     opacity: 0.8;
   }
 }
+
+/* Page loading state */
+.page-submit-runclub.loading {
+  pointer-events: none;
+  height: 100dvh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

@@ -1,15 +1,11 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import { useState, useEffect, useRef, Suspense, use } from "react";
 import * as Tabs from "@radix-ui/react-tabs";
 import LoginWithUsername from "@/app/components/Page - Login/LoginForm";
 import SignUpForm from "@/app/components/Page - Login/SignUpForm";
 import styles from "./page.module.css";
 import FormToast from "../components/Toast/Toast";
-// Firebase
-import { onAuthStateChanged } from "firebase/auth";
-import { auth } from "@/app/lib/firebase";
 
 function mapAuthError(error: unknown): string {
   if (!error) return "An unknown error occurred.";
@@ -35,12 +31,7 @@ function mapAuthError(error: unknown): string {
   return "Sign up failed";
 }
 
-export default function LoginPage({
-  searchParams,
-}: {
-  searchParams: Promise<{ q?: string }>
-}) {
-  const router = useRouter();
+export default function LoginPage({searchParams}: {searchParams: Promise<{ q?: string }>}) {
   const params = use(searchParams)
   // Form tabs state
   const [activeTab, setActiveTab] = useState("tab1");
@@ -99,16 +90,6 @@ export default function LoginPage({
     toastType === "success" && countdown !== null && countdown > 0
       ? `${toastMessage} Redirecting in (${countdown})...`
       : toastMessage;
-
-  // Redirect if already logged in
-   useEffect(() => {
-     const unsubscribe = onAuthStateChanged(auth, (user) => {
-       if (!user) {
-         router.replace("/login");
-       }
-     });
-     return () => unsubscribe();
-   }, [router]);
 
   return (
     <Suspense fallback={<main className={`${styles.loginPage__main} container`}>

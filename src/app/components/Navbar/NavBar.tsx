@@ -3,8 +3,6 @@
 import React from 'react'
 import { useEffect, useState } from 'react'
 import { useRouter } from "next/navigation";
-// Firebase
-import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "@/app/lib/firebase";
 // Next.js
 import Image from 'next/image';
@@ -12,12 +10,13 @@ import Link from 'next/link';
 // Assets
 import LogoImg from '@/app/assets/runclubs__logo.svg';
 import { LucideLogOut, LucideMoveLeft } from 'lucide-react';
-import { User } from "firebase/auth";
+import { useAuth } from '@/app/providers/AuthProvider';
 
 
 function NavBar() {
+    const router = useRouter();
     const [isScrolled, setScrolled] = useState(false);
-    const [user, setUser] = useState<User | null>(null);
+    const { user } = useAuth();
 
     const handleScroll = () => {
     if(window.pageYOffset > 200) {
@@ -34,20 +33,6 @@ function NavBar() {
             window.removeEventListener('scroll', handleScroll);
         };
     }, []);
-
-
-  const router = useRouter();
-
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (!user) {
-        router.replace("/login");
-      } else {
-        setUser(user as User);
-      }
-    });
-    return () => unsubscribe();
-  }, [router]);
 
   const handleLogout = async () => {
     try {

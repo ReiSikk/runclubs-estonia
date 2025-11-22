@@ -1,8 +1,7 @@
 "use client";
 
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useCallback } from "react";
 import styles from "./page.module.css";
-import { onAuthStateChanged, User } from "firebase/auth";
 import { auth } from "@/app/lib/firebase";
 import RunClubCard from "../components/Dashboard/RunClubCard";
 import getUserRunClubs from "../lib/hooks/useMyRunClubs";
@@ -12,34 +11,32 @@ import Link from "next/link";
 import SideBar from "../components/Dashboard/SideBar";
 import { useRouter } from "next/navigation";
 import { LucidePlus } from "lucide-react";
+import { useAuth } from "../providers/AuthProvider";
 
 
 function DashboardPage() {
-  const [user, setUser] = useState<User | null>(null);
   const [activeTab, setActiveTab] = useState("overview");
   const router = useRouter();
-
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-      setUser(currentUser as User);
-    });
-    return () => unsubscribe();
-  }, []);
+  const { user, loading } = useAuth();
 
   // Log out button handler
-     const handleLogOut = useCallback(async () => {
-        await auth.signOut();
-        router.replace("/login");
-    }, [router]);
+  const handleLogOut = useCallback(async () => {
+    await auth.signOut();
+    router.replace("/login");
+  }, [router]);
 
   // Find users clubs
   const { data: clubs = [], isLoading, isError } = getUserRunClubs(user?.uid);
 
-  if (!user) {
+  if (!user || loading) {
     return (
-      <main className={`${styles.dashboard} container`}>
-        <div>Loading user data...</div>
-      </main>
+    <div className={`${styles.page} container`}>
+      <div className={styles.page__main}>
+        <main className={`${styles.dashboard} ${styles.loading} container`}>
+          <h1 className="h4">Getting your data ready...</h1>
+        </main>
+      </div>
+    </div>
     );
   }
 

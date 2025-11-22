@@ -9,7 +9,6 @@ const RunClubCard = ({ name, distance, city, area, runDays, slug, approvedForPub
   const daysList = convertDaysToAbbs(runDays);
 
   // Determine status label class
-  console.log("RunClubCard status:", approvedForPublication);
   const statusClass = approvedForPublication ? styles.approved : styles.pending;
 
   return (

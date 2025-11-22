@@ -2,9 +2,10 @@
 
 import { useState, useEffect } from 'react'
 import styles from '@/app/login/page.module.css'
-import { signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, onAuthStateChanged } from 'firebase/auth';
+import { signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider } from 'firebase/auth';
 import { auth } from '@/app/lib/firebase';
 import { useRouter } from 'next/navigation';
+import { useAuth } from '@/app/providers/AuthProvider';
 
 interface LoginWithUsernameProps {
   showToast: (msg: string, type?: "success" | "error") => void;
@@ -20,15 +21,13 @@ export default function LoginWithUsername({ showToast, showCountdownToast, mapAu
     password: ''
   })
   const [error, setError] = useState<string | null>(null)
+  const { user, loading } = useAuth();
 
   useEffect(() => {
-  const unsubscribe = onAuthStateChanged(auth, (user) => {
-    if (user) {
-      router.push("/dashboard");
+    if (!loading && user) {
+      router.push('/dashboard');
     }
-  });
-  return () => unsubscribe();
-}, [router]);
+  }, [user, loading, router]);
 
 const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
   e.preventDefault();

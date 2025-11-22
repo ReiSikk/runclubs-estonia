@@ -19,6 +19,12 @@
   max-width: 1440px;
   margin-inline: auto;
   min-height: calc(75svh);
+
+  &.loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
 }
 .card_dashboard {
   padding: clamp(16px, 2vw, 20px);
@@ -81,11 +87,6 @@
   margin-top: auto;
   justify-content: space-between;
   align-items: end;
-
-  .name {
-  }
-  .since {
-  }
 }
 
 /*

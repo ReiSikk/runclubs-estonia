@@ -8,7 +8,7 @@ import { createRunClub } from "@/app/actions";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import TimePicker, { TimePickerValue } from "react-accessible-time-picker";
-import { auth } from "@/app/lib/firebase";
+import { useAuth } from "@/app/providers/AuthProvider";
 
 // Match server action's return type
 type FormState =
@@ -25,10 +25,11 @@ const initialState: FormState = undefined;
 
 export default function RunClubRegistrationForm() {
   const router = useRouter();
-  const [mounted, setMounted] = useState(false);
   const [state, setState] = useState<FormState>(initialState);
   const [isPending, startTransition] = useTransition();
   const [countdown, setCountdown] = useState<number | null>(null);
+  // Get current user from auth context
+  const { user } = useAuth();
 
   // Feedback toast state
   const [toastOpen, setToastOpen] = useState(false);
@@ -92,7 +93,6 @@ export default function RunClubRegistrationForm() {
     const formData = new FormData(event.currentTarget);
 
     // Get current user id token
-    const user = auth.currentUser;
     if (!user) {
       setState({
         success: false,
@@ -123,6 +123,7 @@ export default function RunClubRegistrationForm() {
       return;
     }
 
+    // Add idToken to form data
     formData.append("idToken", idToken);
 
     startTransition(async () => {
@@ -172,31 +173,30 @@ export default function RunClubRegistrationForm() {
   }, [countdown]);
 
   useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  useEffect(() => {
     if (state?.message) {
       setToastOpen(true);
     }
   }, [state?.message]);
 
-  if (!mounted) {
-    return (
-      <div
-        style={{
-          maxWidth: "42rem",
-          margin: "0 auto",
-          padding: "2rem 1rem",
-        }}
-      >
-        <h2 style={{ marginBottom: "1.5rem", textAlign: "center" }}>Submit a new running club to Run Clubs Estonia</h2>
-        <p style={{ color: "#64748b" }} className="txt-body">
-          Loading...
-        </p>
-      </div>
-    );
-  }
+  // if (!user || loading) {
+  //   return (
+  //     <div
+  //       style={{
+  //         maxWidth: "42rem",
+  //         margin: "0 auto",
+  //         paddingBlock: "8rem",
+  //         textAlign: "center",
+  //       }}
+  //     >
+  //        <div className={styles.rcForm__header}>
+  //           <h1 className={styles.rcForm__title}>Register a new running club</h1>
+  //           <p className="txt-body">
+  //             Getting the form ready...
+  //           </p>
+  //         </div>
+  //     </div>
+  //   );
+  // }
 
   return (
     <form onSubmit={handleSubmit} ref={formRef} className={`${styles.rcForm} fp-col`}>
