@@ -17,17 +17,36 @@
 .clubCard__content {
   display: flex;
   flex-direction: column;
-  gap: 1.2rem;
+}
+.clubCard__status {
+  width: fit-content;
+  padding-inline: 0.8rem;
+  padding-block: 0.4rem 0.2rem;
+  border-radius: 9999px;
+  font-size: 1.2rem;
+  font-weight: 500;
+  letter-spacing: 0.05rem;
+  box-shadow: 0 1px 6px rgba(0,0,0,0.15);
+  background: var(--cream);
+}
+
+.approved {
+  background: #007500;
+  color: var(--cream);
+  border: 1px solid #007500;
+}
+
+.pending {
+  background: #ffe066;
+  color: var(--dark);
+  border: 1px solid #ffe066;
 }
 
 .clubCard__header {
-  margin-bottom: 0.5rem;
-}
-.clubCard__editIcon {
+  margin-bottom: 1.2rem;
   justify-content: space-between;
   align-items: center;
-}
-.clubCard__editIcon {
+
   .icon {
     width: 32px;
     height: 32px;
@@ -48,19 +67,18 @@
 }
 
 .clubCard__title {
-  margin: 0 0 0.25rem 0;
   color: var(--dark);
-  letter-spacing: -0.01em;
 }
 
 .clubCard__description {
   color: var(--dark);
   opacity: 0.8;
+  margin-bottom: 1.2rem;
 }
 
 .clubCard__days {
   align-items: center;
-  gap: 8px;
+  gap: 0.4rem;
 
   .day {
     background: var(--dark);

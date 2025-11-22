@@ -11,7 +11,7 @@
   distance: string;
   distanceDescription?: string;
   runDays: string[];
-  status: "pending" | "approved" | "rejected";
+  approvedForPublication: boolean;
   facebook?: string;
   instagram?: string;
   strava?: string;

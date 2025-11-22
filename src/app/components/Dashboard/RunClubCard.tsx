@@ -4,30 +4,34 @@ import { RunClub } from "@/app/lib/types/runClub";
 import { convertDaysToAbbs } from "@/app/lib/utils/convertDays";
 import Link from "next/link";
 
-const RunClubCard = ({ name, distance, city, area, runDays, slug } : RunClub) => {
+const RunClubCard = ({ name, distance, city, area, runDays, slug, approvedForPublication } : RunClub) => {
   // Convert run days to abbreviated format
   const daysList = convertDaysToAbbs(runDays);
+
+  // Determine status label class
+  console.log("RunClubCard status:", approvedForPublication);
+  const statusClass = approvedForPublication ? styles.approved : styles.pending;
 
   return (
     <Link
       href={`/runclubs/${slug}`}
-      className={`${styles.clubCard} group cursor-pointer`}
+      className={`${styles.clubCard}`}
     >
+      <div className={`${styles.clubCard__header} fp`}>
+        <div className={`${styles.clubCard__status} ${statusClass} fp`}>
+          {approvedForPublication ? "Approved" : "Pending"}
+        </div>
+        <div className={styles.icon}>
+          <LucidePencil size={20} />
+        </div>
+      </div>
       <div className={styles.clubCard__content}>
-        <div className={styles.clubCard__header}>
-          <div className={`${styles.clubCard__editIcon} fp`}>
-            <h3 className={`${styles.clubCard__title} h4`}>
-              {name}
-            </h3>
-            <div className={styles.icon}>
-              <LucidePencil size={20} />
-            </div>
-          </div>
+          <h3 className={`${styles.clubCard__title} h4`}>
+            {name}
+          </h3>
           <p className={`${styles.clubCard__description} txt-small`}>
             {city}, {area} • {distance} km
           </p>
-        </div>
-
         <div className={` ${styles.clubCard__days} fp`}>
           {daysList.map((day) => (
               <li key={day} className={`${styles.day} fp card-label--small`}>
