@@ -7,7 +7,6 @@ export interface RunClubEvent {
   time: string;
   location: string;
   runclub_id?: string;
-  status?: "approved" | "in_review" | "draft";
 };
 
 export type RunClubEvents = RunClubEvent[];

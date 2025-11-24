@@ -13,12 +13,16 @@ import { useRouter } from "next/navigation";
 import { LucidePlus } from "lucide-react";
 import { useAuth } from "../providers/AuthProvider";
 import RunClubEvent from "./RunClubEvent";
+import EventCreationForm from "../components/Forms/EventCreationForm";
+import Modal from "../components/Modals/Modal";
 
 
 function DashboardPage() {
   const [activeTab, setActiveTab] = useState("overview");
   const router = useRouter();
   const { user, loading } = useAuth();
+  // State for create event modal
+  const [showCreateEvent, setShowCreateEvent] = useState(false);
 
   // Log out button handler
   const handleLogOut = useCallback(async () => {
@@ -120,7 +124,12 @@ function DashboardPage() {
                           <h5 className={`${styles.createEvent__title} h3`}>Create an event</h5>
                           <p className="txt-body">Schedule a new run for one of your clubs.</p>
                         </div>
-                        <Link href={'/submit'} className={`${styles.createEvent__btn} btn_main`}>Create Event</Link>
+                          <button
+                            className={`${styles.createEvent__btn} btn_main accent`}
+                            onClick={() => setShowCreateEvent(true)}
+                          >
+                            Create Event
+                          </button>
                       </div>
                     </div>
                   </div>
@@ -132,7 +141,7 @@ function DashboardPage() {
                         <h6 className="h2">My events</h6>
                         <p className="txt-body">You have no upcoming events. Create one to get started!</p>
                       </div>
-                      <Link href={'/submit'} className={`${styles.dashboardEvents__btn} btn_main accent`}><LucidePlus size={16} />Create Event</Link>
+                      <Link href={'/create-event'} className={`${styles.dashboardEvents__btn} btn_main accent`}><LucidePlus size={16} />Create Event</Link>
                     </div>
                     <div className={styles.dashboardEvents__content}>
                       <ul className={styles.list}>
@@ -145,9 +154,8 @@ function DashboardPage() {
                             title: "Evening Run at Kadriorg Park",
                             description: "Join us for a refreshing evening run through the beautiful Kadriorg Park. Suitable for all levels! Join us for a refreshing evening run through the beautiful Kadriorg Park. Suitable for all levels! Join us for a refreshing evening run through the beautiful Kadriorg Park.Suitable for all levels! Join us for a refreshing evening run through the beautiful Kadriorg Park. Suitable for all levels! Join us for a refreshing evening run through the beautiful Kadriorg Park. Suitable for all levels! Join us for a refreshing evening run through the beautiful Kadriorg Park. Suitable for all levels! Join us for a refreshing evening run through the beautiful Kadriorg Park. Suitable for all levels! Join us for a refreshing evening run through the beautiful Kadriorg Park. Suitable for all levels! Join us for a refreshing evening run through the beautiful Kadriorg Park. Suitable for all levels!",
                             date: "2025-11-25",
-                            time: "18:00",
+                            time: "18:00PM - 19:30PM",
                             location: "Kadriorg Park, Tallinn",
-                            status: "approved",
                           }} />
                         </li>
                       </ul>
@@ -157,6 +165,12 @@ function DashboardPage() {
             </Tabs.Root>
         </main>
       </div>
+         <Modal open={showCreateEvent} onClose={() => setShowCreateEvent(false)} ariaLabel="Create event">
+        <EventCreationForm
+          runclubs={clubs.map(c => ({ id: c.id, name: c.name }))}
+          onClose={() => setShowCreateEvent(false)}
+        />
+      </Modal>
     </div>
   );
 }

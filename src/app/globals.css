@@ -821,6 +821,24 @@ button {
 .inputRow {
   width: 100%;
 
+  &.col-2 {
+    flex: 1 1 auto;
+    gap: 1.6rem;
+    flex-wrap: nowrap;
+  }
+
+  select {
+    position: relative;
+    border-radius: 12px;
+    padding-block: 8px;
+    padding-inline: 16px 16px;
+    border: 1px solid var(--dark);
+    background: var(--cream);
+    color: var(--dark);
+    width: 100%;
+    transition: all 0.2s ease;
+  }
+
   .rcForm__input {
     border-radius: 12px;
     padding-block: 8px;
@@ -976,6 +994,7 @@ button {
   margin-left: auto;
   border: 1px solid transparent;
   width: 100%;
+  text-wrap: nowrap;
 
   @media only screen and (min-width: 768px) and (max-width: 1024px), only screen and (min-width: 1025px) {
     width: fit-content;

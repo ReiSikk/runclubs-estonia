@@ -97,7 +97,7 @@
   gap: 1.6rem;
 
   @media only screen and (min-width: 468px) and (max-width: 1024px) {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(auto-fit, minmax(275px, 1fr));
   }
 
   @media only screen and (min-width: 1025px) {
@@ -143,6 +143,7 @@
 }
 .createEvent {
   justify-content: space-between;
+  aspect-ratio: 3 / 2;
 }
 .createEvent__title {
   h5 {
@@ -152,11 +153,6 @@
 }
 .createEvent__btn {
   width: 100%;
-  background: var(--accent);
-  color: var(--dark);
-  &:hover {
-    opacity: 0.9;
-  }
 }
 
 /*
@@ -209,4 +205,49 @@
 }
 .dashboardEvents__btn {
   gap: 0.8rem;
+}
+
+/*** Create event modal form ***/
+.form {
+  width: fit-content;
+  margin-inline: auto;
+  width: 100%;
+  max-width: 550px;
+}
+.form__section {
+  gap: 1.2rem;
+  width: 100%;
+}
+.form__header {
+  gap: 0.8rem;
+  margin-bottom: 1.6rem;
+}
+.form__body {
+  padding-block: clamp(3.2rem, 4vw, 4rem);
+  width: 100%;
+}
+.form__timegroup {
+  gap: 1.6rem;
+  flex-wrap: nowrap;
+  width: 50%;
+}
+.form__actions {
+  gap: 1.2rem;
+  width: 100%;
+
+  button {
+    width: 100%;
+  }
+  @media only screen and (min-width: 768px) and (max-width: 1024px), only screen and (min-width: 1025px) {
+    width: fit-content;
+    flex-wrap: nowrap;
+    margin-left: auto;
+  }
+
+  .form__cancel {
+    &:hover {
+      background: var(--accent);
+      border: 1px solid var(--accent);
+    }
+  }
 }

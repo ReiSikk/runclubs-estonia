@@ -45,7 +45,7 @@ function AccordionControlledPreview({
 }
 
 export default function RunClubEvent({ event, onShowMore }: RunClubEventProps) {
-  const { id, title, description, date, time, location, status } = event;
+  const { id, title, description, date, time, location } = event;
 
   const eventMoment = moment(date);
   const formattedDate = eventMoment.isValid()
@@ -62,22 +62,9 @@ export default function RunClubEvent({ event, onShowMore }: RunClubEventProps) {
   else if (isTomorrow) displayDate = "Tomorrow";
   else if (daysDiff < 0) displayDate = `${Math.abs(daysDiff)} days ago`;
 
-  const statusClass =
-    status === "approved"
-      ? styles["runClubEvent__status--approved"]
-      : status === "in_review"
-      ? styles["runClubEvent__status--in-review"]
-      : "";
-
 
   return (
     <article className={styles.runClubEvent} aria-labelledby={`event-${id}-title`}>
-      {status && (
-        <div className={`${styles.runClubEvent__status} ${statusClass} txt-body`}>
-          {status === "approved" ? "Approved" : status === "in_review" ? "In review" : "Draft"}
-        </div>
-      )}
-
       <header className={styles.runClubEvent__header}>
         <div className={styles.runClubEvent__tags}>
           <span className={styles.runClubEvent__tag}>{displayDate}</span>

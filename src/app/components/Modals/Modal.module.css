@@ -1,0 +1,56 @@
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  backdrop-filter: blur(2px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  padding: 32px;
+}
+
+.content {
+  background: var(--card-bg, #0f0f0f);
+  color: var(--text, #fff);
+  border-radius: 20px;
+  width: 100%;
+  max-width: 880px;
+  max-height: 90vh;
+  overflow: auto;
+  position: relative;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.6);
+  padding: 24px;
+}
+
+/* close button top-right */
+.close {
+  position: fixed;
+  right: 32px;
+  top: 32px;
+  background: transparent;
+  border: 1px solid transparent;
+  color: inherit;
+  cursor: pointer;
+  line-height: 1;
+  transition: color 0.2s ease, background 0.2s ease;
+  border-radius: 12px;
+  background: var(--accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &:hover {
+    color: var(--accent);
+    background: var(--dark);
+    border: 1px solid var(--accent);
+  }
+}
+
+/* small responsive padding tweak */
+@media (max-width: 520px) {
+  .content {
+    padding: 16px;
+    border-radius: 10px;
+  }
+}

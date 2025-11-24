@@ -12,8 +12,7 @@ const RunClubCard = ({ name, distance, city, area, runDays, slug, approvedForPub
   const statusClass = approvedForPublication ? styles.approved : styles.pending;
 
   return (
-    <Link
-      href={`/runclubs/${slug}`}
+    <div
       className={`${styles.clubCard}`}
     >
       <div className={`${styles.clubCard__header} fp`}>
@@ -39,7 +38,7 @@ const RunClubCard = ({ name, distance, city, area, runDays, slug, approvedForPub
           ))}
         </div>
       </div>
-    </Link>
+    </div>
   );
 };
 

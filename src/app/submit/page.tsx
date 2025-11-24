@@ -1,7 +1,7 @@
 "use client"
 
 import React from 'react'
-import RunClubRegistrationForm from '../components/SubmitForm/RunClubRegistrationForm'
+import RunClubRegistrationForm from '../components/Forms/RunClubRegistrationForm'
 import styles from './page.module.css'
 import NavBar from '../components/Navbar/NavBar'
 import { useAuth } from '../providers/AuthProvider'
