@@ -5,10 +5,8 @@ export const submitEventSchema = z.object({
   date: z.string().refine((v) => !Number.isNaN(Date.parse(v)), { message: "Invalid date" }), // ISO date string
   startTime: z.string().min(1), // "HH:mm"
   endTime: z.string().optional(),
-  locationName: z.string().max(256),
+  locationName: z.string().min(1).max(256),
   locationUrl: z.string().optional(),
-  about: z.string().optional(), // HTML or markdown string from rich-editor
+  about: z.string().min(1).max(5000), // HTML or markdown string from rich-editor
   runclub_id: z.string().min(1),
 });    
-
-export type CreateEventInput = z.infer<typeof submitEventSchema>;

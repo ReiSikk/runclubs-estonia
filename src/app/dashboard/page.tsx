@@ -66,7 +66,7 @@ function DashboardPage() {
                 </Tabs.Trigger>
               </Tabs.List>
                 <Tabs.Content className="tabs__content" value="overview">
-                  <div className={styles.dashboardEvents__header}>
+                  <div className={styles.dashboardEvents__header + " fp-col"}>
                     <h6 className="h2">Overview</h6>
                     <p className="txt-body">All your run clubs and events at a glance.</p>
                   </div>
@@ -152,7 +152,7 @@ function DashboardPage() {
                           <RunClubEvent event={{
                             id: "1",
                             title: "Evening Run at Kadriorg Park",
-                            description: "Join us for a refreshing evening run through the beautiful Kadriorg Park. Suitable for all levels! Join us for a refreshing evening run through the beautiful Kadriorg Park. Suitable for all levels! Join us for a refreshing evening run through the beautiful Kadriorg Park.Suitable for all levels! Join us for a refreshing evening run through the beautiful Kadriorg Park. Suitable for all levels! Join us for a refreshing evening run through the beautiful Kadriorg Park. Suitable for all levels! Join us for a refreshing evening run through the beautiful Kadriorg Park. Suitable for all levels! Join us for a refreshing evening run through the beautiful Kadriorg Park. Suitable for all levels! Join us for a refreshing evening run through the beautiful Kadriorg Park. Suitable for all levels! Join us for a refreshing evening run through the beautiful Kadriorg Park. Suitable for all levels!",
+                            about: "Join us for a refreshing evening run through the beautiful Kadriorg Park. Suitable for all levels! Join us for a refreshing evening run through the beautiful Kadriorg Park. Suitable for all levels! Join us for a refreshing evening run through the beautiful Kadriorg Park.Suitable for all levels! Join us for a refreshing evening run through the beautiful Kadriorg Park. Suitable for all levels! Join us for a refreshing evening run through the beautiful Kadriorg Park. Suitable for all levels! Join us for a refreshing evening run through the beautiful Kadriorg Park. Suitable for all levels! Join us for a refreshing evening run through the beautiful Kadriorg Park. Suitable for all levels! Join us for a refreshing evening run through the beautiful Kadriorg Park. Suitable for all levels! Join us for a refreshing evening run through the beautiful Kadriorg Park. Suitable for all levels!",
                             date: "2025-11-25",
                             time: "18:00PM - 19:30PM",
                             location: "Kadriorg Park, Tallinn",

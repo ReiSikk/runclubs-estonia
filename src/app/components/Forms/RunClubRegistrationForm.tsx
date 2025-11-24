@@ -9,17 +9,7 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import TimePicker, { TimePickerValue } from "react-accessible-time-picker";
 import { useAuth } from "@/app/providers/AuthProvider";
-
-// Match server action's return type
-type FormState =
-  | { success: true; message: string }
-  | {
-      success: false;
-      message: string;
-      errors?: Record<string, string[]>;
-      fieldValues?: Record<string, unknown>;
-    }
-  | undefined;
+import { FormState } from "@/app/lib/types/serverActionReturn";
 
 const initialState: FormState = undefined;
 
@@ -177,26 +167,6 @@ export default function RunClubRegistrationForm() {
       setToastOpen(true);
     }
   }, [state?.message]);
-
-  // if (!user || loading) {
-  //   return (
-  //     <div
-  //       style={{
-  //         maxWidth: "42rem",
-  //         margin: "0 auto",
-  //         paddingBlock: "8rem",
-  //         textAlign: "center",
-  //       }}
-  //     >
-  //        <div className={styles.rcForm__header}>
-  //           <h1 className={styles.rcForm__title}>Register a new running club</h1>
-  //           <p className="txt-body">
-  //             Getting the form ready...
-  //           </p>
-  //         </div>
-  //     </div>
-  //   );
-  // }
 
   return (
     <form onSubmit={handleSubmit} ref={formRef} className={`${styles.rcForm} fp-col`}>

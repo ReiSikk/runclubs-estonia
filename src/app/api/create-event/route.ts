@@ -1,15 +1,12 @@
-// ...existing code...
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import { submitRunClubSchema } from "@/app/lib/types/submitRunClub";
+import { submitEventSchema } from "@/app/lib/types/submitEvent";
 import { adminAuth, adminDb } from "@/app/lib/firebaseAdmin";
-// ...existing code...
 
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
 
-    // Get token from Authorization header or fallback to body.idToken
     const authHeader = req.headers.get("authorization");
     const idToken =
       authHeader?.startsWith("Bearer ") ? authHeader.replace("Bearer ", "") : body.idToken;
@@ -22,19 +19,22 @@ export async function POST(req: NextRequest) {
     const uid = decoded.uid;
 
     // validate payload (expects runclub_id to be present)
-    const parsed = submitRunClubSchema.safeParse(body);
+    const parsed = submitEventSchema.safeParse(body);
     if (!parsed.success) {
       return NextResponse.json({ error: "Invalid payload", details: parsed.error }, { status: 400 });
     }
     const data = parsed.data;
+    console.log("create-event payload validated:", data);
 
     // ensure runclub exists and the requesting user is its creator
-    const runclubRef = adminDb.collection("runclubs").doc(data.runclub_id);
+    const runclubId = data.runclub_id;
+    const runclubRef = adminDb.collection("runclubs").doc(runclubId);
     const runclubSnap = await runclubRef.get();
     if (!runclubSnap.exists) {
       return NextResponse.json({ error: "Runclub not found" }, { status: 404 });
     }
     const runclubData = runclubSnap.data() as any;
+
     if (runclubData.creator_id !== uid) {
       return NextResponse.json({ error: "Forbidden: not the runclub owner" }, { status: 403 });
     }
@@ -61,4 +61,3 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Server error" }, { status: 500 });
   }
 }
-// ...existing code...

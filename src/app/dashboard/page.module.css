@@ -161,7 +161,7 @@
 .dashboardEvents {
   .main {
     h6 {
-      margin-bottom: 0.8rem;
+      margin-bottom: 0.4rem;
     }
   }
   .list {
@@ -171,6 +171,7 @@
   margin-bottom: clamp(3.2rem, 4vw, 4rem);
   justify-content: space-between;
   flex-wrap: nowrap;
+  gap: 0.4rem;
 }
 .dashboardEvents__content {
   .list {

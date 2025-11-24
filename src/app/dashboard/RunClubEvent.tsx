@@ -13,15 +13,14 @@ interface RunClubEventProps {
 }
 
 function AccordionControlledPreview({
-  description,
+  about,
   id,
 }: {
-  description: string;
+  about: string;
   id: string;
 }) {
   const [open, setOpen] = useState<string | undefined>(undefined);
-  const truncated = description.length > 200 ? `${description.slice(0, 200)}…` : description;
-
+  const truncated = about.length > 200 ? `${about.slice(0, 200)}…` : about;
   return (
     <>
       {open !== "desc" && (
@@ -33,7 +32,7 @@ function AccordionControlledPreview({
       <Accordion.Root type="single" collapsible value={open} onValueChange={(v) => setOpen(v)}>
         <Accordion.Item value="desc">
           <Accordion.Content className={styles.runClubEvent__accordionContent}>
-            <p className={styles.runClubEvent__description}>{description}</p>
+            <p className={styles.runClubEvent__description}>{about}</p>
           </Accordion.Content>
           <Accordion.Trigger className={styles.runClubEvent__showMoreTrigger}>
             {open === "desc" ? "Show less" : "Show more"}
@@ -44,8 +43,8 @@ function AccordionControlledPreview({
   );
 }
 
-export default function RunClubEvent({ event, onShowMore }: RunClubEventProps) {
-  const { id, title, description, date, time, location } = event;
+export default function RunClubEvent({ event }: RunClubEventProps) {
+  const { id, title, about, date, time, location } = event;
 
   const eventMoment = moment(date);
   const formattedDate = eventMoment.isValid()
@@ -91,11 +90,11 @@ export default function RunClubEvent({ event, onShowMore }: RunClubEventProps) {
         )}
       </div>
 
-      {description && (
+      {about && (
         <div className={styles.runClubEvent__about}>
           {/* truncated preview shown only when accordion is closed */}
           {/* we'll control the Accordion so we can hide the preview when open */}
-          <AccordionControlledPreview description={description} id={id} />
+          <AccordionControlledPreview about={about} id={id} />
         </div>
       )}
     </article>
