@@ -164,8 +164,6 @@
       margin-bottom: 0.4rem;
     }
   }
-  .list {
-  }
 }
 .dashboardEvents__header {
   margin-bottom: clamp(3.2rem, 4vw, 4rem);
@@ -175,9 +173,12 @@
 }
 .dashboardEvents__content {
   .list {
-    gap: 1.6rem;
+    gap: 3.2rem;
   }
   .list__item {
+    width: 100%;
+    max-width: 580px;
+    margin-inline: auto;
   }
   .list__divider {
 
