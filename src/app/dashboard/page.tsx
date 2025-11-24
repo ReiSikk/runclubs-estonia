@@ -12,6 +12,7 @@ import SideBar from "../components/Dashboard/SideBar";
 import { useRouter } from "next/navigation";
 import { LucidePlus } from "lucide-react";
 import { useAuth } from "../providers/AuthProvider";
+import RunClubEvent from "./RunClubEvent";
 
 
 function DashboardPage() {
@@ -139,7 +140,15 @@ function DashboardPage() {
                           <div className={`${styles.list__divider} fp`}>
                             <span className="h4">Tue, Nov 25</span>
                           </div>
-                          Event card component here
+                          <RunClubEvent event={{
+                            id: "1",
+                            title: "Evening Run at Kadriorg Park",
+                            description: "Join us for a refreshing evening run through the beautiful Kadriorg Park. Suitable for all levels! Join us for a refreshing evening run through the beautiful Kadriorg Park. Suitable for all levels! Join us for a refreshing evening run through the beautiful Kadriorg Park.Suitable for all levels! Join us for a refreshing evening run through the beautiful Kadriorg Park. Suitable for all levels! Join us for a refreshing evening run through the beautiful Kadriorg Park. Suitable for all levels! Join us for a refreshing evening run through the beautiful Kadriorg Park. Suitable for all levels! Join us for a refreshing evening run through the beautiful Kadriorg Park. Suitable for all levels! Join us for a refreshing evening run through the beautiful Kadriorg Park. Suitable for all levels! Join us for a refreshing evening run through the beautiful Kadriorg Park. Suitable for all levels!",
+                            date: "2025-11-25",
+                            time: "18:00",
+                            location: "Kadriorg Park, Tallinn",
+                            status: "approved",
+                          }} />
                         </li>
                       </ul>
                     </div>

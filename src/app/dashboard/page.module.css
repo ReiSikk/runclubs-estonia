@@ -178,6 +178,7 @@
 }
 .dashboardEvents__content {
   .list {
+    gap: 1.6rem;
   }
   .list__item {
   }
@@ -187,6 +188,7 @@
     gap: 1.2rem;
     position: relative;
     width: 100%;
+    margin-bottom: 1.6rem;
   }
 
   .list__divider span {

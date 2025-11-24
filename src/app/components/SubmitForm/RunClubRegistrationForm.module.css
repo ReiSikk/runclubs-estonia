@@ -29,7 +29,7 @@
 .rcForm__step {
   gap: 0.8rem 1.2rem;
   align-items: center;
-  color: var(--form-label);
+  color: var(--muted-text);
 
   .icon {
     font-size: 1.4rem;
