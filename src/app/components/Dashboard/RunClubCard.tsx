@@ -2,9 +2,8 @@ import { LucidePencil } from "lucide-react";
 import styles from "./RunClubCard.module.css";
 import { RunClub } from "@/app/lib/types/runClub";
 import { convertDaysToAbbs } from "@/app/lib/utils/convertDays";
-import Link from "next/link";
 
-const RunClubCard = ({ name, distance, city, area, runDays, slug, approvedForPublication } : RunClub) => {
+const RunClubCard = ({ name, distance, city, area, runDays, approvedForPublication } : RunClub) => {
   // Convert run days to abbreviated format
   const daysList = convertDaysToAbbs(runDays);
 

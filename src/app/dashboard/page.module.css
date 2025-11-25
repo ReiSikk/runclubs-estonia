@@ -22,7 +22,7 @@
   min-height: calc(75svh);
 }
 .card_dashboard {
-  padding: clamp(16px, 2vw, 20px);
+  padding: clamp(12px, 2vw, 16px);
   border-radius: 12px;
   box-shadow: 0 1px 8px rgba(0, 0, 0, 0.1);
   background: var(--cream);
@@ -57,6 +57,7 @@
 }
 .dashboardStats__item {
   aspect-ratio: 3 / 2;
+  flex-wrap: nowrap;
 }
 .dashboardStats__item.simple {
   .inner {
@@ -70,13 +71,11 @@
     }
   }
 }
-.dashboardStats__label {
-}
 .dashboardStats__initials {
   margin-block: 0.4rem 0.8rem;
   border-radius: 9999px;
-  width: clamp(48px, 7vw, 64px);
-  height: clamp(48px, 7vw, 64px);
+  width: clamp(48px, 6vw, 64px);
+  height: clamp(48px, 6vw, 64px);
   background: var(--dark);
   color: var(--cream);
   align-items: center;
@@ -87,6 +86,7 @@
   margin-top: auto;
   justify-content: space-between;
   align-items: end;
+  flex-wrap: nowrap;
 }
 
 /*

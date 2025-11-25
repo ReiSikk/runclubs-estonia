@@ -92,6 +92,9 @@
 .runClubEvent__about {
   margin-block: 8px 12px;
 }
+.runClubEvent__actions {
+  justify-content: flex-end;
+}
 
 .runClubEvent__description {
   margin-bottom: 8px;

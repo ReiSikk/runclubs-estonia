@@ -238,7 +238,7 @@ export async function createEvent(
   try {
     const decodedToken = await getAuth(adminApp).verifyIdToken(idToken);
     creatorUid = decodedToken.uid;
-  } catch (err) {
+  } catch {
     return {
       success: false,
       message: "Invalid or expired authentication token.",
@@ -265,7 +265,7 @@ export async function createEvent(
         message: "Runclub not found",
       };
     }
-    const runclubData = runclubSnap.data() as any;
+    const runclubData = runclubSnap.data() as Record<string, unknown>;
     if (runclubData.creator_id !== creatorUid) {
       return {
         success: false,

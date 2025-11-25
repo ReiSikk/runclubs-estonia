@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useEffect, useRef, useState, useTransition } from "react";
-import { useRouter } from "next/navigation";
 import { useAuth } from "@/app/providers/AuthProvider";
 import { createEvent } from "@/app/actions";
 import FormToast from "../Toast/Toast";
@@ -15,6 +14,7 @@ type Props = {
   runclubId?: string;
   runclubs?: RunClubOption[];
   onClose?: () => void;
+  onEventCreated?: () => void;
 };
 
 type FormState =
@@ -26,7 +26,6 @@ const initialState: FormState = undefined;
 
 export default function EventCreationForm({ runclubId, runclubs = [], onClose }: Props) {
   const { user } = useAuth();
-  const router = useRouter();
   const formRef = useRef<HTMLFormElement | null>(null);
   const [state, setState] = useState<FormState>(initialState);
   const [isPending, startTransition] = useTransition();
@@ -88,31 +87,43 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
 
     const formData = new FormData(formRef.current);
 
+    // Get ID token for authentication
+    let idToken: string | undefined;
+    try {
+        idToken = await currentUser.getIdToken(true); // Force refresh to get latest token
+        } catch {
+        setState({
+            success: false,
+            message: "Failed to get authentication token.",
+            errors: {},
+        });
+        return;
+        }
+        
+    if (!idToken) {
+      setState({ success: false, message: "Authentication expired. Please log in again." });
+      setToastOpen(true);
+      return;
+    }
+    formData.set("idToken", idToken);
+
     startTransition(async () => {
       try {
-        // ensure fresh idToken
-        let idToken: string | undefined;
-        if (typeof (currentUser as any)?.getIdToken === "function") {
-          idToken = await (currentUser as any).getIdToken(true);
-        } else if (clientAuth.currentUser) {
-          idToken = await clientAuth.currentUser.getIdToken(true);
-        }
-        if (idToken) formData.set("idToken", idToken);
-
         const result = await createEvent(undefined, formData);
         setState(result);
 
         if (result && result.success) {
           if (!formRef.current) return;
+
           formRef.current.reset();
           setSelectedRunclub(runclubs[0]?.id || "");
           setCountdown(5);
         } else {
           setToastOpen(true);
         }
-      } catch (err: any) {
+      } catch (err: unknown) {
         console.error("Event submit error:", err);
-        setState({ success: false, message: err?.message || "Unexpected error" });
+        setState({ success: false, message: (err as Error)?.message || "Unexpected error" });
         setToastOpen(true);
       }
     });

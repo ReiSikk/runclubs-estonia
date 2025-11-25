@@ -1,22 +1,24 @@
 "use client";
 
-import React, { useState, useCallback } from "react";
-import styles from "./page.module.css";
-import { auth } from "@/app/lib/firebase";
-import RunClubCard from "../components/Dashboard/RunClubCard";
+import React, { useState, useCallback, useEffect } from "react";
+// Hooks and utils
 import getUserRunClubs from "../lib/hooks/useMyRunClubs";
 import { formatMonthYear } from "../lib/utils/convertTime";
-import * as Tabs from "@radix-ui/react-tabs";
-import Link from "next/link";
-import SideBar from "../components/Dashboard/SideBar";
-import { useRouter } from "next/navigation";
-import { LucidePlus } from "lucide-react";
 import { useAuth } from "../providers/AuthProvider";
-import RunClubEvent from "./RunClubEvent";
-import EventCreationForm from "../components/Forms/EventCreationForm";
-import Modal from "../components/Modals/Modal";
+import { useRouter } from "next/navigation";
 import useEventsForRunclubs from "../lib/hooks/useEvents";
+// Firebase
+import { auth } from "@/app/lib/firebase";
+// Components and styles
+import EventCreationForm from "../components/Forms/EventCreationForm";
+import RunClubCard from "../components/Dashboard/RunClubCard";
 import LoaderSpinner from "../components/Loader/LoaderSpinner";
+import Modal from "../components/Modals/Modal";
+import SideBar from "../components/Dashboard/SideBar";
+import * as Tabs from "@radix-ui/react-tabs";
+import { LucidePlus } from "lucide-react";
+import RunClubEventCard from "./RunClubEvent";
+import styles from "./page.module.css";
 
 function DashboardPage() {
   const [activeTab, setActiveTab] = useState("overview");
@@ -37,13 +39,25 @@ function DashboardPage() {
   const clubIds = clubs.map((c) => c.id);
   const { data: events = [], isLoading: eventsLoading, isError: eventsError } = useEventsForRunclubs(clubIds);
 
+  const [eventsState, setEventsState] = useState(events);
+
+  useEffect(() => {
+    setEventsState(events);
+  }, [events]);
+
+
+  // Handle event DELETE
+  const handleEventDeleted = (deletedEventId: string) => {
+    setEventsState((prevEvents) => prevEvents.filter((event) => event.id !== deletedEventId));
+  };
+
   if (!user || loading) {
     return (
       <div className={`${styles.page} page--loading container`}>
-          <div className="loader fp">
-             <LoaderSpinner size={12} />
-            <h1 className="h4">Getting your data ready...</h1>
-          </div>
+        <div className="loader fp">
+          <LoaderSpinner size={12} />
+          <h1 className="h4">Getting your data ready...</h1>
+        </div>
       </div>
     );
   }
@@ -80,10 +94,10 @@ function DashboardPage() {
             </Tabs.List>
             <Tabs.Content className={styles.dashboardStats__content + " tabs__content"} value="overview">
               <div className={styles.dashboardStats}>
-              <div className={styles.dashboardStats__header + " fp-col"}>
-                <h6 className="h2">Overview</h6>
-                <p className="txt-body">All your run clubs and events at a glance.</p>
-              </div>
+                <div className={styles.dashboardStats__header + " fp-col"}>
+                  <h6 className="h2">Overview</h6>
+                  <p className="txt-body">All your run clubs and events at a glance.</p>
+                </div>
                 <ul className={`${styles.dashboardStats__list} list-grid list-grid--3`}>
                   <li className={`${styles.dashboardStats__item} ${styles.card_dashboard} fp-col`}>
                     <div className={`${styles.dashboardStats__initials} fp`}>
@@ -96,7 +110,7 @@ function DashboardPage() {
                       </span>
                     </div>
                     <div className={`${styles.nameMember} fp`}>
-                      <h2 className={`${styles.name} h3`}>{user.displayName}</h2>
+                      <h2 className={`${styles.name} h4`}>{user.displayName}</h2>
                       {user.metadata.creationTime && (
                         <div className={`${styles.since} fp-col`}>
                           <span className="txt-small">Member since</span>
@@ -109,9 +123,8 @@ function DashboardPage() {
                     className={`${styles.dashboardStats__item} ${styles.card_dashboard} ${styles.accent} ${styles.simple}`}
                   >
                     <div className={`${styles.inner} fp-col`}>
-                      <span className={`${styles.dashboardStats__label} txt-label`}>Total members</span>
-                      <h3 className="h1">79</h3>
-                      {/* //TODO: Remove or add dynamic stats */}
+                      <span className={`${styles.dashboardStats__label} txt-label`}>My events</span>
+                      <h3 className="h1">{eventsState.length}</h3>
                     </div>
                   </li>
                   <li className={`${styles.dashboardStats__item} ${styles.card_dashboard} ${styles.simple}`}>
@@ -156,25 +169,32 @@ function DashboardPage() {
                 <div className={`${styles.dashboardEvents__header} fp`}>
                   <div className={`${styles.main}`}>
                     <h6 className="h2">My events</h6>
-                    <p className="txt-body">{events.length < 1 ? "You have no upcoming events. Create one to get started!" : `You have ${events.length} events`}</p>
+                    <p className="txt-body">
+                      {eventsState.length < 1
+                        ? "You have no upcoming events. Create one to get started!"
+                        : `You have ${eventsState.length} events`}
+                    </p>
                   </div>
-                  <Link href={"/create-event"} className={`${styles.dashboardEvents__btn} btn_main accent`}>
+                  <button
+                    className={`${styles.dashboardEvents__btn} btn_main accent`}
+                    onClick={() => setShowCreateEvent(true)}
+                  >
                     <LucidePlus size={16} />
                     Create Event
-                  </Link>
+                  </button>
                 </div>
                 <div className={styles.dashboardEvents__content}>
-                  {isLoading && 
+                  {eventsLoading && (
                     <div className="loader fp">
                       <LoaderSpinner size={8} /> <span className="txt-body">Hang tight. Loading your events...</span>
                     </div>
-                  }
+                  )}
                   {/* Group by date and render a divider per date */}
-                  {!eventsError && !isLoading && (
+                  {!eventsError && !eventsLoading && (
                     <ul className={styles.list + " list-grid list-grid--1"}>
                       {(() => {
-                        const grouped: Record<string, typeof events> = {};
-                        for (const ev of events) {
+                        const grouped: Record<string, typeof eventsState> = {};
+                        for (const ev of eventsState) {
                           const key = ev.date ?? "No date";
                           if (!grouped[key]) grouped[key] = [];
                           grouped[key].push(ev);
@@ -187,7 +207,11 @@ function DashboardPage() {
                           try {
                             const dt = new Date(d);
                             if (isNaN(dt.getTime())) return d;
-                            return dt.toLocaleDateString(undefined, { weekday: "short", month: "short", day: "numeric" });
+                            return dt.toLocaleDateString(undefined, {
+                              weekday: "short",
+                              month: "short",
+                              day: "numeric",
+                            });
                           } catch {
                             return d;
                           }
@@ -201,7 +225,7 @@ function DashboardPage() {
 
                             {grouped[dateKey].map((ev) => (
                               <div key={ev.id} className={styles.list__item}>
-                                <RunClubEvent
+                                <RunClubEventCard
                                   event={{
                                     id: ev.id,
                                     title: ev.title,
@@ -210,9 +234,10 @@ function DashboardPage() {
                                     time: ev.time,
                                     location: ev.location,
                                     locationUrl: ev.locationUrl,
-                                    runclub_id: (ev as any).runclub_id,
-                                    runclub: (ev as any).runclub,
+                                    runclub_id: ev.runclub_id,
+                                    runclub: ev.runclub,
                                   }}
+                                  onDeleted={handleEventDeleted}
                                 />
                               </div>
                             ))}

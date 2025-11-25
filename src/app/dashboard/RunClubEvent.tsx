@@ -6,19 +6,16 @@ import moment from "moment";
 import type { RunClubEvent } from "@/app/lib/types/runClubEvent";
 import * as Accordion from "@radix-ui/react-accordion";
 import { useState } from "react";
+import { deleteDoc, doc } from "firebase/firestore";
+import { db } from "@/app/lib/firebase";
 
 interface RunClubEventProps {
   event: RunClubEvent;
   onShowMore?: (id: string) => void;
+  onDeleted?: (id: string) => void;
 }
 
-function AccordionControlledPreview({
-  about,
-  id,
-}: {
-  about: string;
-  id: string;
-}) {
+function AccordionControlledPreview({ about }: { about: string;}) {
   const [open, setOpen] = useState<string | undefined>(undefined);
   const truncated = about.length > 200 ? `${about.slice(0, 200)}…` : about;
   return (
@@ -43,8 +40,27 @@ function AccordionControlledPreview({
   );
 }
 
-export default function RunClubEvent({ event }: RunClubEventProps) {
+export default function RunClubEventCard({ event, onDeleted }: RunClubEventProps) {
   const { id, title, about, date, time, location } = event;
+
+    const [deleting, setDeleting] = useState(false);
+
+  const handleDelete = async () => {
+    if (!confirm("Are you sure you want to delete this event?")) return;
+    setDeleting(true);
+    try {
+      await deleteDoc(doc(db, "events", event.id));
+
+      if (onDeleted) {
+        onDeleted(event.id);
+      }
+    } catch (err) {
+      console.error("Failed to delete event:", err);
+      alert("Could not delete event. Check console for details.");
+    } finally {
+      setDeleting(false);
+    }
+  };
 
   const eventMoment = moment(date);
   const formattedDate = eventMoment.isValid()
@@ -93,10 +109,21 @@ export default function RunClubEvent({ event }: RunClubEventProps) {
       {about && (
         <div className={styles.runClubEvent__about}>
           {/* truncated preview shown only when accordion is closed */}
-          {/* we'll control the Accordion so we can hide the preview when open */}
-          <AccordionControlledPreview about={about} id={id} />
+          <AccordionControlledPreview about={about} />
         </div>
       )}
+       <div className={styles.runClubEvent__actions + " fp"}>
+          <button
+            type="button"
+            className="btn_main accent"
+            onClick={handleDelete}
+            disabled={deleting}
+            aria-disabled={deleting}
+            aria-label={deleting ? "Deleting event" : "Delete event"}
+          >
+            {deleting ? "Deleting…" : "Delete"}
+          </button>
+        </div>
     </article>
   );
 }

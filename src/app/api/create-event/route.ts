@@ -32,7 +32,7 @@ export async function POST(req: NextRequest) {
     if (!runclubSnap.exists) {
       return NextResponse.json({ error: "Runclub not found" }, { status: 404 });
     }
-    const runclubData = runclubSnap.data() as any;
+    const runclubData = runclubSnap.data() as Record<string, unknown>;
 
     if (runclubData.creator_id !== uid) {
       return NextResponse.json({ error: "Forbidden: not the runclub owner" }, { status: 403 });
@@ -55,7 +55,7 @@ export async function POST(req: NextRequest) {
     await newRef.set(eventDoc);
 
     return NextResponse.json({ success: true, id: newRef.id }, { status: 201 });
-  } catch (err: any) {
+  } catch (err: unknown) {
     console.error("create-event error:", err);
     return NextResponse.json({ error: "Server error" }, { status: 500 });
   }

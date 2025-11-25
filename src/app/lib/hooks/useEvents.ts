@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { collection, getDocs, orderBy, query, where } from "firebase/firestore";
 import { db } from "@/app/lib/firebase";
 import type { RunClubEvent } from "@/app/lib/types/runClubEvent";
@@ -9,49 +9,39 @@ type HookResult = {
   isError: boolean;
 };
 
-/**
- * Fetch events that belong to any of the provided runclub IDs.
- * - Splits runclubIds into chunks of 10 to satisfy Firestore "in" query limit of 10
- * - Orders results by "date" descending
- */
 export default function useEventsForRunclubs(runclubIds?: string[]): HookResult {
   const [data, setData] = useState<RunClubEvent[]>([]);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [isError, setIsError] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isError, setIsError] = useState(false);
+
+  // stable primitive dependency — avoids re-running effect when a new array reference is passed
+  const idsKey = useMemo(() => (runclubIds && runclubIds.length ? runclubIds.join("|") : ""), [runclubIds]);
 
   useEffect(() => {
-    if (!runclubIds || runclubIds.length === 0) {
+    if (!idsKey) {
       setData([]);
       setIsLoading(false);
       setIsError(false);
       return;
     }
 
-    let mounted = true;
+    let cancelled = false;
     setIsLoading(true);
     setIsError(false);
 
-    const chunks: string[][] = [];
-    for (let i = 0; i < runclubIds.length; i += 10) {
-      chunks.push(runclubIds.slice(i, i + 10));
-    }
-
     (async () => {
       try {
-        const results: RunClubEvent[] = [];
+        const ids = idsKey.split("|");
+        const chunks: string[][] = [];
+        for (let i = 0; i < ids.length; i += 10) chunks.push(ids.slice(i, i + 10));
 
+        const results: RunClubEvent[] = [];
         for (const chunk of chunks) {
-          const q = query(
-            collection(db, "events"),
-            where("runclub_id", "in", chunk),
-            orderBy("date", "desc")
-          );
+          const q = query(collection(db, "events"), where("runclub_id", "in", chunk), orderBy("date", "desc"));
           const snap = await getDocs(q);
           snap.forEach((doc) => {
-            const d = doc.data() as any;
-            const time =
-              (d.startTime ? String(d.startTime) : "") +
-              (d.endTime ? ` - ${String(d.endTime)}` : "");
+            const d = doc.data();
+            const time = (d.startTime ? String(d.startTime) : "") + (d.endTime ? ` - ${String(d.endTime)}` : "");
             results.push({
               id: doc.id,
               title: d.title ?? "",
@@ -66,21 +56,19 @@ export default function useEventsForRunclubs(runclubIds?: string[]): HookResult 
           });
         }
 
-        if (!mounted) return;
-        setData(results);
-        setIsLoading(false);
+        if (!cancelled) setData(results);
       } catch (err) {
         console.error("useEventsForRunclubs error:", err);
-        if (!mounted) return;
-        setIsError(true);
-        setIsLoading(false);
+        if (!cancelled) setIsError(true);
+      } finally {
+        if (!cancelled) setIsLoading(false);
       }
     })();
 
     return () => {
-      mounted = false;
+      cancelled = true;
     };
-  }, [runclubIds?.join(",")]);
+  }, [idsKey]);
 
   return { data, isLoading, isError };
 }
