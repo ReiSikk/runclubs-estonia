@@ -16,6 +16,7 @@ import RunClubEvent from "./RunClubEvent";
 import EventCreationForm from "../components/Forms/EventCreationForm";
 import Modal from "../components/Modals/Modal";
 import useEventsForRunclubs from "../lib/hooks/useEvents";
+import LoaderSpinner from "../components/Loader/LoaderSpinner";
 
 function DashboardPage() {
   const [activeTab, setActiveTab] = useState("overview");
@@ -35,16 +36,14 @@ function DashboardPage() {
   // Get clubs ids and fetch events
   const clubIds = clubs.map((c) => c.id);
   const { data: events = [], isLoading: eventsLoading, isError: eventsError } = useEventsForRunclubs(clubIds);
-  console.log("Events:", events);
 
   if (!user || loading) {
     return (
-      <div className={`${styles.page} container`}>
-        <div className={styles.page__main}>
-          <main className={`${styles.dashboard} ${styles.loading} container`}>
+      <div className={`${styles.page} page--loading container`}>
+          <div className="loader fp">
+             <LoaderSpinner size={12} />
             <h1 className="h4">Getting your data ready...</h1>
-          </main>
-        </div>
+          </div>
       </div>
     );
   }
@@ -52,7 +51,7 @@ function DashboardPage() {
   return (
     <div className={`${styles.page} container`}>
       <SideBar handleLogOut={handleLogOut} />
-      <div className={styles.page__main}>
+      <div className={styles.page__main + " container"}>
         <div className={`${styles.page__header}`}>
           <h1 className="h1">Welcome to your dashboard, {user.displayName?.split(" ")[0] || ""}! 👋</h1>
           <p>
@@ -79,12 +78,12 @@ function DashboardPage() {
                 Events
               </Tabs.Trigger>
             </Tabs.List>
-            <Tabs.Content className="tabs__content" value="overview">
-              <div className={styles.dashboardEvents__header + " fp-col"}>
+            <Tabs.Content className={styles.dashboardStats__content + " tabs__content"} value="overview">
+              <div className={styles.dashboardStats}>
+              <div className={styles.dashboardStats__header + " fp-col"}>
                 <h6 className="h2">Overview</h6>
                 <p className="txt-body">All your run clubs and events at a glance.</p>
               </div>
-              <div className={styles.dashboardStats}>
                 <ul className={`${styles.dashboardStats__list} list-grid list-grid--3`}>
                   <li className={`${styles.dashboardStats__item} ${styles.card_dashboard} fp-col`}>
                     <div className={`${styles.dashboardStats__initials} fp`}>
@@ -157,7 +156,7 @@ function DashboardPage() {
                 <div className={`${styles.dashboardEvents__header} fp`}>
                   <div className={`${styles.main}`}>
                     <h6 className="h2">My events</h6>
-                    <p className="txt-body">You have no upcoming events. Create one to get started!</p>
+                    <p className="txt-body">{events.length < 1 ? "You have no upcoming events. Create one to get started!" : `You have ${events.length} events`}</p>
                   </div>
                   <Link href={"/create-event"} className={`${styles.dashboardEvents__btn} btn_main accent`}>
                     <LucidePlus size={16} />
@@ -165,57 +164,63 @@ function DashboardPage() {
                   </Link>
                 </div>
                 <div className={styles.dashboardEvents__content}>
-                  {/* Group events by date and render a divider per date */}
-                  <ul className={styles.list + " list-grid list-grid--1"}>
-                    {(() => {
-                      // Group by date string
-                      const grouped: Record<string, typeof events> = {};
-                      for (const ev of events) {
-                        const key = ev.date ?? "No date";
-                        if (!grouped[key]) grouped[key] = [];
-                        grouped[key].push(ev);
-                      }
-
-                      // Sort date keys descending (newest first). If date strings are ISO (yyyy-mm-dd) this will work correctly.
-                      const sortedDates = Object.keys(grouped).sort((a, b) => (a < b ? 1 : a > b ? -1 : 0));
-
-                      const formatDividerDate = (d: string) => {
-                        try {
-                          const dt = new Date(d);
-                          if (isNaN(dt.getTime())) return d;
-                          return dt.toLocaleDateString(undefined, { weekday: "short", month: "short", day: "numeric" });
-                        } catch {
-                          return d;
+                  {isLoading && 
+                    <div className="loader fp">
+                      <LoaderSpinner size={8} /> <span className="txt-body">Hang tight. Loading your events...</span>
+                    </div>
+                  }
+                  {/* Group by date and render a divider per date */}
+                  {!eventsError && !isLoading && (
+                    <ul className={styles.list + " list-grid list-grid--1"}>
+                      {(() => {
+                        const grouped: Record<string, typeof events> = {};
+                        for (const ev of events) {
+                          const key = ev.date ?? "No date";
+                          if (!grouped[key]) grouped[key] = [];
+                          grouped[key].push(ev);
                         }
-                      };
 
-                      return sortedDates.map((dateKey) => (
-                        <li key={dateKey} className={styles.list__item}>
-                          <div className={`${styles.list__divider} fp`}>
-                            <span className="h4">{formatDividerDate(dateKey)}</span>
-                          </div>
+                        // Sort date keys descending (newest first). Date string have to be in ISO format
+                        const sortedDates = Object.keys(grouped).sort((a, b) => (a < b ? 1 : a > b ? -1 : 0));
 
-                          {grouped[dateKey].map((ev) => (
-                            <div key={ev.id} className={styles.list__item}>
-                              <RunClubEvent
-                                event={{
-                                  id: ev.id,
-                                  title: ev.title,
-                                  about: ev.about,
-                                  date: ev.date,
-                                  time: ev.time,
-                                  location: ev.location,
-                                  locationUrl: ev.locationUrl,
-                                  runclub_id: (ev as any).runclub_id,
-                                  runclub: (ev as any).runclub,
-                                }}
-                              />
+                        const formatDividerDate = (d: string) => {
+                          try {
+                            const dt = new Date(d);
+                            if (isNaN(dt.getTime())) return d;
+                            return dt.toLocaleDateString(undefined, { weekday: "short", month: "short", day: "numeric" });
+                          } catch {
+                            return d;
+                          }
+                        };
+
+                        return sortedDates.map((dateKey) => (
+                          <li key={dateKey} className={styles.list__item}>
+                            <div className={`${styles.list__divider} fp`}>
+                              <span className="h4">{formatDividerDate(dateKey)}</span>
                             </div>
-                          ))}
-                        </li>
-                      ));
-                    })()}
-                  </ul>
+
+                            {grouped[dateKey].map((ev) => (
+                              <div key={ev.id} className={styles.list__item}>
+                                <RunClubEvent
+                                  event={{
+                                    id: ev.id,
+                                    title: ev.title,
+                                    about: ev.about,
+                                    date: ev.date,
+                                    time: ev.time,
+                                    location: ev.location,
+                                    locationUrl: ev.locationUrl,
+                                    runclub_id: (ev as any).runclub_id,
+                                    runclub: (ev as any).runclub,
+                                  }}
+                                />
+                              </div>
+                            ))}
+                          </li>
+                        ));
+                      })()}
+                    </ul>
+                  )}
                 </div>
               </div>
             </Tabs.Content>

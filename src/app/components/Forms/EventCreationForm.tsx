@@ -62,12 +62,10 @@ export default function EventCreationForm({ runclubId, runclubs = [], onClose }:
 
 const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log("EventCreationForm.handleSubmit called");
 
     // prefer the hook user, fallback to firebase client currentUser
     const clientAuth = getAuth();
     const currentUser = user ?? clientAuth.currentUser ?? undefined;
-    console.log("Rendered hook user:", user, "clientAuth.currentUser:", clientAuth.currentUser, "using:", currentUser);
 
     if (!formRef.current) {
       setState({ success: false, message: "Form is not available." });
@@ -102,7 +100,6 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         if (idToken) formData.set("idToken", idToken);
 
         const result = await createEvent(undefined, formData);
-        console.log("createEvent result:", result);
         setState(result);
 
         if (result && result.success) {
@@ -238,7 +235,7 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
           {isPending ? "Creating..." : "Create event"}
         </button>
         {onClose && (
-          <button type="button" className={styles.form__cancel + " btn_link"} onClick={onClose} style={{ marginLeft: 12 }}>
+          <button type="button" className={styles.form__cancel + " btn_main accent"} onClick={onClose} disabled={isPending}>
             Cancel
           </button>
         )}

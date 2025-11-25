@@ -13,7 +13,7 @@ function SubmitRunClubPage() {
      return (
         <div className={`${styles.page} page-submit-runclub loading container`} id='page-top'>
           <NavBar />
-          <div className={styles.page__main}>
+          <div className={styles.page__main + " page--loading"}>
             <main className={`container`}>
               <h1 className="h4">Checking log in status and getting things ready...</h1>
             </main>

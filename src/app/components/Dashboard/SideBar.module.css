@@ -4,6 +4,8 @@
   height: 100svh;
   min-width: fit-content;
   padding-right: 1.2rem;
+  max-width: 275px;
+  width: 100%;
 }
 .sideBar__menu {
     height: 100%;

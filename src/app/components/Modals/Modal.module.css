@@ -15,8 +15,8 @@
   color: var(--text, #fff);
   border-radius: 20px;
   width: 100%;
-  max-width: 880px;
-  max-height: 90vh;
+  max-width: 800px;
+  max-height: 85vh;
   overflow: auto;
   position: relative;
   box-shadow: 0 10px 40px rgba(0,0,0,0.6);
@@ -27,7 +27,7 @@
 .close {
   position: fixed;
   right: 32px;
-  top: 32px;
+  top: clamp(20px, 3vw, 32px);
   background: transparent;
   border: 1px solid transparent;
   color: inherit;

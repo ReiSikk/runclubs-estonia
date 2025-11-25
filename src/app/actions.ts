@@ -232,7 +232,6 @@ export async function createEvent(
       message: "You must be logged in to create an event.",
     };
   }
-  console.log("createEvent action called with idToken:", idToken);
 
   // Verify token and get UID
   let creatorUid: string;
@@ -286,11 +285,9 @@ export async function createEvent(
       runclub_id,
       creator_id: creatorUid,
     };
-    console.log("Event submission data before validation:", submission);
 
     // Validate with Zod schema
     const validatedFields = submitEventSchema.safeParse(submission);
-    console.log("Event validation result:", validatedFields);
 
     if (!validatedFields.success) {
       const errors: Record<string, string[]> = {};

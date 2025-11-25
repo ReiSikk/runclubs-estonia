@@ -24,7 +24,6 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Invalid payload", details: parsed.error }, { status: 400 });
     }
     const data = parsed.data;
-    console.log("create-event payload validated:", data);
 
     // ensure runclub exists and the requesting user is its creator
     const runclubId = data.runclub_id;
