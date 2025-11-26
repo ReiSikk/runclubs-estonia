@@ -1,19 +1,10 @@
 .sideBar {
   padding-block: 4rem;
   border-right: 1px solid var(--gray);
-  height: 100svh;
   padding-right: 1.2rem;
   max-width: 325px;
   width: 100%;
-}
-.sideBar__menu {
-    height: 100%;
-    transition: transform 0.3s ease-in-out;
-}
-.sideBar__list {
-  height: 100%;
-  transform: translateX(0);
-  transition: transform 0.3s ease-in-out;
+  height: 100dvh;
 }
 .item {
   position: relative;
@@ -43,7 +34,7 @@
 
 @media (hover: hover) and (pointer: fine) {
 
-  .sideBar__list .item:hover {
+  .sideBar .item:hover {
     background: var(--dark-gray);
   }
 }

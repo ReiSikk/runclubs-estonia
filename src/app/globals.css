@@ -507,7 +507,7 @@ button {
 
 
   &.tabs__root--fullW {
-    max-width: 100%;
+    max-width: none;
     flex-direction: column;
     flex-wrap: nowrap;
 

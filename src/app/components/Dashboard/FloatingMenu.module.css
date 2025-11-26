@@ -1,10 +1,20 @@
-.floatingMenu {
+.layout {
   position: fixed;
-  bottom: 30px;
+  bottom: 0px;
   left: 50%;
   transform: translateX(-50%);
+  z-index: 999;
+  width: 100%;
+  background: rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(10px);
+  border-top-left-radius: 12px;
+  border-top-right-radius: 12px;
+}
+.floatingMenu {
   width: calc(100vw - clamp(40px, 8vw, 80px));
   max-width: 600px;
+  margin-block: 24px;
+  margin-inline: auto;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
   background: var(--cream);
   color: var(--dark);
@@ -109,6 +119,19 @@
   text-decoration: none;
   cursor: pointer;
   text-wrap: nowrap;
+}
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  opacity: 1;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(10px);
+  z-index: 998;
+  transition: opacity 0.3s ease-in-out;
 }
 
 @media (hover: hover) and (pointer: fine) {

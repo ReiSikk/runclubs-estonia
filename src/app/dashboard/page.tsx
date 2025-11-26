@@ -40,6 +40,7 @@ function DashboardPage() {
   const clubIds = clubs.map((c) => c.id);
   const { data: events = [], isLoading: eventsLoading, isError: eventsError } = useEventsForRunclubs(clubIds);
 
+  // Local state for events to allow updates on delete/create
   const [eventsState, setEventsState] = useState(events);
 
   useEffect(() => {
@@ -52,9 +53,26 @@ function DashboardPage() {
     setEventsState((prevEvents) => prevEvents.filter((event) => event.id !== deletedEventId));
   };
 
+  // Handle event CREATE
   const handleEventCreated = (newEvent: RunClubEvent) => {
     setEventsState((prevEvents) => [newEvent, ...prevEvents]); 
   }
+
+  // Mobile detection for sidebar
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 768); // Mobile breakpoint
+    };
+
+    handleResize(); // Initial check
+    window.addEventListener("resize", handleResize);
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
 
   if (!user || loading) {
     return (
@@ -68,195 +86,195 @@ function DashboardPage() {
   }
 
   return (
-    <div className={`${styles.page} container`}>
-      <SideBar handleLogOut={handleLogOut} />
-      <div className={styles.page__main + " container"}>
-        <div className={`${styles.page__header}`}>
-          <h1 className="h1">Welcome to your dashboard, {user.displayName?.split(" ")[0] || ""}! 👋</h1>
-          <p>
-            Here you can manage your account and view your clubs and activities.
-            <br />
-            Keep building the running community of Estonia!
-          </p>
-        </div>
-        <main className={`${styles.dashboard} fp-col`}>
-          <Tabs.Root
-            defaultValue="overview"
-            value={activeTab}
-            onValueChange={setActiveTab}
-            className="tabs__root tabs__root--fullW"
-          >
-            <Tabs.List
-              className={`tabs__list tabs__list--dark ${activeTab === "overview" ? "slide-left" : "slide-right"}`}
-              aria-label="Dashboard Tab Options"
+    <>
+      <main className={`${styles.dashboard} ${isMobile ? styles.mobile : ""}`} id="page-top">
+          <SideBar handleLogOut={handleLogOut} isMobile={isMobile} />
+          <div className={`${styles.dashboard__main}`}>
+            <div className={`${styles.header}`}>
+              <h1 className="h1">Welcome to your dashboard, {user.displayName?.split(" ")[0] || ""}! 👋</h1>
+              <p>
+                Here you can manage your account and view your clubs and activities.
+                <br />
+                Keep building the running community of Estonia!
+              </p>
+            </div>
+            <Tabs.Root
+              defaultValue="overview"
+              value={activeTab}
+              onValueChange={setActiveTab}
+              className="tabs__root tabs__root--fullW"
             >
-              <Tabs.Trigger className="tabs__trigger" value="overview">
-                Overview
-              </Tabs.Trigger>
-              <Tabs.Trigger className="tabs__trigger" value="events">
-                Events
-              </Tabs.Trigger>
-            </Tabs.List>
-            <Tabs.Content className={styles.dashboardStats__content + " tabs__content"} value="overview">
-              <div className={styles.dashboardStats}>
-                <div className={styles.dashboardStats__header + " fp-col"}>
-                  <h6 className="h2">Overview</h6>
-                  <p className="txt-body">All your run clubs and events at a glance.</p>
-                </div>
-                <ul className={`${styles.dashboardStats__list} list-grid list-grid--3`}>
-                  <li className={`${styles.dashboardStats__item} ${styles.card_dashboard} fp-col`}>
-                    <div className={`${styles.dashboardStats__initials} fp`}>
-                      <span className="h3">
-                        {user.displayName
-                          ?.split(" ")
-                          .map((n) => n[0])
-                          .join("")
-                          .toUpperCase()}
-                      </span>
-                    </div>
-                    <div className={`${styles.nameMember} fp`}>
-                      <h2 className={`${styles.name} h4`}>{user.displayName}</h2>
-                      {user.metadata.creationTime && (
-                        <div className={`${styles.since} fp-col`}>
-                          <span className="txt-small">Member since</span>
-                          <span className="txt-label">{formatMonthYear(user.metadata.creationTime)}</span>
-                        </div>
-                      )}
-                    </div>
-                  </li>
-                  <li
-                    className={`${styles.dashboardStats__item} ${styles.card_dashboard} ${styles.accent} ${styles.simple}`}
-                  >
-                    <div className={`${styles.inner} fp-col`}>
-                      <span className={`${styles.dashboardStats__label} txt-label`}>My events</span>
-                      <h3 className="h1">{eventsState.length}</h3>
-                    </div>
-                  </li>
-                  <li className={`${styles.dashboardStats__item} ${styles.card_dashboard} ${styles.simple}`}>
-                    <div className={`${styles.inner} fp-col`}>
-                      <span className={`${styles.dashboardStats__label} txt-label`}>Active clubs</span>
-                      <h4 className="h1">{clubs.length}</h4>
-                    </div>
-                  </li>
-                </ul>
-                <div className={`${styles.clubsNevents} list-grid`}>
-                  <div className={`${styles.card_dashboard}`}>
-                    <div className={`${styles.titlecount} fp`}>
-                      <h5 className="h3">Your run clubs</h5>
-                      <div className="txt-label card-label--small">{clubs.length}</div>
-                    </div>
-                    <ul className={`${styles.clubsNevents__list} fp-col`}>
-                      {isLoading && <p>Loading your clubs...</p>}
-                      {isError && <p>Error loading your clubs. Please try again later.</p>}
-                      {clubs.length === 0 && !isLoading && <p>You are not organizing any clubs yet.</p>}
-                      {clubs.map((club) => (
-                        <RunClubCard key={club.id} {...club} />
-                      ))}
-                    </ul>
+              <Tabs.List
+                className={`tabs__list tabs__list--dark ${activeTab === "overview" ? "slide-left" : "slide-right"}`}
+                aria-label="Dashboard Tab Options"
+              >
+                <Tabs.Trigger className="tabs__trigger" value="overview">
+                  Overview
+                </Tabs.Trigger>
+                <Tabs.Trigger className="tabs__trigger" value="events">
+                  Events ({eventsState.length})
+                </Tabs.Trigger>
+              </Tabs.List>
+              <Tabs.Content className={styles.dashboardStats__content + " tabs__content"} value="overview">
+                <div className={styles.dashboardStats}>
+                  <div className={styles.dashboardStats__header + " fp-col"}>
+                    <h6 className="h2">Overview</h6>
+                    <p className="txt-body">All your run clubs and events at a glance.</p>
                   </div>
-                  <div className={`${styles.card_dashboard} ${styles.createEvent} ${styles.dark} fp-col`}>
-                    <div className={`${styles.createEvent__title}`}>
-                      <h5 className={`${styles.createEvent__title} h3`}>Create an event</h5>
-                      <p className="txt-body">Schedule a new run for one of your clubs.</p>
+                  <ul className={`${styles.dashboardStats__list} list-grid list-grid--3`}>
+                    <li className={`${styles.dashboardStats__item} ${styles.card_dashboard} fp-col`}>
+                      <div className={`${styles.dashboardStats__initials} fp`}>
+                        <span className="h3">
+                          {user.displayName
+                            ?.split(" ")
+                            .map((n) => n[0])
+                            .join("")
+                            .toUpperCase()}
+                        </span>
+                      </div>
+                      <div className={`${styles.nameMember} fp`}>
+                        <h2 className={`${styles.name} h4`}>{user.displayName}</h2>
+                        {user.metadata.creationTime && (
+                          <div className={`${styles.since} fp-col`}>
+                            <span className="txt-small">Member since</span>
+                            <span className="txt-label">{formatMonthYear(user.metadata.creationTime)}</span>
+                          </div>
+                        )}
+                      </div>
+                    </li>
+                    <li
+                      className={`${styles.dashboardStats__item} ${styles.card_dashboard} ${styles.accent} ${styles.simple}`}
+                    >
+                      <div className={`${styles.inner} fp-col`}>
+                        <span className={`${styles.dashboardStats__label} txt-label`}>My events</span>
+                        <h3 className="h1">{eventsState.length}</h3>
+                      </div>
+                    </li>
+                    <li className={`${styles.dashboardStats__item} ${styles.card_dashboard} ${styles.simple}`}>
+                      <div className={`${styles.inner} fp-col`}>
+                        <span className={`${styles.dashboardStats__label} txt-label`}>Active clubs</span>
+                        <h4 className="h1">{clubs.length}</h4>
+                      </div>
+                    </li>
+                  </ul>
+                  <div className={`${styles.clubsNevents} list-grid`}>
+                    <div className={`${styles.card_dashboard}`}>
+                      <div className={`${styles.titlecount} fp`}>
+                        <h5 className="h3">Your run clubs</h5>
+                        <div className="txt-label card-label--small">{clubs.length}</div>
+                      </div>
+                      <ul className={`${styles.clubsNevents__list} fp-col`}>
+                        {isLoading && <p>Loading your clubs...</p>}
+                        {isError && <p>Error loading your clubs. Please try again later.</p>}
+                        {clubs.length === 0 && !isLoading && <p>You are not organizing any clubs yet.</p>}
+                        {clubs.map((club) => (
+                          <RunClubCard key={club.id} {...club} />
+                        ))}
+                      </ul>
+                    </div>
+                    <div className={`${styles.card_dashboard} ${styles.createEvent} ${styles.dark} fp-col`}>
+                      <div className={`${styles.createEvent__title}`}>
+                        <h5 className={`${styles.createEvent__title} h3`}>Create an event</h5>
+                        <p className="txt-body">Schedule a new run for one of your clubs.</p>
+                      </div>
+                      <button
+                        className={`${styles.createEvent__btn} btn_main accent`}
+                        onClick={() => setShowCreateEvent(true)}
+                      >
+                        Create Event
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </Tabs.Content>
+              <Tabs.Content className="tabs__content" value="events">
+                <div className={styles.dashboardEvents}>
+                  <div className={`${styles.dashboardEvents__header} fp`}>
+                    <div className={`${styles.main}`}>
+                      <h6 className="h2">My events</h6>
+                      <p className="txt-body">
+                        {eventsState.length < 1
+                          ? "You have no upcoming events. Create one to get started!"
+                          : `You have ${eventsState.length} events`}
+                      </p>
                     </div>
                     <button
-                      className={`${styles.createEvent__btn} btn_main accent`}
+                      className={`${styles.dashboardEvents__btn} btn_main accent`}
                       onClick={() => setShowCreateEvent(true)}
                     >
+                      <LucidePlus size={16} />
                       Create Event
                     </button>
                   </div>
-                </div>
-              </div>
-            </Tabs.Content>
-            <Tabs.Content className="tabs__content" value="events">
-              <div className={styles.dashboardEvents}>
-                <div className={`${styles.dashboardEvents__header} fp`}>
-                  <div className={`${styles.main}`}>
-                    <h6 className="h2">My events</h6>
-                    <p className="txt-body">
-                      {eventsState.length < 1
-                        ? "You have no upcoming events. Create one to get started!"
-                        : `You have ${eventsState.length} events`}
-                    </p>
-                  </div>
-                  <button
-                    className={`${styles.dashboardEvents__btn} btn_main accent`}
-                    onClick={() => setShowCreateEvent(true)}
-                  >
-                    <LucidePlus size={16} />
-                    Create Event
-                  </button>
-                </div>
-                <div className={styles.dashboardEvents__content}>
-                  {eventsLoading && (
-                    <div className="loader fp">
-                      <LoaderSpinner size={8} /> <span className="txt-body">Hang tight. Loading your events...</span>
-                    </div>
-                  )}
-                  {/* Group by date and render a divider per date */}
-                  {!eventsError && !eventsLoading && (
-                    <ul className={styles.list + " list-grid list-grid--1"}>
-                      {(() => {
-                        const grouped: Record<string, typeof eventsState> = {};
-                        for (const ev of eventsState) {
-                          const key = ev.date ?? "No date";
-                          if (!grouped[key]) grouped[key] = [];
-                          grouped[key].push(ev);
-                        }
-
-                        // Sort date keys descending (newest first). Date string have to be in ISO format
-                        const sortedDates = Object.keys(grouped).sort((a, b) => (a < b ? 1 : a > b ? -1 : 0));
-
-                        const formatDividerDate = (d: string) => {
-                          try {
-                            const dt = new Date(d);
-                            if (isNaN(dt.getTime())) return d;
-                            return dt.toLocaleDateString(undefined, {
-                              weekday: "short",
-                              month: "short",
-                              day: "numeric",
-                            });
-                          } catch {
-                            return d;
+                  <div className={styles.dashboardEvents__content}>
+                    {eventsLoading && (
+                      <div className="loader fp">
+                        <LoaderSpinner size={8} /> <span className="txt-body">Hang tight. Loading your events...</span>
+                      </div>
+                    )}
+                    {/* Group by date and render a divider per date */}
+                    {!eventsError && !eventsLoading && (
+                      <ul className={styles.list + " list-grid list-grid--1"}>
+                        {(() => {
+                          const grouped: Record<string, typeof eventsState> = {};
+                          for (const ev of eventsState) {
+                            const key = ev.date ?? "No date";
+                            if (!grouped[key]) grouped[key] = [];
+                            grouped[key].push(ev);
                           }
-                        };
 
-                        return sortedDates.map((dateKey) => (
-                          <li key={dateKey} className={styles.list__item}>
-                            <div className={`${styles.list__divider} fp`}>
-                              <span className="h4">{formatDividerDate(dateKey)}</span>
-                            </div>
+                          // Sort date keys descending (newest first). Date string have to be in ISO format
+                          const sortedDates = Object.keys(grouped).sort((a, b) => (a < b ? 1 : a > b ? -1 : 0));
 
-                            {grouped[dateKey].map((ev) => (
-                              <div key={ev.id} className={styles.list__item}>
-                                <RunClubEventCard
-                                  event={{
-                                    id: ev.id,
-                                    title: ev.title,
-                                    about: ev.about,
-                                    date: ev.date,
-                                    time: ev.time,
-                                    location: ev.location,
-                                    locationUrl: ev.locationUrl,
-                                    runclub_id: ev.runclub_id,
-                                    runclub: ev.runclub,
-                                  }}
-                                  onDeleted={handleEventDeleted}
-                                />
+                          const formatDividerDate = (d: string) => {
+                            try {
+                              const dt = new Date(d);
+                              if (isNaN(dt.getTime())) return d;
+                              return dt.toLocaleDateString(undefined, {
+                                weekday: "short",
+                                month: "short",
+                                day: "numeric",
+                              });
+                            } catch {
+                              return d;
+                            }
+                          };
+
+                          return sortedDates.map((dateKey) => (
+                            <li key={dateKey} className={styles.list__item}>
+                              <div className={`${styles.list__divider} fp`}>
+                                <span className="h4">{formatDividerDate(dateKey)}</span>
                               </div>
-                            ))}
-                          </li>
-                        ));
-                      })()}
-                    </ul>
-                  )}
+
+                              {grouped[dateKey].map((ev) => (
+                                <div key={ev.id} className={styles.list__item}>
+                                  <RunClubEventCard
+                                    event={{
+                                      id: ev.id,
+                                      title: ev.title,
+                                      about: ev.about,
+                                      date: ev.date,
+                                      time: ev.time,
+                                      location: ev.location,
+                                      locationUrl: ev.locationUrl,
+                                      runclub_id: ev.runclub_id,
+                                      runclub: ev.runclub,
+                                    }}
+                                    onDeleted={handleEventDeleted}
+                                  />
+                                </div>
+                              ))}
+                            </li>
+                          ));
+                        })()}
+                      </ul>
+                    )}
+                  </div>
                 </div>
-              </div>
-            </Tabs.Content>
-          </Tabs.Root>
-        </main>
-      </div>
+              </Tabs.Content>
+            </Tabs.Root>
+          </div>
+      </main>
       <Modal open={showCreateEvent} onClose={() => setShowCreateEvent(false)} ariaLabel="Create event">
         <EventCreationForm
           runclubs={clubs.map((c) => ({ id: c.id, name: c.name }))}
@@ -264,7 +282,7 @@ function DashboardPage() {
           onEventCreated={handleEventCreated}
         />
       </Modal>
-    </div>
+    </>
   );
 }
 

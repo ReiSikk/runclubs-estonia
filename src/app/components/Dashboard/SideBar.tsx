@@ -11,60 +11,36 @@ import {
 
 interface SideBarProps {
   handleLogOut: () => void;
+  isMobile: boolean;
 }
 
-function SideBar({ handleLogOut }: SideBarProps) {
-  const [isMobile, setIsMobile] = useState(false);
-
-  useEffect(() => {
-    const handleResize = () => {
-      setIsMobile(window.innerWidth <= 768); // Mobile breakpoint
-    };
-
-    handleResize(); // Initial check
-    window.addEventListener("resize", handleResize);
-
-    return () => {
-      window.removeEventListener("resize", handleResize);
-    };
-  }, []);
+function SideBar({ handleLogOut, isMobile }: SideBarProps) {
 
   if (isMobile) {
-    // Render FloatingMenu for mobile view
     return <FloatingMenu handleLogOut={handleLogOut} />;
   }
 
   return (
-    <div className={styles.sideBar}>
-      <nav className={styles.sideBar__menu}>
-        <ul className={`${styles.sideBar__list} fp-col`}>
-          <li className={`${styles.item} fp`}>
-            <LucideLayoutGrid size={20} className={styles.item__icon} />
-            <Link href="/dashboard" className="h4">
-              Dashboard
-            </Link>
-          </li>
-          <li className={`${styles.item} fp`}>
-            <LucideHome size={20} className={styles.item__icon} />
-            <Link href="/" className="h4">
-              Home
-            </Link>
-          </li>
-          <li className={`${styles.item} fp`}>
-            <LucideSend size={20} className={styles.item__icon} />
-            <Link href="/submit" className="h4">
-              Register club
-            </Link>
-          </li>
-          <li className={`${styles.item} fp`}>
-            <LucideLogOut size={20} className={styles.item__icon} />
-            <div onClick={handleLogOut} className="h4">
-              Log out
-            </div>
-          </li>
-        </ul>
-      </nav>
-    </div>
+    <nav className={styles.sideBar +" fp-col"}>
+        <Link href="/dashboard" className={`${styles.item}  h4 fp`}>
+        <LucideLayoutGrid size={20} className={styles.item__icon} />
+            Dashboard
+        </Link>
+        <Link href="/" className={`${styles.item}  h4 fp`}>
+        <LucideHome size={20} className={styles.item__icon} />
+            Home
+        </Link>
+        <Link href="/submit" className={`${styles.item}  h4 fp`}>
+        <LucideSend size={20} className={styles.item__icon} />
+            Register club
+        </Link>
+        <div className={`${styles.item} fp`}>
+        <LucideLogOut size={20} className={styles.item__icon} />
+        <div onClick={handleLogOut} className="h4">
+            Log out
+        </div>
+        </div>
+    </nav>
   );
 }
 
