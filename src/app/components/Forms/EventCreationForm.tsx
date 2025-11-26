@@ -7,6 +7,9 @@ import FormToast from "../Toast/Toast";
 import styles from "../../dashboard/page.module.css";
 import { LucideCalendarPlus } from "lucide-react";
 import { getAuth } from "firebase/auth";
+import { RunClubEvent } from "@/app/lib/types/runClubEvent";
+import { db } from "@/app/lib/firebase";
+import { doc, getDoc } from "firebase/firestore";
 
 type RunClubOption = { id: string; name?: string; title?: string };
 
@@ -14,7 +17,7 @@ type Props = {
   runclubId?: string;
   runclubs?: RunClubOption[];
   onClose?: () => void;
-  onEventCreated?: () => void;
+  onEventCreated?: (newEvent: RunClubEvent) => void;
 };
 
 type FormState =
@@ -24,7 +27,7 @@ type FormState =
 
 const initialState: FormState = undefined;
 
-export default function EventCreationForm({ runclubId, runclubs = [], onClose }: Props) {
+export default function EventCreationForm({ runclubId, runclubs = [], onClose, onEventCreated }: Props) {
   const { user } = useAuth();
   const formRef = useRef<HTMLFormElement | null>(null);
   const [state, setState] = useState<FormState>(initialState);
@@ -114,6 +117,27 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
 
         if (result && result.success) {
           if (!formRef.current) return;
+
+            const eventId = result.id;
+            if (!eventId) {
+            console.error("No event ID returned from server.");
+            return;
+            }
+            // Fetch the newly created event document
+            const eventDoc = await getDoc(doc(db, "events", eventId));
+            if (eventDoc.exists()) {
+            const newEvent = {
+                id: eventDoc.id,
+                ...eventDoc.data(),
+            } as RunClubEvent;
+
+            // Call the callback function to update eventsState
+            if (onEventCreated) {
+                onEventCreated(newEvent);
+            }
+            } else {
+            console.error("Event document not found:", eventId);
+            }
 
           formRef.current.reset();
           setSelectedRunclub(runclubs[0]?.id || "");

@@ -19,6 +19,7 @@ import * as Tabs from "@radix-ui/react-tabs";
 import { LucidePlus } from "lucide-react";
 import RunClubEventCard from "./RunClubEvent";
 import styles from "./page.module.css";
+import { RunClubEvent } from "../lib/types/runClubEvent";
 
 function DashboardPage() {
   const [activeTab, setActiveTab] = useState("overview");
@@ -50,6 +51,10 @@ function DashboardPage() {
   const handleEventDeleted = (deletedEventId: string) => {
     setEventsState((prevEvents) => prevEvents.filter((event) => event.id !== deletedEventId));
   };
+
+  const handleEventCreated = (newEvent: RunClubEvent) => {
+    setEventsState((prevEvents) => [newEvent, ...prevEvents]); 
+  }
 
   if (!user || loading) {
     return (
@@ -256,6 +261,7 @@ function DashboardPage() {
         <EventCreationForm
           runclubs={clubs.map((c) => ({ id: c.id, name: c.name }))}
           onClose={() => setShowCreateEvent(false)}
+          onEventCreated={handleEventCreated}
         />
       </Modal>
     </div>
