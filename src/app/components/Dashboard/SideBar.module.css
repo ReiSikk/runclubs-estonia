@@ -2,16 +2,18 @@
   padding-block: 4rem;
   border-right: 1px solid var(--gray);
   height: 100svh;
-  min-width: fit-content;
   padding-right: 1.2rem;
-  max-width: 275px;
+  max-width: 325px;
   width: 100%;
 }
 .sideBar__menu {
     height: 100%;
+    transition: transform 0.3s ease-in-out;
 }
 .sideBar__list {
-    height: 100%;
+  height: 100%;
+  transform: translateX(0);
+  transition: transform 0.3s ease-in-out;
 }
 .item {
   position: relative;
@@ -38,6 +40,7 @@
     margin-top: auto;
   }
 }
+
 @media (hover: hover) and (pointer: fine) {
 
   .sideBar__list .item:hover {
