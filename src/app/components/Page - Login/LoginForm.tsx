@@ -73,6 +73,7 @@ const handleGoogleSignIn = async () => {
             value={data?.email} 
             placeholder='Your email'
             autoComplete='email'
+            data-testid="email-input"
             onChange={(e) => setData({...data, email: e.target.value})} 
           />
         </div>
@@ -82,6 +83,7 @@ const handleGoogleSignIn = async () => {
             className="rcForm__input"
             id="password"
             type="password" 
+            data-testid="password-input"
             value={data?.password} 
             placeholder='Your password'
             onChange={(e) => setData({...data, password: e.target.value})} 
@@ -89,7 +91,7 @@ const handleGoogleSignIn = async () => {
         </div>
         {error && <p className="input__error">{`${error} !`}</p>}
         <div className={`${styles.loginForm__actions} fp-col`}>
-          <button type="submit" className="btn_main">
+          <button type="submit" className="btn_main" data-testid="sign-in-btn">
             Sign in
           </button>
           <button

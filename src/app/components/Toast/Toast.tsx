@@ -26,10 +26,11 @@ export default function FormToast({ message, type, open, onOpenChange}: FormToas
         open={open}
         onOpenChange={onOpenChange}
         duration={5000}
+        data-testid="feedback-toast"
       >
         <div className={`${styles.overlay} ${type === "success" ? styles.success : styles.error}`}></div>
         <Toast.Title className={`${styles.Title} h5`}>
-          {type === "success" ? "Success!" : "Error submitting form"}
+          {type === "success" ? "Success!" : "Error submitting form. "}
         </Toast.Title>
         <Toast.Description className={`${styles.Description} txt-body`}>
           {message}

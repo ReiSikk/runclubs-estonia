@@ -322,7 +322,7 @@ export async function createEvent(
 
     return {
       success: true,
-      message: "Event created successfully",
+      message: "Event successfully created!",
       id: docRef.id,
     };
   } catch (error: unknown) {

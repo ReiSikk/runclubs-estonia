@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import FloatingMenu from "./FloatingMenu"; // Import the new FloatingMenu component
 import styles from "./SideBar.module.css";
 import Link from "next/link";

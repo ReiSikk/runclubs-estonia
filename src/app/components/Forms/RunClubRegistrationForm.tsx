@@ -123,6 +123,7 @@ export default function RunClubRegistrationForm() {
 
         if (result.success) {
           // Clear form on success
+
           if (formRef.current) {
             formRef.current.reset();
             setFilePreview(null);

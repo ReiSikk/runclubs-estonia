@@ -54,6 +54,7 @@
 .dashboardStats__list {
   gap: 1.6rem;
   grid-template-columns: repeat(auto-fit, minmax(275px, 1fr));
+  align-items: stretch;
 
   @media only screen and (min-width: 1025px) {
     grid-template-columns: repeat(3, 1fr);
@@ -179,6 +180,13 @@
   margin-bottom: clamp(3.2rem, 4vw, 4rem);
   justify-content: space-between;
   gap: 2.4rem 1.6rem;
+
+  /* In case user has no events */
+  &.noEvents {
+    align-items: end;
+    margin-bottom: 0px;
+  }
+
   @media only screen and (min-width: 768px) and (max-width: 1024px), only screen and (min-width: 1025px) {
     flex-wrap: nowrap;
   }

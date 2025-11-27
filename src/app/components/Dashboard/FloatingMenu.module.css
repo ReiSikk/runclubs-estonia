@@ -64,7 +64,7 @@
   bottom: calc(100% + 8px);
   left: 50%;
   transform: translateX(-50%);
-  width: 100%;
+  width: calc(100% - 24px);
   max-width: 600px;
   background: var(--cream);
   box-shadow: 0 6px 8px rgba(0, 0, 0, 0.5);

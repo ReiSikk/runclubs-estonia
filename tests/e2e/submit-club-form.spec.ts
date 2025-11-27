@@ -1,4 +1,8 @@
 import { test, expect } from '@playwright/test';
+import fs from "fs";
+import path from "path";
+
+const indexedDBFile = path.join(__dirname, "../../playwright/.auth/indexedDB.json");
 
 test.describe('Run Club Registration Form', () => {
   test.beforeEach(async ({ page }) => {
@@ -55,6 +59,25 @@ test.describe('Run Club Registration Form', () => {
   });
 
   test('should successfully submit a complete run club registration with image', async ({ page }) => {
+    // Restore IndexedDB for Firebase auth session retrieval
+    const indexedDBData = JSON.parse(fs.readFileSync(indexedDBFile, "utf-8"));
+    await page.evaluate(async (data) => {
+      const dbName = "firebaseLocalStorageDb";
+      const storeName = "firebaseLocalStorage";
+      const dbRequest = indexedDB.open(dbName);
+      await new Promise((resolve, reject) => {
+        dbRequest.onsuccess = () => {
+          const db = dbRequest.result;
+          const transaction = db.transaction(storeName, "readwrite");
+          const store = transaction.objectStore(storeName);
+          data.forEach((item: unknown) => store.put(item));
+          transaction.oncomplete = () => resolve(true);
+          transaction.onerror = () => reject(transaction.error);
+        };
+        dbRequest.onerror = () => reject(dbRequest.error);
+      });
+    }, indexedDBData);
+
     // Fill in club name
     await page.fill('input[name="name"]', 'Test Running Club E2E');
 
@@ -140,15 +163,12 @@ test.describe('Run Club Registration Form', () => {
     const submitButton = page.locator('button[type="submit"]');
     await submitButton.click();
 
-    // Wait for submission to complete
-    await page.waitForTimeout(10000);
+    // Wait for the feedback toast to appear (appears when state.message is set after server action)
+    await page.waitForSelector('[data-testid="feedback-toast"]', { timeout: 10000 });
 
-    // Check for success message or redirect
-    const currentUrl = page.url();
-    const hasSuccessMessage = await page.locator('text=/success|submitted|registered/i').isVisible().catch(() => false);
-    
-    // Either should show success message OR redirect to home
-    expect(hasSuccessMessage || !currentUrl.includes('/submit')).toBeTruthy();
+    // Assert the toast contains the success message
+    const toastText = await page.locator('[data-testid="feedback-toast"]').textContent();
+    expect(toastText).toContain("Success! Your club has been registered and is pending approval.");
   });
 
   test('should upload and preview SVG file', async ({ page }) => {

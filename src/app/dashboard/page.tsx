@@ -87,7 +87,7 @@ function DashboardPage() {
 
   return (
     <>
-      <main className={`${styles.dashboard} ${isMobile ? styles.mobile : ""}`} id="page-top">
+      <main className={`${styles.dashboard} ${isMobile ? styles.mobile : ""}`} id="page-top" data-testid="dashboard-page">
           <SideBar handleLogOut={handleLogOut} isMobile={isMobile} />
           <div className={`${styles.dashboard__main}`}>
             <div className={`${styles.header}`}>
@@ -189,7 +189,7 @@ function DashboardPage() {
               </Tabs.Content>
               <Tabs.Content className="tabs__content" value="events">
                 <div className={styles.dashboardEvents}>
-                  <div className={`${styles.dashboardEvents__header} fp`}>
+                  <div className={`${styles.dashboardEvents__header} ${eventsState.length < 1 ? styles.noEvents : ""} fp`}>
                     <div className={`${styles.main}`}>
                       <h6 className="h2">My events</h6>
                       <p className="txt-body">
