@@ -6,7 +6,7 @@ const authFile = path.join(__dirname, "../playwright/.auth/user.json");
 const indexedDBFile = path.join(__dirname, "../playwright/.auth/indexedDB.json");
 
 setup("authenticate", async ({ page }) => {
-  const base = process.env.BASE_URL ?? "http://localhost:3000";
+  const base = process.env.PLAYWRIGHT_TEST_BASE_URL ?? "http://localhost:3000";
   const loginUrl = `${base}/login`;
   const email = process.env.TEST_USER_EMAIL ?? "test@example.com";
   const password = process.env.TEST_USER_PASSWORD ?? "password123";
