@@ -40,8 +40,7 @@
     color: var(--cream);
     backdrop-filter: blur(10px);
     border: 0.5px solid var(--cream);
-    border-radius: 999px;
-    text-wrap: nowrap;
+    border-radius: var(--bradius-xl);    text-wrap: nowrap;
   }
 }
 .rcForm__section {
@@ -71,7 +70,7 @@
   .pickerInput {
     background: var(--cream);
     border: 1px solid var(--dark);
-    border-radius: 8px;
+    border-radius: var(--bradius-8);
     &:hover {
       border-color: var(--dark);
     }

@@ -117,8 +117,7 @@
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
-	border-radius: 999px;
-    padding: 8px;
+	border-radius: var(--bradius-xl);    padding: 8px;
     border: 1px solid var(--dark);
     background: transparent;
     height: 32px;

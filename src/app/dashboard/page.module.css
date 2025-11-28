@@ -27,7 +27,7 @@
 }
 .card_dashboard {
   padding: clamp(12px, 2vw, 16px);
-  border-radius: 12px;
+  border-radius: var(--bradius-12);
   box-shadow: 0 1px 8px rgba(0, 0, 0, 0.1);
   background: var(--cream);
   color: var(--dark);
@@ -78,7 +78,7 @@
 }
 .dashboardStats__initials {
   margin-block: 0.4rem 0.8rem;
-  border-radius: 9999px;
+  border-radius: var(--bradius-xl);
   width: clamp(48px, 6vw, 64px);
   height: clamp(48px, 6vw, 64px);
   background: var(--dark);
@@ -138,8 +138,7 @@
     background: var(--dark);
     color: var(--cream);
     backdrop-filter: blur(10px);
-    border-radius: 999px;
-    align-content: center;
+    border-radius: var(--bradius-xl);    align-content: center;
   }
 }
 .clubsNevents__list {

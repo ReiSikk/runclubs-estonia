@@ -4,30 +4,6 @@
   font-family: var(--font-inter-tight);
 }
 /*
-   Navigation
-   ========================================================================== */
-
-.pageNav {
-  margin-block: 0px 16px;
-  padding-inline: 12px 20px;
-
-  &:empty {
-    display: none;
-  }
-}
-.pageNav__link {
-  font-size: 1.6rem;
-  margin-left: auto;
-  z-index: 2;
-  margin-bottom: 4px;
-  border-bottom: 1px solid var(--accent);
-  transition: border-bottom 0.2s ease;
-
-  &:hover {
-    border-bottom: 1px solid transparent;
-  }
-}
-/*
    Site main content
    ========================================================================== */
 

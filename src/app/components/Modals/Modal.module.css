@@ -34,7 +34,7 @@
   cursor: pointer;
   line-height: 1;
   transition: color 0.2s ease, background 0.2s ease;
-  border-radius: 12px;
+  border-radius: var(--bradius-12);
   background: var(--accent);
   display: flex;
   align-items: center;

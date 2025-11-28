@@ -3,6 +3,7 @@ import Script from "next/script";
 import { Geist, Geist_Mono, Work_Sans, Inter_Tight } from "next/font/google";
 import "./globals.css";
 import SiteFooter from "./components/Footer/SiteFooter";
+import SiteNav from "./components/Navbar/SiteNav";
 // Providers
 import Providers from "./providers/providers";
 
@@ -79,6 +80,7 @@ export default function RootLayout({
   return (
     <html lang="en" data-scroll-behavior="smooth">
         <body className={`${geistSans.variable} ${geistMono.variable} ${workSans.variable} ${interTight.variable}`}>
+              <SiteNav />
               <Providers>{children}</Providers>
               <SiteFooter />
               <Script

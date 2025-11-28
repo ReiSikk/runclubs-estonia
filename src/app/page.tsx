@@ -25,11 +25,6 @@ export default async function Home() {
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
       <div className={`${styles.page}`} id="page-top">
-          <nav className={`${styles.pageNav} container`}>
-            <Link href="/submit" className={`${styles.pageNav__link}`} aria-label="Register your running club">
-              Add your club
-            </Link>
-          </nav>
         <HeroSection />
         <main className={`${styles.main}`}>
           <MainSection />

@@ -2,7 +2,7 @@
   position: relative;
   background: var(--dark-gray);
   color: var(--white);
-  border-radius: 12px;
+  border-radius: var(--bradius-12);
   padding: 20px;
   box-shadow: 0 6px 20px rgba(0,0,0,0.4);
   overflow: hidden;
@@ -16,8 +16,7 @@
   transform: translateX(-50%);
   z-index: 3;
   padding: 6px 14px;
-  border-radius: 999px;
-  background: rgba(40,40,40,0.9);
+  border-radius: var(--bradius-xl);  background: rgba(40,40,40,0.9);
   color: var(--white);
   border: 1px solid rgba(255,255,255,0.03);
 }
@@ -54,8 +53,7 @@
   background: #222;
   color: var(--white);
   padding: 8px 12px;
-  border-radius: 999px;
-  font-size: 1.4rem;
+  border-radius: var(--bradius-xl);  font-size: 1.4rem;
   user-select: none;
   white-space: nowrap;
 }
