@@ -6,7 +6,6 @@ import {
   QueryClientProvider,
 } from '@tanstack/react-query'
 import { AuthProvider } from './AuthProvider'
-import AppCheckWrapper from '../lib/AppCheckWrapper'
 
 function makeQueryClient() {
   return new QueryClient({
@@ -39,13 +38,10 @@ export default function Providers({ children }: { children: React.ReactNode }) {
   const queryClient = getQueryClient()
 
   return (
-    <>
-    <AppCheckWrapper />
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
         {children}
       </AuthProvider>
     </QueryClientProvider>
-    </>
   )
 }
