@@ -53,10 +53,4 @@ if (typeof window !== 'undefined') {
 export const db = getFirestore(app);
 export const storage = getStorage(app);
 export const auth = getAuth(app);
-  auth.settings = {
-    cookies: {
-      sameSite: "None",
-      secure: true,
-    },
-  };
 export { app };
