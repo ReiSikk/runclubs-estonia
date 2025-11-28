@@ -39,17 +39,18 @@ if (typeof window !== 'undefined') {
     console.log('🔧 App Check Debug Mode: Auto-generating token');
   }
 
-  initializeAppCheck(app, {
+  // initializeAppCheck(app, {
 
-    provider: new ReCaptchaEnterpriseProvider(
-      process.env.NEXT_PUBLIC_RECAPTCHA_ENTERPRISE_SITE_KEY!
-    ),
-    isTokenAutoRefreshEnabled: true, // Recommended to keep tokens fresh automatically
+  //   provider: new ReCaptchaEnterpriseProvider(
+  //     process.env.NEXT_PUBLIC_RECAPTCHA_ENTERPRISE_SITE_KEY!
+  //   ),
+  //   isTokenAutoRefreshEnabled: true, // Recommended to keep tokens fresh automatically
 
-  });
+  // });
 
 }
 
 export const db = getFirestore(app);
 export const storage = getStorage(app);
 export const auth = getAuth(app);
+export { app };
