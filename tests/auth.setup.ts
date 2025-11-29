@@ -24,7 +24,7 @@ setup("authenticate", async ({ page }) => {
   await page.getByTestId("sign-in-btn").click();
 
   // Wait for login success
-  await page.waitForURL(`${base}/dashboard`);
+  await page.waitForURL((url) => url.pathname.includes("/dashboard"));
   console.log("Login successful");
 
   // Save cookies and sessionStorage (default Playwright behavior)
