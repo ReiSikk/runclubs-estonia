@@ -15,6 +15,11 @@ setup("authenticate", async ({ page }) => {
   console.log("Using test email:", email);
 
   await page.goto(loginUrl);
+  await page.evaluate(() => {
+    // In Next.js, process.env properties are replaced by strings at build time.
+    // If the build worked, this will log the actual token string in the browser console.
+    console.log('DEBUG: Token in browser is:', process.env.NEXT_PUBLIC_APP_CHECK_DEBUG_TOKEN_FROM_CI);
+  });
 
   const emailField = page.getByTestId("email-input");
   const passwordField = page.getByTestId("password-input");
