@@ -12,7 +12,6 @@ import {
   QueryClient,
 } from '@tanstack/react-query'
 // Queries
-import Link from "next/link";
 import { getRunClubs } from "./lib/queries/runClubs";
 
 export default async function Home() {

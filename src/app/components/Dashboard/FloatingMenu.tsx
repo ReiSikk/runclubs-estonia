@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import styles from "./FloatingMenu.module.css";
 import Link from "next/link";
-import { LucideLayoutGrid, LucideHome, LucideSend, LucideLogOut, LucideMenu, LucideX } from "lucide-react";
+import { LucideLayoutDashboard, LucideHome, LucideSend, LucideLogOut, LucideMenu, LucideX } from "lucide-react";
 
 interface FloatingMenuProps {
   handleLogOut: () => void;
@@ -30,7 +30,7 @@ export default function FloatingMenu({ handleLogOut }: FloatingMenuProps) {
       <div className={styles.floatingMenu__wrap + " fp-col"}>
         <nav className={styles.menuItems + (isExpanded ? ` ${styles.expanded}` : "") + " fp-col"} role="menu" aria-hidden={!isExpanded}>
               <Link href="/dashboard" className={`${styles.item} h4 fp`} aria-hidden={!isExpanded} ref={firstMenuItemRef} tabIndex={isExpanded ? 0 : -1}>
-                  <LucideLayoutGrid size={20} className={styles.item__icon} />
+                  <LucideLayoutDashboard size={20} className={styles.item__icon} />
                   Dashboard
               </Link>
               <Link href="/" className={`${styles.item} h4 fp`} tabIndex={isExpanded ? 0 : -1} role="menuitem">
