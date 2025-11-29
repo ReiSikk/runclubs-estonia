@@ -1,38 +1,30 @@
-.layout {
+.floatingMenu {
   position: fixed;
   bottom: 0px;
   left: 50%;
   transform: translateX(-50%);
-  z-index: 999;
-  width: 100%;
-  background: rgba(0, 0, 0, 0.3);
-  backdrop-filter: blur(10px);
-  border-top-left-radius: 12px;
-  border-top-right-radius: 12px;
-}
-.floatingMenu {
-  width: calc(100vw - clamp(40px, 8vw, 80px));
-  max-width: 600px;
-  margin-block: 24px;
-  margin-inline: auto;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
-  background: var(--cream);
-  color: var(--dark);
-  border-radius: var(--bradius-16);
-  border: 2px solid var(--dark);
-  padding: 0.8rem;
-  align-items: center;
-  justify-content: space-between;
+  width: 100vw;
   z-index: 1000;
+  height: 76px;
 
   .actions {
     width: 100%;
     justify-content: space-between;
     align-items: center;
+    padding: 1.6rem;
+    height:100%;
+    border-top: 1px solid var(--dark);
+    background: var(--cream);
+    color: var(--dark);
+    z-index: 1005;
     span {
       margin-left: 8px;
     }
   }
+}
+.floatingMenu__wrap {
+  height: 100%;
+
 }
 
 /* Menu button */
@@ -47,7 +39,6 @@
   border: none;
   cursor: pointer;
   position: relative;
-  z-index: 1000;
   background: var(--dark);
   border-radius: var(--bradius-8);
   transition: background 0.2s ease;
@@ -61,30 +52,28 @@
 /* Menu items container */
 .menuItems {
   position: absolute;
-  bottom: calc(100% + 8px);
-  left: 50%;
-  transform: translateX(-50%);
-  width: calc(100% - 24px);
-  max-width: 600px;
+  bottom: 0;
+  transform: translateY(100%);
+  width: 100%;
   background: var(--cream);
-  box-shadow: 0 6px 8px rgba(0, 0, 0, 0.5);
-  border-radius: var(--bradius-16);
+  color: var(--dark);
   gap: 1.2rem;
   align-items: center;
   overflow: hidden;
-  height: 0;
   opacity: 0;
   pointer-events: none;
-  transition: height 0.3s cubic-bezier(0.25, 0.1, 0.25, 1), opacity 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
-  z-index: 999;
+  transition: height 0.3s cubic-bezier(0.25, 0.1, 0.25, 1), opacity 0.3s cubic-bezier(0.25, 0.1, 0.25, 1),
+    transform 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
+  z-index: 1002;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.8);
 }
 
 /* Expanded state */
-.floatingMenu.expanded .menuItems {
-  height: auto;
-  opacity: 1;
+.menuItems.expanded {
   pointer-events: auto;
   padding: 1.2rem;
+  transform: translateY(calc(0% + -76px));
+  opacity: 1;
 }
 
 .item {

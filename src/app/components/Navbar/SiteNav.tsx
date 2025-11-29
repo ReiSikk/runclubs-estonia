@@ -8,14 +8,14 @@ import { Tooltip } from "radix-ui";
 import { useAuth } from "@/app/providers/AuthProvider";
 import { auth } from "@/app/lib/firebase";
 import { useRouter } from "next/navigation";
-import useIsMobile from "@/app/lib/hooks/useIsMobile";
+import { useIsMobile } from "@/app/lib/hooks/useIsMobile";
 
 function SiteNav() {
   const [isVisible, setIsVisible] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
   const { user } = useAuth();
   const router = useRouter();
-  const isMobile = useIsMobile(); // Check for mobile breakpoint
+  const isMobile  = useIsMobile(); // Check for mobile breakpoint
   const [isExpanded, setIsExpanded] = useState(false);
     const firstMenuItemRef = useRef<HTMLAnchorElement>(null);
     const burgerButtonRef = useRef<HTMLButtonElement>(null);
@@ -60,7 +60,7 @@ function SiteNav() {
       {isMobile && (
         <button 
             ref={burgerButtonRef}
-            className={`${styles.siteNav__link} ${styles.icon} fp`}
+            className={`${styles.siteNav__link} ${styles.icon} ${styles.toggle} fp`}
             onClick={toggleMenu}
             aria-expanded={isExpanded}
             aria-label={isExpanded ? "Close menu" : "Open menu"}
@@ -75,7 +75,7 @@ function SiteNav() {
             <LucideHome size={16} />
             Home
           </Link>
-          <Tooltip.Provider delayDuration={500}>
+          <Tooltip.Provider delayDuration={0}>
             <Tooltip.Root>
               <Tooltip.Trigger asChild>
                 <Link className={`${styles.siteNav__link} ${styles.icon} fp`} href="/submit" role="menulink">
@@ -90,7 +90,7 @@ function SiteNav() {
               </Tooltip.Portal>
             </Tooltip.Root>
           </Tooltip.Provider>
-          <Tooltip.Provider delayDuration={500}>
+          <Tooltip.Provider delayDuration={0}>
             <Tooltip.Root>
               <Tooltip.Trigger asChild>
                 <Link className={`${styles.siteNav__link} ${styles.icon} fp`} href="/dashboard" role="menulink">

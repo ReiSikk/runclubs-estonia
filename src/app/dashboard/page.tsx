@@ -7,6 +7,7 @@ import { formatMonthYear } from "../lib/utils/convertTime";
 import { useAuth } from "../providers/AuthProvider";
 import { useRouter } from "next/navigation";
 import useEventsForRunclubs from "../lib/hooks/useEvents";
+import { useIsMobile } from "../lib/hooks/useIsMobile";
 // Firebase
 import { auth } from "@/app/lib/firebase";
 // Components and styles

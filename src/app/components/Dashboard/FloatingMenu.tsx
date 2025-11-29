@@ -26,28 +26,28 @@ export default function FloatingMenu({ handleLogOut }: FloatingMenuProps) {
   }, [isExpanded]);
 
   return (
-    <div className={styles.layout}>
-        <div className={`${styles.floatingMenu} ${isExpanded ? styles.expanded : ""} fp-col`}>
-        <nav className={styles.menuItems + " fp-col"} role="menu" aria-hidden={!isExpanded}>
-            <Link href="/dashboard" className={`${styles.item} h4 fp`} aria-hidden={!isExpanded} ref={firstMenuItemRef} tabIndex={isExpanded ? 0 : -1}>
-                <LucideLayoutGrid size={20} className={styles.item__icon} />
-                Dashboard
-            </Link>
-            <Link href="/" className={`${styles.item} h4 fp`} tabIndex={isExpanded ? 0 : -1} role="menuitem">
-                <LucideHome size={20} className={styles.item__icon} />
-                    Home
-            </Link>
-            <Link href="/submit" className={`${styles.item} h4 fp`} tabIndex={isExpanded ? 0 : -1} role="menuitem">
-                <LucideSend size={20} className={styles.item__icon} />
-                    Register club
-            </Link>
-            <div className={`${styles.item} fp`} onClick={handleLogOut} tabIndex={isExpanded ? 0 : -1} role="menuitem">
-                <LucideLogOut size={20} className={styles.item__icon} />
-                <div onClick={handleLogOut} className="h4">
-                    Log out
-                </div>
-            </div>
-        </nav>
+    <div className={styles.floatingMenu}>
+      <div className={styles.floatingMenu__wrap + " fp-col"}>
+        <nav className={styles.menuItems + (isExpanded ? ` ${styles.expanded}` : "") + " fp-col"} role="menu" aria-hidden={!isExpanded}>
+              <Link href="/dashboard" className={`${styles.item} h4 fp`} aria-hidden={!isExpanded} ref={firstMenuItemRef} tabIndex={isExpanded ? 0 : -1}>
+                  <LucideLayoutGrid size={20} className={styles.item__icon} />
+                  Dashboard
+              </Link>
+              <Link href="/" className={`${styles.item} h4 fp`} tabIndex={isExpanded ? 0 : -1} role="menuitem">
+                  <LucideHome size={20} className={styles.item__icon} />
+                      Home
+              </Link>
+              <Link href="/submit" className={`${styles.item} h4 fp`} tabIndex={isExpanded ? 0 : -1} role="menuitem">
+                  <LucideSend size={20} className={styles.item__icon} />
+                      Register club
+              </Link>
+              <div className={`${styles.item} fp`} onClick={handleLogOut} tabIndex={isExpanded ? 0 : -1} role="menuitem">
+                  <LucideLogOut size={20} className={styles.item__icon} />
+                  <div onClick={handleLogOut} className="h4">
+                      Log out
+                  </div>
+              </div>
+          </nav>
         <div className={styles.actions + " fp"}>
             <span className="h3">Menu</span>
             <button
@@ -60,7 +60,7 @@ export default function FloatingMenu({ handleLogOut }: FloatingMenuProps) {
             {isExpanded ? <LucideX size={24} /> : <LucideMenu size={24} />}
             </button>
         </div>
-        </div>
+      </div>
     </div>
   );
 }
