@@ -31,6 +31,7 @@ if (typeof window !== 'undefined') {
   console.log('Using App Check Debug Token:', debugToken); //TODO: Remove after verifying!!!
   const isCI = process.env.CI === 'true';
   const isDev = process.env.NODE_ENV === 'development';
+  console.log(isCI, "isCi");
 
   if ((isDev || isCI) && debugToken) {
     self.FIREBASE_APPCHECK_DEBUG_TOKEN = debugToken;
