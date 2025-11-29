@@ -43,6 +43,8 @@ jobs:
     
     - name: Build Next.js app
       run: npm run build
+      env:
+        NEXT_PUBLIC_APP_CHECK_DEBUG_TOKEN_FROM_CI: ${{ secrets.FIREBASE_APPCHECK_DEBUG_TOKEN }}
     
     - name: Run Playwright tests
       run: npx playwright test
