@@ -1,16 +1,14 @@
 import { initializeApp, getApps, getApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
-import { initializeAppCheck, ReCaptchaEnterpriseProvider } from "firebase/app-check";
+import { initializeAppCheck, ReCaptchaEnterpriseProvider, CustomProvider } from "firebase/app-check";
 import { getAuth } from "firebase/auth";
 
-// Extend Window interface for type safety
 declare global {
   interface Window {
-    FIREBASE_APPCHECK_DEBUG_TOKEN?: string | boolean;
+    FIREBASE_APPCHECK_DEBUG_TOKEN?: boolean; // Add the property to the Window interface
   }
 }
-
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -28,27 +26,52 @@ const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
 if (typeof window !== 'undefined') {
   // Set debug token for development AND CI environments
   const debugToken = process.env.NEXT_PUBLIC_APP_CHECK_DEBUG_TOKEN_FROM_CI;
-  console.log('Using App Check Debug Token:', debugToken); //TODO: Remove after verifying!!!
   const isCI = process.env.CI === 'true';
   const isDev = process.env.NODE_ENV === 'development';
-  console.log(isCI, "isCi");
+  console.log(`[Firebase Init] CI: ${isCI}, Dev: ${isDev}, Token Available: ${!!debugToken}`);
 
-  if ((isDev || isCI) && debugToken) {
-    self.FIREBASE_APPCHECK_DEBUG_TOKEN = debugToken;
+ if (isCI && debugToken) {
+    // 1. In CI, force the use of the debug token using CustomProvider.
+    // This bypasses the reCAPTCHA call completely, solving the CI timeout.
+    
+    console.log('[Firebase Init] Using CustomProvider for CI/Debug Token.');
+    
+    initializeAppCheck(app, {
+      provider: new CustomProvider({
+        // getToken must return a Promise of an AppCheckTokenResult
+        getToken: async () => ({
+          token: debugToken,
+          // Set a generous expiration time (e.g., 5 minutes)
+          expireTimeMillis: Date.now() + 300000, 
+        }),
+      }),
+      isTokenAutoRefreshEnabled: false, // Turn off refresh since it's a static debug token
+    });
+
   } else if (isDev && !debugToken) {
-    // Auto-generate token in development if not provided
+    // 2. In Dev mode without a provided token, enable the debug token generation mode.
+    // The SDK will now output a token to the console which you can copy.
     self.FIREBASE_APPCHECK_DEBUG_TOKEN = true;
-    console.log('🔧 App Check Debug Mode: Auto-generating token');
+    console.log('🔧 [Firebase Init] Dev Mode: Auto-generating token for copy/paste.');
+
+    initializeAppCheck(app, {
+      provider: new ReCaptchaEnterpriseProvider(
+        process.env.NEXT_PUBLIC_RECAPTCHA_ENTERPRISE_SITE_KEY!
+      ),
+      isTokenAutoRefreshEnabled: true,
+    });
+
+  } else {
+    // 3. Standard production or dev mode with token (if provided through other means)
+    console.log('[Firebase Init] Using standard ReCaptchaEnterpriseProvider.');
+    
+    initializeAppCheck(app, {
+      provider: new ReCaptchaEnterpriseProvider(
+        process.env.NEXT_PUBLIC_RECAPTCHA_ENTERPRISE_SITE_KEY!
+      ),
+      isTokenAutoRefreshEnabled: true,
+    });
   }
-
-  initializeAppCheck(app, {
-
-    provider: new ReCaptchaEnterpriseProvider(
-      process.env.NEXT_PUBLIC_RECAPTCHA_ENTERPRISE_SITE_KEY!
-    ),
-    isTokenAutoRefreshEnabled: true, // Recommended to keep tokens fresh automatically
-
-  });
 
 }
 
