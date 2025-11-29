@@ -8,9 +8,9 @@ interface FloatingMenuProps {
 }
 
 export default function FloatingMenu({ handleLogOut }: FloatingMenuProps) {
-  const [isExpanded, setIsExpanded] = useState(false);
   const firstMenuItemRef = useRef<HTMLAnchorElement>(null);
   const burgerButtonRef = useRef<HTMLButtonElement>(null);
+  const [isExpanded, setIsExpanded] = useState(false);
 
   const toggleMenu = () => {
     setIsExpanded((prev) => !prev);

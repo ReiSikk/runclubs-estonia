@@ -28,12 +28,6 @@ function DashboardPage() {
   // State for create event modal
   const [showCreateEvent, setShowCreateEvent] = useState(false);
 
-  // Log out button handler
-  const handleLogOut = useCallback(async () => {
-    await auth.signOut();
-    router.replace("/login");
-  }, [router]);
-
   // Find users clubs
   const { data: clubs = [], isLoading, isError } = getUserRunClubs(user?.uid);
   // Get clubs ids and fetch events
@@ -42,10 +36,17 @@ function DashboardPage() {
 
   // Local state for events to allow updates on delete/create
   const [eventsState, setEventsState] = useState(events);
+  const isMobile = useIsMobile(); // Check for mobile breakpoint
 
   useEffect(() => {
     setEventsState(events);
   }, [events]);
+
+  // Log out button handler
+  const handleLogOut = useCallback(async () => {
+    await auth.signOut();
+    router.replace("/login");
+  }, [router]);
 
 
   // Handle event DELETE
@@ -57,22 +58,6 @@ function DashboardPage() {
   const handleEventCreated = (newEvent: RunClubEvent) => {
     setEventsState((prevEvents) => [newEvent, ...prevEvents]); 
   }
-
-  // Mobile detection for sidebar
-  const [isMobile, setIsMobile] = useState(false);
-
-  useEffect(() => {
-    const handleResize = () => {
-      setIsMobile(window.innerWidth <= 768); // Mobile breakpoint
-    };
-
-    handleResize(); // Initial check
-    window.addEventListener("resize", handleResize);
-
-    return () => {
-      window.removeEventListener("resize", handleResize);
-    };
-  }, []);
 
   if (!user || loading) {
     return (

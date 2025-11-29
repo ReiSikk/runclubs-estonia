@@ -1,6 +1,6 @@
 .page {
   min-height: 100svh;
-  padding-block: 16px clamp(64px, 8vw, 84px);
+  padding-block: 12px clamp(64px, 8vw, 84px);
   font-family: var(--font-inter-tight);
 }
 /*
