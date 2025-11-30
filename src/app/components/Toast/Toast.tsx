@@ -20,21 +20,22 @@ export default function FormToast({ message, type, open, onOpenChange}: FormToas
     }, []);
 
 	return (
-	    <Toast.Provider swipeDirection="right">
+	    <Toast.Provider swipeDirection="down">
       <Toast.Root
         className={`${styles.Root} ${type === "success" ? styles.success : styles.error}`}
         open={open}
         onOpenChange={onOpenChange}
         duration={5000}
+        data-testid="feedback-toast"
       >
         <div className={`${styles.overlay} ${type === "success" ? styles.success : styles.error}`}></div>
         <Toast.Title className={`${styles.Title} h5`}>
-          {type === "success" ? "Success!" : "Error submitting form"}
+          {type === "success" ? "Success!" : "Error submitting form. "}
         </Toast.Title>
         <Toast.Description className={`${styles.Description} txt-body`}>
           {message}
         </Toast.Description>
-        <Toast.Close className={styles.Close}>
+        <Toast.Close className={styles.Close} aria-label="Close">
           <LucideX size={24} strokeWidth={2}/>
         </Toast.Close>
       </Toast.Root>

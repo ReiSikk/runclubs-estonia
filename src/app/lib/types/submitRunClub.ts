@@ -47,4 +47,5 @@ export const submitRunClubSchema = z.object({
   approvedForPublication: z.boolean().default(false),
   createdAt: z.any(),
   updatedAt: z.any(),
+  creator_id: z.any(),
 });

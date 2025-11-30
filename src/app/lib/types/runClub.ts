@@ -11,13 +11,14 @@
   distance: string;
   distanceDescription?: string;
   runDays: string[];
-  status: "pending" | "approved" | "rejected";
+  approvedForPublication: boolean;
   facebook?: string;
   instagram?: string;
   strava?: string;
   website?: string;
   createdAt?: string;
   updatedAt?: string;
+  creator_id?: string;
 }
 
 export type RunClubs = RunClub[];

@@ -52,7 +52,7 @@ function CtaSection({ variant }: { variant?: string }) {
             alt="Image of people running down a brick road. Photo by Jeremy Bishop on Unsplash"
             width={614}
             height={416}
-            className={styles.ctaSection__image}
+            className={`${styles.ctaSection__image} bradius-m`}
           />
         </div>
       </div>

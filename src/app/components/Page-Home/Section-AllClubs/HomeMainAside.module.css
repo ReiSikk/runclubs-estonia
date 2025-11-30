@@ -31,8 +31,7 @@
   color: var(--cream);
   backdrop-filter: blur(10px);
   border: 0.5px solid var(--cream);
-  border-radius: 999px;
-  transform: translateY(-50%);
+  border-radius: var(--bradius-xl);  transform: translateY(-50%);
   min-width: 37px;
   min-height: 20px;
 }

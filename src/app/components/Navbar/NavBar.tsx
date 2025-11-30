@@ -9,6 +9,7 @@ import Link from 'next/link';
 import LogoImg from '@/app/assets/runclubs__logo.svg';
 import { LucideMoveLeft } from 'lucide-react';
 
+
 function NavBar() {
     const [isScrolled, setScrolled] = useState(false);
 

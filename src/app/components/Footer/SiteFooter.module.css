@@ -22,8 +22,7 @@
   .siteFooter__bmac {
     width: fit-content;
     flex-direction: row;
-    border-radius: 999px;
-    gap: 8px;
+    border-radius: var(--bradius-xl);    gap: 8px;
     height: fit-content;
     background: var(--footer-3);
     transition: all 0.2s ease;
@@ -63,7 +62,7 @@
 .siteFooter__cell {
   position: relative;
   display: flex;
-  border-radius: 8px;
+  border-radius: var(--bradius-8);
   padding: clamp(16px, 3vw, 24px);
   align-items: center;
   justify-content: center;

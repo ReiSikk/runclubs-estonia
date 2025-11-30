@@ -77,6 +77,7 @@ export async function POST(request: NextRequest) {
       approvedForPublication: false,
       createdAt: Timestamp.now(),
       updatedAt: Timestamp.now(),
+      creator_id: formData.get("creator_id") as string,
     };
 
     // Add logo URL if uploaded

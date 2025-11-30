@@ -1,5 +1,7 @@
 "use server";
 
+import 'server-only'; // Ensure these server actions don't get bundled into client
+
 import { submitRunClubSchema } from "@/app/lib/types/submitRunClub";
 import { adminApp, adminDb } from "@/app/lib/firebaseAdmin";
 import { getStorage } from "firebase-admin/storage";
@@ -8,15 +10,39 @@ import getOptionalField from "@/app/lib/utils/getOptionalField";
 import normalizeToSlug from "@/app/lib/utils/generateSlugFromName";
 import sanitizeSVGs from "@/app/lib/utils/sanitizeSvgs";
 import { Timestamp } from "firebase-admin/firestore";
+import { getAuth } from "firebase-admin/auth";
+import { submitEventSchema } from './lib/types/submitEvent';
 
 type ActionResult =
-  | { success: true; message: string }
+  | { success: true; message: string; id?: string }
   | { success: false; message: string; errors?: Record<string, string[]> };
 
 export async function createRunClub(
   prevState: ActionResult | undefined,
   formData: FormData
 ): Promise<ActionResult> {
+
+  // Get ID token from formData
+  const idToken = formData.get("idToken") as string | undefined;
+  if (!idToken) {
+    return {
+      success: false,
+      message: "You must be logged in to submit a run club.",
+    };
+  }
+
+    // 2. Verify the token and get the UID
+  let creatorUid: string;
+  try {
+    const decodedToken = await getAuth(adminApp).verifyIdToken(idToken);
+    creatorUid = decodedToken.uid;
+  } catch {
+    return {
+      success: false,
+      message: "Invalid or expired authentication token.",
+    };
+  }
+
   try {
     const logoFile = formData.get("logo") as File | null;
     let logoUrl = "";
@@ -115,6 +141,7 @@ export async function createRunClub(
       approvedForPublication: boolean().default(false).parse(false),
       createdAt: Timestamp.now(),
       updatedAt: Timestamp.now(),
+      creator_id: creatorUid,
     };
 
     if (logoUrl) {
@@ -184,6 +211,126 @@ export async function createRunClub(
       success: false,
       message: errorMessage,
       errors: {},
+    };
+  }
+}
+
+
+/*
+   Create event server action
+   ========================================================================== */
+
+export async function createEvent(
+  prevState: ActionResult | undefined,
+  formData: FormData
+): Promise<ActionResult> {
+  // Expect idToken in formData (client should include user.getIdToken())
+  const idToken = formData.get("idToken") as string | undefined;
+  if (!idToken) {
+    return {
+      success: false,
+      message: "You must be logged in to create an event.",
+    };
+  }
+
+  // Verify token and get UID
+  let creatorUid: string;
+  try {
+    const decodedToken = await getAuth(adminApp).verifyIdToken(idToken);
+    creatorUid = decodedToken.uid;
+  } catch {
+    return {
+      success: false,
+      message: "Invalid or expired authentication token.",
+    };
+  }
+
+  try {
+    // Extract fields from formData
+    const title = String(formData.get("title") || "").trim();
+    const date = String(formData.get("date") || "").trim(); // expect yyyy-mm-dd or ISO
+    const startTime = String(formData.get("startTime") || "").trim();
+    const endTime = String(formData.get("endTime") || "").trim() || null;
+    const locationName = getOptionalField(formData, "locationName") || null;
+    const locationUrl = getOptionalField(formData, "locationUrl") || null;
+    const about = getOptionalField(formData, "about") || "";
+    const runclub_id = String(formData.get("runclub_id") || "").trim();
+
+    // Ensure runclub exists and that the requesting user is the creator
+    const runclubRef = adminDb.collection("runclubs").doc(runclub_id);
+    const runclubSnap = await runclubRef.get();
+    if (!runclubSnap.exists) {
+      return {
+        success: false,
+        message: "Runclub not found",
+      };
+    }
+    const runclubData = runclubSnap.data() as Record<string, unknown>;
+    if (runclubData.creator_id !== creatorUid) {
+      return {
+        success: false,
+        message: "Forbidden: you are not the owner of this run club",
+      };
+    }
+
+    // Build submission object for validation
+    const submission: Record<string, unknown> = {
+      title,
+      date,
+      startTime,
+      endTime,
+      locationName,
+      locationUrl,
+      about,
+      runclub_id,
+      creator_id: creatorUid,
+    };
+
+    // Validate with Zod schema
+    const validatedFields = submitEventSchema.safeParse(submission);
+
+    if (!validatedFields.success) {
+      const errors: Record<string, string[]> = {};
+      validatedFields.error.issues.forEach((issue) => {
+        const path = issue.path.join(".");
+        if (!errors[path]) errors[path] = [];
+        errors[path].push(issue.message);
+      });
+
+      return {
+        success: false,
+        message: "Please fix the validation errors",
+        errors,
+      };
+    }
+
+    // Clean data
+    const cleanData: Record<string, unknown> = {};
+    Object.entries(validatedFields.data).forEach(([key, value]) => {
+      if (value !== undefined && value !== null && value !== "") {
+        cleanData[key] = value;
+      }
+    });
+
+    // Ensure server-controlled fields
+    cleanData.creator_id = creatorUid;
+    cleanData.runclub_id = runclub_id;
+    cleanData.runclub = runclubRef; // admin SDK DocumentReference stored in Firestore
+
+    // Save to Firestore under "events"
+    const docRef = await adminDb.collection("events").add(cleanData);
+
+    return {
+      success: true,
+      message: "Event successfully created!",
+      id: docRef.id,
+    };
+  } catch (error: unknown) {
+    console.error("createEvent action error:", error);
+    const errorMessage = error instanceof Error ? error.message : "An unexpected error occurred";
+    return {
+      success: false,
+      message: errorMessage,
     };
   }
 }

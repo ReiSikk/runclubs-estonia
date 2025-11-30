@@ -15,7 +15,7 @@
   min-width: 125px;
   align-items: center;
   justify-content: space-between;
-  border-radius: 9999px;
+  border-radius: var(--bradius-xl);
   border: 1px solid var(--accent);
   background: none;
   color: var(--white);
@@ -93,7 +93,7 @@
   width: 100%;
   min-width: 200px;
   overflow: hidden;
-  border-radius: 8px;
+  border-radius: var(--bradius-8);
   border: 1px solid var(--cream);
   background-color: var(--cream);
   box-shadow:
