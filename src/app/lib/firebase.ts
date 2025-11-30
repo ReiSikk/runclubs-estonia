@@ -1,17 +1,15 @@
 import { initializeApp, getApps, getApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
-import { initializeAppCheck, ReCaptchaEnterpriseProvider } from "firebase/app-check";
+import { initializeAppCheck, ReCaptchaEnterpriseProvider, CustomProvider } from "firebase/app-check";
 import { getAuth } from "firebase/auth";
-
 
 declare global {
   interface Window {
-    FIREBASE_APPCHECK_DEBUG_TOKEN?: boolean | string;
+    FIREBASE_APPCHECK_DEBUG_TOKEN?: string | boolean;
   }
 }
 
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
   authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
@@ -22,32 +20,46 @@ const firebaseConfig = {
   measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID
 };
 
-// Initialize Firebase (only if it hasn't been initialized already)
 const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
 
 if (typeof window !== 'undefined') {
-  // Set debug token for development AND CI environments
   const debugToken = process.env.NEXT_PUBLIC_APP_CHECK_DEBUG_TOKEN_FROM_CI;
-  const isCI = process.env.CI === 'true';
-  const isDev = process.env.NODE_ENV === 'development';
-
-  if ((isDev || isCI) && debugToken) {
-    self.FIREBASE_APPCHECK_DEBUG_TOKEN = debugToken;
-  } else if (isDev && !debugToken) {
-    // Auto-generate token in development if not provided
+  
+  // We check purely for the existence of the token to decide mode
+  // This handles both Local Development (if you put token in .env.local) AND CI
+  if (debugToken) {
+    console.log('[App Check] Using CustomProvider with Debug Token.');
+    
+    initializeAppCheck(app, {
+      provider: new CustomProvider({
+        getToken: async () => ({
+          token: debugToken,
+          // Set to 1 hour to prevent timeout during long test suites
+          expireTimeMillis: Date.now() + 1000 * 60 * 60, 
+        }),
+      }),
+      isTokenAutoRefreshEnabled: false,
+    });
+  } else if (process.env.NODE_ENV === 'development') {
+    // Local dev without a token -> Generate one for console
+    console.log('[App Check] Dev mode: generating debug token.');
     self.FIREBASE_APPCHECK_DEBUG_TOKEN = true;
-    console.log('🔧 App Check Debug Mode: Auto-generating token');
+    
+    initializeAppCheck(app, {
+      provider: new ReCaptchaEnterpriseProvider(
+        process.env.NEXT_PUBLIC_RECAPTCHA_ENTERPRISE_SITE_KEY!
+      ),
+      isTokenAutoRefreshEnabled: true,
+    });
+  } else {
+    // Production / Fallback
+    initializeAppCheck(app, {
+      provider: new ReCaptchaEnterpriseProvider(
+        process.env.NEXT_PUBLIC_RECAPTCHA_ENTERPRISE_SITE_KEY!
+      ),
+      isTokenAutoRefreshEnabled: true,
+    });
   }
-
-  initializeAppCheck(app, {
-
-    provider: new ReCaptchaEnterpriseProvider(
-      process.env.NEXT_PUBLIC_RECAPTCHA_ENTERPRISE_SITE_KEY!
-    ),
-    isTokenAutoRefreshEnabled: true, // Recommended to keep tokens fresh automatically
-
-  });
-
 }
 
 export const db = getFirestore(app);
