@@ -25,7 +25,6 @@ const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
 if (typeof window !== 'undefined') {
   const debugToken = process.env.NEXT_PUBLIC_APP_CHECK_DEBUG_TOKEN_FROM_CI;
   
-  // We check purely for the existence of the token to decide mode
   // This handles both Local Development (if you put token in .env.local) AND CI
   if (debugToken) {
     console.log('[App Check] Using CustomProvider with Debug Token.');
