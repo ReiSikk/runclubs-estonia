@@ -11,15 +11,7 @@ setup("authenticate", async ({ page }) => {
   const email = process.env.TEST_USER_EMAIL ?? "test@example.com";
   const password = process.env.TEST_USER_PASSWORD ?? "password123";
 
-  console.log("Using login URL:", loginUrl);
-  console.log("Using test email:", email);
-
   await page.goto(loginUrl);
-  await page.evaluate(() => {
-    // In Next.js, process.env properties are replaced by strings at build time.
-    // If the build worked, this will log the actual token string in the browser console.
-    console.log('DEBUG: Token in browser is:', process.env.NEXT_PUBLIC_APP_CHECK_DEBUG_TOKEN_FROM_CI);
-  });
 
   const emailField = page.getByTestId("email-input");
   const passwordField = page.getByTestId("password-input");
@@ -35,7 +27,6 @@ setup("authenticate", async ({ page }) => {
   // Save cookies and sessionStorage (default Playwright behavior)
   if (!fs.existsSync(path.dirname(authFile))) fs.mkdirSync(path.dirname(authFile), { recursive: true });
   await page.context().storageState({ path: authFile });
-  console.log("Storage state saved successfully");
 
   // Save IndexedDB (firebaseLocalStorageDb/firebaseLocalStorage)
   const indexedDBData = await page.evaluate(async () => {
@@ -55,5 +46,4 @@ setup("authenticate", async ({ page }) => {
     });
   });
   fs.writeFileSync(indexedDBFile, JSON.stringify(indexedDBData, null, 2));
-  console.log("IndexedDB saved successfully");
 });

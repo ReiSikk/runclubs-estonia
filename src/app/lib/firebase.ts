@@ -28,10 +28,8 @@ const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
 if (typeof window !== 'undefined') {
   // Set debug token for development AND CI environments
   const debugToken = process.env.NEXT_PUBLIC_APP_CHECK_DEBUG_TOKEN_FROM_CI;
-  console.log('Using App Check Debug Token:', debugToken); //TODO: Remove after verifying!!!
   const isCI = process.env.CI === 'true';
   const isDev = process.env.NODE_ENV === 'development';
-  console.log(`[Firebase Init] CI: ${isCI}, Dev: ${isDev}, Token Available: ${!!debugToken}`);
 
   if ((isDev || isCI) && debugToken) {
     self.FIREBASE_APPCHECK_DEBUG_TOKEN = debugToken;
