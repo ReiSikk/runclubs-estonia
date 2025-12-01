@@ -48,6 +48,14 @@ jobs:
     
     - name: Run Playwright tests
       run: npx playwright test
+
+    - name: Upload screenshots on failure
+    if: failure()
+    uses: actions/upload-artifact@v4
+    with:
+      name: debug-screenshots
+      path: test-results/*.png
+      retention-days: 7
       
     
     - uses: actions/upload-artifact@v4
