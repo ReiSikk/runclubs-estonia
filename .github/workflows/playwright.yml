@@ -26,8 +26,8 @@ jobs:
       # Auth env for CI
       TEST_USER_EMAIL: ${{ secrets.TEST_USER_EMAIL }}
       TEST_USER_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
-      CI: true
-      NEXT_PUBLIC_CI: true
+      CI: "true"
+      NEXT_PUBLIC_CI: "true"
     steps:
     - uses: actions/checkout@v4
     
@@ -43,6 +43,8 @@ jobs:
     
     - name: Build Next.js app
       run: npm run build
+      env:
+        NEXT_PUBLIC_CI: "true"
     
     - name: Run Playwright tests
       run: npx playwright test
