@@ -221,7 +221,7 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
             <input id="date" name="date" type="date" required className="rcForm__input" />
           </div>
 
-          <div className="inputRow col-2 fp">
+          <div className="inputRow inputRow--2 fp">
             <div className={styles.form__timegroup + " fp-col"}>
               <label htmlFor="startTime" className="rcForm__label">
                 Start <span className="rcForm__required">*</span>

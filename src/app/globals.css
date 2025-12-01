@@ -256,7 +256,8 @@ button {
   font-weight: 600;
   letter-spacing: 0.4px;
   border: 1px solid transparent;
-  border-radius: var(--bradius-xl);  background: var(--dark);
+  border-radius: var(--bradius-xl);
+  background: var(--dark);
   color: var(--cream);
   cursor: pointer;
   text-align: center;
@@ -320,7 +321,8 @@ button {
   font-size: 1.4rem;
   font-weight: 500;
   border: 1.5px solid var(--cream);
-  border-radius: var(--bradius-xl);  background: transparent;
+  border-radius: var(--bradius-xl);
+  background: transparent;
   color: var(--cream);
   cursor: pointer;
   text-align: center;
@@ -400,14 +402,16 @@ button {
   cursor: pointer;
   transition: all 0.2s ease;
   border: 2px solid transparent;
-  border-radius: var(--bradius-xl);  padding-inline: 8px 16px;
+  border-radius: var(--bradius-xl);
+  padding-inline: 8px 16px;
   padding-block: 8px;
 }
 
 .card-label--small {
   padding-block: 2px;
   padding-inline: 14px;
-  border-radius: var(--bradius-xl);  border: 1px solid var(--dark);
+  border-radius: var(--bradius-xl);
+  border: 1px solid var(--dark);
   text-transform: uppercase;
   font-size: 1.2rem;
   font-weight: 500;
@@ -511,7 +515,6 @@ button {
   margin-inline: auto;
   max-width: 580px;
   width: 100%;
-
 
   &.tabs__root--fullW {
     max-width: none;
@@ -839,15 +842,21 @@ button {
 /*
    Form elements
    ========================================================================== */
-/** *Form elements* */
-
 .inputRow {
   width: 100%;
 
-  &.col-2 {
-    flex: 1 1 auto;
+  &.inputRow--2 {
+    flex-wrap: wrap;
     gap: 1.6rem;
-    flex-wrap: nowrap;
+
+    div {
+      flex: 1;
+      min-width: 175px;
+    }
+
+    @media only screen and (min-width: 768px) and (max-width: 1024px), only screen and (min-width: 1025px) {
+      flex-wrap: nowrap;
+    }
   }
 
   select {
@@ -905,7 +914,8 @@ button {
     align-items: center;
     border: 2px solid var(--accent);
     padding: 12px;
-    border-radius: var(--bradius-xl);    transition: all 0.2s ease;
+    border-radius: var(--bradius-xl);
+    transition: all 0.2s ease;
   }
 
   span {

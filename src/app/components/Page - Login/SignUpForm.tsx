@@ -16,7 +16,8 @@ interface SignUpFormProps {
 
 export default function SignUpForm({ showToast, showCountdownToast, setActiveTab, mapAuthError }: SignUpFormProps) {
   const [email, setEmail] = useState("");
-  const [name, setName] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
@@ -31,9 +32,9 @@ export default function SignUpForm({ showToast, showCountdownToast, setActiveTab
       // Create user with Firebase Auth
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
 
-      // Optionally update display name
-      if (userCredential.user && name) {
-        await updateProfile(userCredential.user, { displayName: name });
+      // Update display name
+      if (userCredential.user && firstName && lastName) {
+        await updateProfile(userCredential.user, { displayName: `${firstName} ${lastName}` });
       }
 
       // Show success toast with countdown and redirect to login
@@ -53,26 +54,44 @@ export default function SignUpForm({ showToast, showCountdownToast, setActiveTab
         <h1 className={`${styles.loginForm__title} h2`}>Register an account</h1>
       </div>
       <Form.Root onSubmit={signUpNewUser} className={`${styles.loginForm} bradius-m`}>
-        <Form.Field name="name" className="inputRow">
-          <Form.Label className="rcForm__label">First and last name</Form.Label>
-          <Form.Control
-            className="rcForm__input"
-            id="name"
-            type="text"
-            value={name}
-            maxLength={256}
-            placeholder="Your name"
-            autoComplete="name"
-            pattern="^[A-Za-zÀ-ÖØ-öø-ÿ\-']{2,}(?:\s+[A-Za-zÀ-ÖØ-öø-ÿ\-']{2,})+$"
-            required
-            onChange={(e) => setName(e.target.value)}
-          />
-          <Form.Message match="patternMismatch" className="input__message">
-            Please enter a valid name
-          </Form.Message>
-        </Form.Field>
-        <Form.Field name="email" className="inputRow">
-          <Form.Label className="rcForm__label">Email</Form.Label>
+        <div className="inputRow inputRow--2 fp">
+          <Form.Field name="firstName" className="fp-col">
+            <Form.Label className="rcForm__label h5">First name</Form.Label>
+            <Form.Control
+              className="rcForm__input"
+              id="first-name"
+              type="text"
+              value={firstName}
+              maxLength={256}
+              placeholder="First Name"
+              autoComplete="given-name"
+              required
+              onChange={(e) => setFirstName(e.target.value)}
+            />
+            <Form.Message match="valueMissing" className="input__message">
+              Please enter a first name
+            </Form.Message>
+          </Form.Field>
+          <Form.Field name="lastName" className="fp-col">
+            <Form.Label className="rcForm__label h5">Last name</Form.Label>
+            <Form.Control
+              className="rcForm__input"
+              id="name"
+              type="text"
+              value={lastName}
+              maxLength={256}
+              placeholder="Last Name"
+              autoComplete="family-name"
+              required
+              onChange={(e) => setLastName(e.target.value)}
+            />
+            <Form.Message match="valueMissing" className="input__message">
+              Please enter a last name
+            </Form.Message>
+          </Form.Field>
+        </div>
+        <Form.Field name="email" className="inputRow fp-col">
+          <Form.Label className="rcForm__label h5">Email</Form.Label>
           <Form.Control
             className="rcForm__input"
             id="email"
@@ -88,8 +107,8 @@ export default function SignUpForm({ showToast, showCountdownToast, setActiveTab
             Please enter a valid email address
           </Form.Message>
         </Form.Field>
-        <Form.Field name="password" className="inputRow">
-          <Form.Label className="rcForm__label" htmlFor="password">
+        <Form.Field name="password" className="inputRow fp-col">
+          <Form.Label className="rcForm__label h5" htmlFor="password">
             Password:
           </Form.Label>
           <Form.Control
@@ -108,8 +127,8 @@ export default function SignUpForm({ showToast, showCountdownToast, setActiveTab
             Must contain at least one number and one uppercase and lowercase letter, and at least 8 or more characters
           </Form.Message>
         </Form.Field>
-        <Form.Field className="inputRow" name="confirm-password">
-          <Form.Label className="rcForm__label" htmlFor="confirm-password">
+        <Form.Field className="inputRow fp-col" name="confirm-password">
+          <Form.Label className="rcForm__label h5" htmlFor="confirm-password">
             Confirm Password:
           </Form.Label>
           <input
