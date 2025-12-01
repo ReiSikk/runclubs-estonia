@@ -30,10 +30,8 @@ function DashboardPage() {
   // State for create event modal
   const [showCreateEvent, setShowCreateEvent] = useState(false);
 
-
   // Find users clubs
   const { data: clubs = [], isLoading, isError } = getUserRunClubs(user?.uid);
-  console.log("User's clubs:", clubs);
   // Get clubs ids and fetch events
   const clubIds = clubs.map((c) => c.id);
   const { data: events = [], isLoading: eventsLoading, isError: eventsError } = useEventsForRunclubs(clubIds);
@@ -63,6 +61,21 @@ function DashboardPage() {
     setEventsState((prevEvents) => [newEvent, ...prevEvents]); 
   }
 
+  // Toggle create event modal
+  const openEventModal = () => {
+    setShowCreateEvent(true);
+  };
+
+  // Disable body scroll when modal is open
+  useEffect(() => {
+    if (showCreateEvent) {
+      document.documentElement.style.overflowY = "hidden";
+    } else {
+      document.documentElement.style.overflowY = "";
+    }
+  }, [showCreateEvent]);
+
+
   if (!user || loading) {
     return (
       <div className={`${styles.page} page--loading container`}>
@@ -77,7 +90,7 @@ function DashboardPage() {
   return (
     <>
       <main className={`${styles.dashboard} ${isMobile ? styles.mobile : ""}`} id="page-top" data-testid="dashboard-page">
-          <SideBar handleLogOut={handleLogOut} isMobile={isMobile} />
+          <SideBar handleLogOut={handleLogOut} isMobile={isMobile} onEventClicked={openEventModal} />
           <div className={`${styles.dashboard__main}`}>
             <div className={`${styles.header}`}>
               <h1 className="h1">Welcome to your dashboard, {user.displayName?.split(" ")[0] || ""}! 👋</h1>

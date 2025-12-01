@@ -35,16 +35,18 @@ export default function Modal({ open, onClose, children, ariaLabel = "Modal dial
   return ReactDOM.createPortal(
     <div className={styles.overlay} role="presentation" onClick={onClose}>
       <div
-        className={`${styles.content} ${noClubsModal ? styles.noClubsModal : ""}`}
+        className={`${styles.modal} ${noClubsModal ? styles.noClubsModal : ""} fp-col`}
         role="dialog"
         aria-modal="true"
         aria-label={ariaLabel}
         onClick={(e) => e.stopPropagation()}
       >
+        <div className={styles.modal__wrapper}>
         <button className={styles.close} aria-label="Close" onClick={onClose}>
           <LucideX  size={20} />
         </button>
         {children}
+        </div>
       </div>
     </div>,
     document.body

@@ -10,17 +10,18 @@
   padding: 32px;
 }
 
-.content {
+.modal {
+  position: relative;
+  justify-content: center;
+  align-items: stretch;
   background: var(--card-bg, #0f0f0f);
   color: var(--text, #fff);
-  border-radius: 20px;
+  border-radius: var(--bradius-16);
+  overflow: hidden;
   width: 100%;
   max-width: 800px;
   max-height: 85vh;
-  overflow: auto;
-  position: relative;
   box-shadow: 0 10px 40px rgba(0,0,0,0.6);
-  padding: 24px;
 
   &.noClubsModal {
     padding-block: 40px;
@@ -31,6 +32,12 @@
     }
   }
 
+}
+.modal__wrapper {
+  position: relative;
+  overflow-y: auto;
+  padding-block: 40px;
+  padding-inline: 16px;
 }
 
 /* close button top-right */

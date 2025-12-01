@@ -13,9 +13,10 @@ import {
 interface SideBarProps {
   handleLogOut: () => void;
   isMobile: boolean;
+  onEventClicked?: () => void;
 }
 
-function SideBar({ handleLogOut, isMobile }: SideBarProps) {
+function SideBar({ handleLogOut, isMobile, onEventClicked }: SideBarProps) {
 
   if (isMobile) {
     return <FloatingMenu handleLogOut={handleLogOut} />;
@@ -35,9 +36,9 @@ function SideBar({ handleLogOut, isMobile }: SideBarProps) {
         <LucideSend size={20} className={styles.item__icon} />
             Register club
         </Link>
-        <div className={`${styles.item} ${styles.rotate}  h4 fp`}>
+        <div className={`${styles.item} ${styles.rotate}  h4 fp`} onClick={onEventClicked}>
         <LucidePlus size={20} className={styles.item__icon} />
-            Register new club
+            Create new event
         </div>
         <div className={`${styles.item} fp`}>
         <LucideLogOut size={20} className={styles.item__icon} />
