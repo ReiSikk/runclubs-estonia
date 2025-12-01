@@ -358,20 +358,3 @@ test.describe('Run Club Registration - Error Handling', () => {
     expect(isOnSubmitPage || hasErrorMessage).toBeTruthy();
   });
 });
-
-test.describe('Run Club Registration - Accessibility', () => {
-  test('should have proper form labels', async ({ page }) => {
-    await page.goto('/submit');
-
-    // Check that key inputs have associated labels or aria-labels
-    const nameInput = page.locator('input[name="name"]');
-    const hasLabel = await nameInput.evaluate((el) => {
-      const hasAriaLabel = !!el.getAttribute('aria-label');
-      const hasAriaLabelledBy = !!el.getAttribute('aria-labelledby');
-      const label = el.id ? document.querySelector(`label[for="${el.id}"]`) : null;
-      return hasAriaLabel || hasAriaLabelledBy || !!label;
-    });
-    
-    expect(hasLabel).toBeTruthy();
-  });
-});

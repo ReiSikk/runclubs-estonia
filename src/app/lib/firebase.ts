@@ -4,7 +4,6 @@ import { getStorage } from "firebase/storage";
 import { initializeAppCheck, ReCaptchaEnterpriseProvider } from "firebase/app-check";
 import { getAuth } from "firebase/auth";
 
-
 declare global {
   interface Window {
     FIREBASE_APPCHECK_DEBUG_TOKEN?: boolean | string;
@@ -31,18 +30,18 @@ if (typeof window !== 'undefined') {
   const isCI = process.env.CI === 'true';
   const isDev = process.env.NODE_ENV === 'development';
   // Check if token was already injected by Playwright
-  const injectedToken = (window as any).FIREBASE_APPCHECK_DEBUG_TOKEN;
+  const injectedToken = window.FIREBASE_APPCHECK_DEBUG_TOKEN;
 
   if (injectedToken) {
     // Token was injected by Playwright, use it
     console.log("🔧 [Firebase Init] Using injected App Check debug token");
   } else if ((isDev || isCI) && debugToken) {
     // Set debug token from environment variable
-    (window as any).FIREBASE_APPCHECK_DEBUG_TOKEN = debugToken;
+    window.FIREBASE_APPCHECK_DEBUG_TOKEN = debugToken;
     console.log("🔧 [Firebase Init] Using env App Check debug token");
   } else if (isDev && !debugToken) {
     // Auto-generate token in development if not provided
-    (window as any).FIREBASE_APPCHECK_DEBUG_TOKEN = true;
+    window.FIREBASE_APPCHECK_DEBUG_TOKEN = true;
     console.log("🔧 [Firebase Init] Dev Mode: Auto-generating token");
   }
 
@@ -51,9 +50,7 @@ if (typeof window !== 'undefined') {
       process.env.NEXT_PUBLIC_RECAPTCHA_ENTERPRISE_SITE_KEY!
     ),
     isTokenAutoRefreshEnabled: true,
-
   });
-
 }
 
 export const db = getFirestore(app);
