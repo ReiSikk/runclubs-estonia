@@ -186,7 +186,7 @@ test.describe('Run Club Registration Form', () => {
     });
 
     // Wait for file to be processed
-    await page.waitForTimeout(10000);
+    await page.waitForTimeout(500);
 
     // Verify file input has a file
     const fileInput = page.locator('input[type="file"][name="logo"]');

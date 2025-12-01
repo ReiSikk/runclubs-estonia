@@ -25,32 +25,32 @@ const firebaseConfig = {
 const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
 
 if (typeof window !== 'undefined') {
-  // Set debug token for development AND CI environments
-  const debugToken = process.env.NEXT_PUBLIC_APP_CHECK_DEBUG_TOKEN_FROM_CI;
-  const isCI = process.env.CI === 'true';
   const isDev = process.env.NODE_ENV === 'development';
-  // Check if token was already injected by Playwright
-  const injectedToken = window.FIREBASE_APPCHECK_DEBUG_TOKEN;
+  const isCI = process.env.NEXT_PUBLIC_CI === 'true';
+  const debugToken = process.env.NEXT_PUBLIC_APP_CHECK_DEBUG_TOKEN_FROM_CI;
+  console.log("🔍 [Debug] NEXT_PUBLIC_CI:", process.env.NEXT_PUBLIC_CI);
+  console.log("🔍 [Debug] isCI:", process.env.NEXT_PUBLIC_CI === 'true');
 
-  if (injectedToken) {
-    // Token was injected by Playwright, use it
-    console.log("🔧 [Firebase Init] Using injected App Check debug token");
-  } else if ((isDev || isCI) && debugToken) {
-    // Set debug token from environment variable
-    window.FIREBASE_APPCHECK_DEBUG_TOKEN = debugToken;
-    console.log("🔧 [Firebase Init] Using env App Check debug token");
-  } else if (isDev && !debugToken) {
-    // Auto-generate token in development if not provided
-    window.FIREBASE_APPCHECK_DEBUG_TOKEN = true;
-    console.log("🔧 [Firebase Init] Dev Mode: Auto-generating token");
+  // Skip App Check in CI environment
+  if (isCI) {
+    console.log("🔧 [Firebase Init] CI environment detected - skipping App Check");
+  } else {
+    // Set debug token for development
+    if (isDev && debugToken) {
+      window.FIREBASE_APPCHECK_DEBUG_TOKEN = debugToken;
+      console.log("🔧 [Firebase Init] Using env App Check debug token");
+    } else if (isDev && !debugToken) {
+      window.FIREBASE_APPCHECK_DEBUG_TOKEN = true;
+      console.log("🔧 [Firebase Init] Dev Mode: Auto-generating token");
+    }
+
+    initializeAppCheck(app, {
+      provider: new ReCaptchaEnterpriseProvider(
+        process.env.NEXT_PUBLIC_RECAPTCHA_ENTERPRISE_SITE_KEY!
+      ),
+      isTokenAutoRefreshEnabled: true,
+    });
   }
-
-  initializeAppCheck(app, {
-    provider: new ReCaptchaEnterpriseProvider(
-      process.env.NEXT_PUBLIC_RECAPTCHA_ENTERPRISE_SITE_KEY!
-    ),
-    isTokenAutoRefreshEnabled: true,
-  });
 }
 
 export const db = getFirestore(app);
