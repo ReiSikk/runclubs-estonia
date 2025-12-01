@@ -7,6 +7,7 @@ import {
   LucideHome,
   LucideSend,
   LucideLogOut,
+  LucidePlus,
 } from "lucide-react";
 
 interface SideBarProps {
@@ -34,6 +35,10 @@ function SideBar({ handleLogOut, isMobile }: SideBarProps) {
         <LucideSend size={20} className={styles.item__icon} />
             Register club
         </Link>
+        <div className={`${styles.item} ${styles.rotate}  h4 fp`}>
+        <LucidePlus size={20} className={styles.item__icon} />
+            Register new club
+        </div>
         <div className={`${styles.item} fp`}>
         <LucideLogOut size={20} className={styles.item__icon} />
         <div onClick={handleLogOut} className="h4">

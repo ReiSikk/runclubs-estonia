@@ -36,7 +36,7 @@ function NavBar() {
             <LucideMoveLeft width={24} height={24} strokeWidth={1.5} className="icon-main"/>
             <LucideMoveLeft width={24} height={24} strokeWidth={1.5} className="icon-hovered"/>
           </div>
-          Back
+          All clubs
         </Link>
         <Link className="siteNav__logo" href={'/'}>
           <Image 

@@ -10,9 +10,10 @@ type ModalProps = {
   onClose: () => void;
   children: React.ReactNode;
   ariaLabel?: string;
+  noClubsModal?: boolean;
 };
 
-export default function Modal({ open, onClose, children, ariaLabel = "Modal dialog" }: ModalProps) {
+export default function Modal({ open, onClose, children, ariaLabel = "Modal dialog", noClubsModal }: ModalProps) {
   useEffect(() => {
     if (!open) return;
     const onKey = (e: KeyboardEvent) => {
@@ -34,7 +35,7 @@ export default function Modal({ open, onClose, children, ariaLabel = "Modal dial
   return ReactDOM.createPortal(
     <div className={styles.overlay} role="presentation" onClick={onClose}>
       <div
-        className={styles.content}
+        className={`${styles.content} ${noClubsModal ? styles.noClubsModal : ""}`}
         role="dialog"
         aria-modal="true"
         aria-label={ariaLabel}

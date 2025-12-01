@@ -21,6 +21,16 @@
   position: relative;
   box-shadow: 0 10px 40px rgba(0,0,0,0.6);
   padding: 24px;
+
+  &.noClubsModal {
+    padding-block: 40px;
+
+    div {
+        gap: 1.6rem;
+        text-align: center;
+    }
+  }
+
 }
 
 /* close button top-right */

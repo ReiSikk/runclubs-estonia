@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useCallback, useEffect } from "react";
+import Link from "next/link";
 // Hooks and utils
 import getUserRunClubs from "../lib/hooks/useMyRunClubs";
 import { formatMonthYear } from "../lib/utils/convertTime";
@@ -29,8 +30,10 @@ function DashboardPage() {
   // State for create event modal
   const [showCreateEvent, setShowCreateEvent] = useState(false);
 
+
   // Find users clubs
   const { data: clubs = [], isLoading, isError } = getUserRunClubs(user?.uid);
+  console.log("User's clubs:", clubs);
   // Get clubs ids and fetch events
   const clubIds = clubs.map((c) => c.id);
   const { data: events = [], isLoading: eventsLoading, isError: eventsError } = useEventsForRunclubs(clubIds);
@@ -181,7 +184,7 @@ function DashboardPage() {
                       <p className="txt-body">
                         {eventsState.length < 1
                           ? "You have no upcoming events. Create one to get started!"
-                          : `You have ${eventsState.length} events`}
+                          : `You have ${eventsState.length} event${eventsState.length > 1 ? "s" : ""}.`}
                       </p>
                     </div>
                     <button
@@ -261,12 +264,20 @@ function DashboardPage() {
             </Tabs.Root>
           </div>
       </main>
-      <Modal open={showCreateEvent} onClose={() => setShowCreateEvent(false)} ariaLabel="Create event">
-        <EventCreationForm
-          runclubs={clubs.map((c) => ({ id: c.id, name: c.name }))}
-          onClose={() => setShowCreateEvent(false)}
-          onEventCreated={handleEventCreated}
-        />
+      <Modal open={showCreateEvent} onClose={() => setShowCreateEvent(false)} ariaLabel="Create event" noClubsModal={clubs.length === 0}>
+        {clubs.length > 0 ?
+          <EventCreationForm
+            runclubs={clubs.map((c) => ({ id: c.id, name: c.name }))}
+            onClose={() => setShowCreateEvent(false)}
+            onEventCreated={handleEventCreated}
+          />
+          : 
+          <div className="center fp-col">
+            <h2 className="h3">No clubs available</h2>
+            <p className="txt-body">You need to create a run club before you can create events.</p>
+            <Link href="/submit" className="btn_main accent">Register a new club</Link>
+          </div>
+        }
       </Modal>
     </>
   );

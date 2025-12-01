@@ -8,6 +8,7 @@ import * as Accordion from "@radix-ui/react-accordion";
 import { useState } from "react";
 import { deleteDoc, doc } from "firebase/firestore";
 import { db } from "@/app/lib/firebase";
+import { AlertDialog } from "radix-ui";
 
 interface RunClubEventProps {
   event: RunClubEvent;
@@ -46,7 +47,6 @@ export default function RunClubEventCard({ event, onDeleted }: RunClubEventProps
     const [deleting, setDeleting] = useState(false);
 
   const handleDelete = async () => {
-    if (!confirm("Are you sure you want to delete this event?")) return;
     setDeleting(true);
     try {
       await deleteDoc(doc(db, "events", event.id));
@@ -113,16 +113,44 @@ export default function RunClubEventCard({ event, onDeleted }: RunClubEventProps
         </div>
       )}
        <div className={styles.runClubEvent__actions + " fp"}>
-          <button
-            type="button"
-            className="btn_main accent"
-            onClick={handleDelete}
-            disabled={deleting}
-            aria-disabled={deleting}
-            aria-label={deleting ? "Deleting event" : "Delete event"}
-          >
-            {deleting ? "Deleting…" : "Delete"}
-          </button>
+          <AlertDialog.Root>
+            <AlertDialog.Trigger asChild>
+            <button
+              type="button"
+              className="btn_main accent"
+              // onClick={handleDelete}
+              disabled={deleting}
+              aria-disabled={deleting}
+              aria-label={deleting ? "Deleting event" : "Delete event"}
+            >
+              {deleting ? "Deleting…" : "Delete"}
+            </button>
+            </AlertDialog.Trigger>
+            <AlertDialog.Portal>
+              <AlertDialog.Overlay className={styles.Overlay} />
+              <AlertDialog.Content className={styles.Content}>
+                <AlertDialog.Title className={styles.Title + " h3"}>
+                  Are you absolutely sure?
+                </AlertDialog.Title>
+                <AlertDialog.Description className={styles.Description}>
+                  This action cannot be undone. This will permanently delete your
+                  event and remove your data from our servers.
+                </AlertDialog.Description>
+                <div className={styles.Buttons + " fp"}>
+                  <AlertDialog.Cancel asChild>
+                    <button className={`${styles.Button} btn_main cream`}>Cancel</button>
+                  </AlertDialog.Cancel>
+                  <AlertDialog.Action asChild>
+                    <button className={`${styles.Button} btn_main accent`} onClick={handleDelete}>
+                      Yes, delete event
+                    </button>
+                  </AlertDialog.Action>
+                </div>
+              </AlertDialog.Content>
+            </AlertDialog.Portal>
+          </AlertDialog.Root>
+
+
         </div>
     </article>
   );
