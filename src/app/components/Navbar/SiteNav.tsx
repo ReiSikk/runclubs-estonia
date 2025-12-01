@@ -176,7 +176,7 @@ function SiteNav() {
               aria-expanded={isExpanded}
               aria-label={isExpanded ? "Close menu" : "Open menu"}
             >
-              <span className="h3">Close</span>
+              <span className="h4">Close</span>
               <LucideX size={20} />
             </button>
           </div>
