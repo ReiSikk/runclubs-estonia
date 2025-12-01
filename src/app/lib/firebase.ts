@@ -26,24 +26,22 @@ const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
 
 if (typeof window !== 'undefined') {
   const isDev = process.env.NODE_ENV === 'development';
-  const isCI = process.env.NEXT_PUBLIC_CI === 'true';
   const debugToken = process.env.NEXT_PUBLIC_APP_CHECK_DEBUG_TOKEN_FROM_CI;
-  console.log("🔍 [Debug] NEXT_PUBLIC_CI:", process.env.NEXT_PUBLIC_CI);
-  console.log("🔍 [Debug] isCI:", process.env.NEXT_PUBLIC_CI === 'true');
-
-  // Skip App Check in CI environment
-  if (isCI) {
-    console.log("🔧 [Firebase Init] CI environment detected - skipping App Check");
+  
+  // Detect headless browsers (Playwright, Puppeteer, etc.)
+  const isHeadless = /HeadlessChrome|Headless/.test(navigator.userAgent);
+  
+  if (isHeadless) {
+    // Skip App Check entirely in headless browsers (CI/testing)
+    console.log("🔧 [Firebase Init] Headless browser detected - skipping App Check");
   } else {
     // Set debug token for development
-    if (isDev && debugToken) {
-      window.FIREBASE_APPCHECK_DEBUG_TOKEN = debugToken;
-      console.log("🔧 [Firebase Init] Using env App Check debug token");
-    } else if (isDev && !debugToken) {
-      window.FIREBASE_APPCHECK_DEBUG_TOKEN = true;
-      console.log("🔧 [Firebase Init] Dev Mode: Auto-generating token");
+    if (isDev) {
+      window.FIREBASE_APPCHECK_DEBUG_TOKEN = debugToken || true;
+      console.log("🔧 [Firebase Init] Dev mode - using debug token");
     }
-
+    
+    // Initialize App Check for all non-headless environments
     initializeAppCheck(app, {
       provider: new ReCaptchaEnterpriseProvider(
         process.env.NEXT_PUBLIC_RECAPTCHA_ENTERPRISE_SITE_KEY!

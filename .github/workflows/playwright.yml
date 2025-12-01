@@ -27,7 +27,7 @@ jobs:
       TEST_USER_EMAIL: ${{ secrets.TEST_USER_EMAIL }}
       TEST_USER_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
       CI: true
-      NEXT_PUBLIC_CI: "true"
+      NEXT_PUBLIC_CI: true
     steps:
     - uses: actions/checkout@v4
     
