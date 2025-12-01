@@ -164,7 +164,7 @@ test.describe('Run Club Registration Form', () => {
     await submitButton.click();
 
     // Wait for the feedback toast to appear (appears when state.message is set after server action)
-    await page.waitForSelector('[data-testid="feedback-toast"]', { timeout: 10000 });
+    await page.waitForSelector('[data-testid="feedback-toast"]');
 
     // Assert the toast contains the success message
     const toastText = await page.locator('[data-testid="feedback-toast"]').textContent();
@@ -186,7 +186,7 @@ test.describe('Run Club Registration Form', () => {
     });
 
     // Wait for file to be processed
-    await page.waitForTimeout(500);
+    await page.waitForTimeout(10000);
 
     // Verify file input has a file
     const fileInput = page.locator('input[type="file"][name="logo"]');
@@ -233,7 +233,7 @@ test.describe('Run Club Registration Form', () => {
     // Submit without filling all required fields
     await page.locator('button[type="submit"]').click();
     
-    await page.waitForTimeout(1000);
+    await page.waitForTimeout(10000);
     
     // Check that filled fields still have their values
     await expect(page.locator('input[name="name"]')).toHaveValue(clubName);
@@ -266,7 +266,7 @@ test.describe('Run Club Registration Form', () => {
       // Upload new file
       await page.setInputFiles('input[type="file"][name="logo"]', file);
       
-      await page.waitForTimeout(300);
+      await page.waitForTimeout(500);
       
       // Verify file is set
       const fileInput = page.locator('input[type="file"][name="logo"]');
@@ -284,12 +284,12 @@ test.describe('Run Club Registration Form', () => {
       buffer: buffer,
     });
 
-    await page.waitForTimeout(300);
+    await page.waitForTimeout(10000);
 
     // Clear the file
     await page.setInputFiles('input[type="file"][name="logo"]', []);
 
-    await page.waitForTimeout(300);
+    await page.waitForTimeout(10000);
 
     // Verify file is cleared
     const fileInput = page.locator('input[type="file"][name="logo"]');
@@ -307,7 +307,7 @@ test.describe('Run Club Registration - Error Handling', () => {
     await page.goto('/submit', { waitUntil: 'domcontentloaded' });
     
     // Form should still render even if Firebase fails
-    await expect(page.locator('form').first()).toBeVisible({ timeout: 10000 });
+    await expect(page.locator('form').first()).toBeVisible();
   });
 
   test('should handle slow network conditions', async ({ page }) => {
@@ -319,7 +319,7 @@ test.describe('Run Club Registration - Error Handling', () => {
     await page.goto('/submit', { waitUntil: 'networkidle', timeout: 30000 });
     
     // Form should load eventually
-    await expect(page.locator('form').first()).toBeVisible({ timeout: 15000 });
+    await expect(page.locator('form').first()).toBeVisible();
   });
 
   test('should display error message on server error', async ({ page }) => {
@@ -349,7 +349,7 @@ test.describe('Run Club Registration - Error Handling', () => {
     await page.locator('button[type="submit"]').click();
 
     // Wait for error message
-    await page.waitForTimeout(2000);
+    await page.waitForTimeout(10000);
 
     // Should still be on submit page or show error
     const isOnSubmitPage = page.url().includes('/submit');

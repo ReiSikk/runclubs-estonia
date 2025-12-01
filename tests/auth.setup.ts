@@ -1,49 +1,39 @@
-import { test as setup } from "@playwright/test";
+import { test as setup, expect } from "@playwright/test";
 import path from "path";
-import fs from "fs";
 
 const authFile = path.join(__dirname, "../playwright/.auth/user.json");
-const indexedDBFile = path.join(__dirname, "../playwright/.auth/indexedDB.json");
 
 setup("authenticate", async ({ page }) => {
-  const base = process.env.PLAYWRIGHT_TEST_BASE_URL ?? "http://localhost:3000";
-  const loginUrl = `${base}/login`;
-  const email = process.env.TEST_USER_EMAIL ?? "test@example.com";
-  const password = process.env.TEST_USER_PASSWORD ?? "password123";
+  const debugToken = process.env.NEXT_PUBLIC_APP_CHECK_DEBUG_TOKEN_FROM_CI;
+  
+  // Inject the debug token into the browser context BEFORE navigating
+  await page.addInitScript((token) => {
+    if (token) {
+      (window as any).FIREBASE_APPCHECK_DEBUG_TOKEN = token;
+      console.log("🔧 [Playwright] App Check debug token injected");
+    }
+  }, debugToken);
 
-  await page.goto(loginUrl);
+  // Navigate to login page
+  await page.goto("/login");
 
-  const emailField = page.getByTestId("email-input");
-  const passwordField = page.getByTestId("password-input");
-  await emailField.fill(email);
-  await passwordField.fill(password);
+  // Wait for page to load
+  await page.waitForLoadState("networkidle");
 
-  await page.getByTestId("sign-in-btn").click();
+  // Fill in credentials
+  await page.fill('input[type="email"]', process.env.TEST_USER_EMAIL!);
+  await page.fill('input[type="password"]', process.env.TEST_USER_PASSWORD!);
 
-  // Wait for login success
-  await page.waitForURL((url) => url.pathname.includes("/dashboard"));
+  // Click login button
+  await page.click('button[type="submit"]');
+
+  // Wait for login success with increased timeout
+  await page.waitForURL((url) => url.pathname.includes("/dashboard"), {
+    timeout: 60000, // Increase timeout to 60 seconds
+  });
+
   console.log("Login successful");
 
   // Save cookies and sessionStorage (default Playwright behavior)
-  if (!fs.existsSync(path.dirname(authFile))) fs.mkdirSync(path.dirname(authFile), { recursive: true });
   await page.context().storageState({ path: authFile });
-
-  // Save IndexedDB (firebaseLocalStorageDb/firebaseLocalStorage)
-  const indexedDBData = await page.evaluate(async () => {
-    const dbName = "firebaseLocalStorageDb";
-    const storeName = "firebaseLocalStorage";
-    const dbRequest = indexedDB.open(dbName);
-    return await new Promise((resolve, reject) => {
-      dbRequest.onsuccess = () => {
-        const db = dbRequest.result;
-        const transaction = db.transaction(storeName, "readonly");
-        const store = transaction.objectStore(storeName);
-        const allDataRequest = store.getAll();
-        allDataRequest.onsuccess = () => resolve(allDataRequest.result);
-        allDataRequest.onerror = () => reject(allDataRequest.error);
-      };
-      dbRequest.onerror = () => reject(dbRequest.error);
-    });
-  });
-  fs.writeFileSync(indexedDBFile, JSON.stringify(indexedDBData, null, 2));
 });

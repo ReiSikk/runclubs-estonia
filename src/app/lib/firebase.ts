@@ -30,21 +30,27 @@ if (typeof window !== 'undefined') {
   const debugToken = process.env.NEXT_PUBLIC_APP_CHECK_DEBUG_TOKEN_FROM_CI;
   const isCI = process.env.CI === 'true';
   const isDev = process.env.NODE_ENV === 'development';
+  // Check if token was already injected by Playwright
+  const injectedToken = (window as any).FIREBASE_APPCHECK_DEBUG_TOKEN;
 
-  if ((isDev || isCI) && debugToken) {
-    self.FIREBASE_APPCHECK_DEBUG_TOKEN = debugToken;
+  if (injectedToken) {
+    // Token was injected by Playwright, use it
+    console.log("🔧 [Firebase Init] Using injected App Check debug token");
+  } else if ((isDev || isCI) && debugToken) {
+    // Set debug token from environment variable
+    (window as any).FIREBASE_APPCHECK_DEBUG_TOKEN = debugToken;
+    console.log("🔧 [Firebase Init] Using env App Check debug token");
   } else if (isDev && !debugToken) {
     // Auto-generate token in development if not provided
-    self.FIREBASE_APPCHECK_DEBUG_TOKEN = true;
-    console.log('🔧 App Check Debug Mode: Auto-generating token');
+    (window as any).FIREBASE_APPCHECK_DEBUG_TOKEN = true;
+    console.log("🔧 [Firebase Init] Dev Mode: Auto-generating token");
   }
 
   initializeAppCheck(app, {
-
     provider: new ReCaptchaEnterpriseProvider(
       process.env.NEXT_PUBLIC_RECAPTCHA_ENTERPRISE_SITE_KEY!
     ),
-    isTokenAutoRefreshEnabled: true, // Recommended to keep tokens fresh automatically
+    isTokenAutoRefreshEnabled: true,
 
   });
 
