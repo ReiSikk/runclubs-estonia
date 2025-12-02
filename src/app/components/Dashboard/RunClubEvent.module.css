@@ -108,6 +108,7 @@
   cursor: pointer;
   font-weight: 600;
   margin-top: 1.2rem;
+  transition: opacity 0.2s ease;
 }
 
 /*
@@ -198,3 +199,10 @@
 	}
 }
 
+@media (hover:hover) and (pointer:fine) {
+  .runClubEvent__showMoreTrigger {
+    &:hover {
+      opacity: 0.75;
+    }
+  }
+}

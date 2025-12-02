@@ -4,7 +4,7 @@ import { useState, useEffect, useRef, useTransition } from "react";
 import styles from "./RunClubRegistrationForm.module.css";
 import FormToast from "../Toast/Toast";
 import { LucideUpload } from "lucide-react";
-import { createRunClub } from "@/app/actions";
+import { saveRunClub } from "@/app/actions";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import TimePicker, { TimePickerValue } from "react-accessible-time-picker";
@@ -13,7 +13,14 @@ import { FormState } from "@/app/lib/types/serverActionReturn";
 
 const initialState: FormState = undefined;
 
-export default function RunClubRegistrationForm() {
+interface Props {
+  mode: "create" | "update";
+  clubId?: string;
+  initialValues?: RunClub;
+  onEditSuccess?: () => void;
+}
+
+export default function RunClubRegistrationForm({ mode, clubId, initialValues, onEditSuccess }: Props) {
   const router = useRouter();
   const [state, setState] = useState<FormState>(initialState);
   const [isPending, startTransition] = useTransition();
@@ -31,6 +38,22 @@ export default function RunClubRegistrationForm() {
   const [fileError, setFileError] = useState<string | null>(null);
   // TimePicker state
   const [time, setTime] = useState({ hour: "", minute: "" });
+
+  // Pre-populate form fields when in update mode
+  useEffect(() => {
+    if (mode === "update" && initialValues) {
+      // Set time picker
+      if (initialValues.startTime) {
+        const [hour, minute] = initialValues.startTime.split(":");
+        setTime({ hour, minute });
+      }
+
+      // Set file preview if logo exists
+      if (initialValues.logo) {
+        setFilePreview(initialValues.logo);
+      }
+    }
+  }, [mode, initialValues]);
 
   // Handle time picker values
   const handleTimeChange = (value: TimePickerValue) => {
@@ -113,33 +136,46 @@ export default function RunClubRegistrationForm() {
       return;
     }
 
+    // Add mode and clubId to formData
+    formData.append("mode", mode);
+    if (clubId) {
+      formData.append("clubId", clubId);
+    }
+    
     // Add idToken to form data
     formData.append("idToken", idToken);
 
+
     startTransition(async () => {
       try {
-        const result = await createRunClub(state, formData);
+        const result = await saveRunClub(state, formData);
+
         setState(result);
 
         if (result.success) {
-          // Clear form on success
-
-          if (formRef.current) {
-            formRef.current.reset();
-            setFilePreview(null);
-            setFileError(null);
-            handleTimeChange({ hour: "", minute: "" });
-            if (fileInputRef.current) {
-              fileInputRef.current.value = "";
+          if (mode === "create") {
+            // Clear form only on create
+            if (formRef.current) {
+              formRef.current.reset();
+              setFilePreview(null);
+              setFileError(null);
+              handleTimeChange({ hour: "", minute: "" });
+              if (fileInputRef.current) {
+                fileInputRef.current.value = "";
+              }
             }
-          }
 
-          // Start countdown timer
-          setCountdown(5);
-          // Redirect after showing success message
-          setTimeout(() => {
-            router.push("/");
-          }, 5000);
+            // Start countdown and redirect
+            setCountdown(5);
+            setTimeout(() => {
+              router.push("/");
+            }, 5000);
+          } else {
+            // Update mode: call onEditSuccess callback (close modal)
+            setTimeout(() => {
+              onEditSuccess?.();
+            }, 2000);
+          }
         }
       } catch (error) {
         console.error("Form submission error:", error);
@@ -170,11 +206,11 @@ export default function RunClubRegistrationForm() {
   }, [state?.message]);
 
   return (
-    <form onSubmit={handleSubmit} ref={formRef} className={`${styles.rcForm} fp-col`}>
+    <form onSubmit={handleSubmit} ref={formRef}  className={`${styles.rcForm} ${mode === "create" ? styles.create : styles.update} fp-col`}>
       {state?.message && (
         <FormToast
           message={
-            state.success && countdown !== null && countdown > 0
+            state.success && mode === "create" && countdown !== null && countdown > 0
               ? `${state.message} Redirecting in (${countdown})...`
               : state.message
           }
@@ -186,8 +222,14 @@ export default function RunClubRegistrationForm() {
       )}
 
       <div className={styles.rcForm__header}>
-        <h1 className={styles.rcForm__title}>Register a new running club</h1>
-        <p>Fill out the form below to submit your club to our list.</p>
+        <h1 className={styles.rcForm__title}>
+           {mode === "create" ? "Register a new running club" : "Update your running club"}
+        </h1>
+        <p>
+          {mode === "create" 
+            ? "Fill out the form below to submit your club to our list." 
+            : "Update your club information below."}
+        </p>
         <p>
           Please feel free to answer in <strong>Estonian</strong> or <strong>English</strong> as you prefer.
         </p>
@@ -208,6 +250,7 @@ export default function RunClubRegistrationForm() {
                 name="name"
                 type="text"
                 placeholder="E.g. Kesklinna Jooksuklubi"
+                defaultValue={initialValues?.name || ""}
                 required
                 className={`rcForm__input h5`}
                 aria-invalid={!!(state && !state.success && state.errors?.name)}
@@ -235,6 +278,7 @@ export default function RunClubRegistrationForm() {
                 name="logo"
                 ref={fileInputRef}
                 type="file"
+                defaultValue={initialValues?.logo || ""}
                 accept="image/jpeg,image/jpg,image/png,image/webp,image/svg+xml"
                 className="rcForm__file"
                 onChange={handleFileChange}
@@ -247,7 +291,7 @@ export default function RunClubRegistrationForm() {
               {filePreview && (
                 <div style={{ marginTop: "0.8rem" }}>
                   <Image
-                    src={filePreview}
+                    src={filePreview || initialValues?.logo || ""}
                     alt="Logo preview"
                     style={{ maxWidth: "250px", maxHeight: "250px", borderRadius: "0.8rem", objectFit: "cover" }}
                     loading="lazy"
@@ -274,6 +318,7 @@ export default function RunClubRegistrationForm() {
                 name="city"
                 type="text"
                 placeholder="E.g. Tallinn"
+                defaultValue={initialValues?.city || ""}
                 required
                 className={`rcForm__input h5`}
                 maxLength={256}
@@ -294,6 +339,7 @@ export default function RunClubRegistrationForm() {
                 id="area"
                 name="area"
                 type="text"
+                defaultValue={initialValues?.area || ""}
                 placeholder="E.g. Rotermanni kvartal"
                 required
                 className={`rcForm__input h5`}
@@ -315,6 +361,7 @@ export default function RunClubRegistrationForm() {
                 id="address"
                 name="address"
                 type="text"
+                defaultValue={initialValues?.address || ""}
                 placeholder="E.g. Rotermanni 2, Tallinn"
                 className={`rcForm__input h5`}
                 maxLength={256}
@@ -335,7 +382,13 @@ export default function RunClubRegistrationForm() {
               <div className={`rcForm__checkboxGroup fp-col`} role="group" aria-labelledby="runDays-label">
                 {["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"].map((day) => (
                   <label key={day} className={`rcForm__checkboxLabel txt-body`}>
-                    <input type="checkbox" name="runDays" value={day} className="rcForm__checkbox" />
+                    <input 
+                      type="checkbox" 
+                      name="runDays" 
+                      value={day} 
+                      defaultChecked={initialValues?.runDays?.includes(day)} 
+                      className="rcForm__checkbox" 
+                      />
                     <span>{day}</span>
                   </label>
                 ))}
@@ -355,6 +408,7 @@ export default function RunClubRegistrationForm() {
                 id="distance"
                 name="distance"
                 type="text"
+                defaultValue={initialValues?.distance || ""}
                 placeholder="E.g. 5-8 km"
                 required
                 className={`rcForm__input h5`}
@@ -379,6 +433,7 @@ export default function RunClubRegistrationForm() {
                 rows={3}
                 className="h5"
                 maxLength={1000}
+                defaultValue={initialValues?.distanceDescription || ""}
               />
             </div>
 
@@ -389,7 +444,7 @@ export default function RunClubRegistrationForm() {
               <TimePicker
                 id="startTime"
                 label=""
-                value={time}
+                value={time || initialValues?.startTime || ""}
                 onChange={handleTimeChange}
                 is24Hour
                 classes={{
@@ -427,6 +482,7 @@ export default function RunClubRegistrationForm() {
                 rows={8}
                 className="h5"
                 maxLength={5000}
+                defaultValue={initialValues?.description || ""}
                 aria-invalid={!!(state && !state.success && state.errors?.description)}
               />
               {state && !state.success && state.errors?.description && (
@@ -451,6 +507,7 @@ export default function RunClubRegistrationForm() {
                 id="instagram"
                 name="instagram"
                 type="url"
+                defaultValue={initialValues?.instagram || ""}
                 placeholder="https://instagram.com/..."
                 className={`rcForm__input h5`}
                 maxLength={2048}
@@ -465,6 +522,7 @@ export default function RunClubRegistrationForm() {
                 id="facebook"
                 name="facebook"
                 type="url"
+                defaultValue={initialValues?.facebook || ""}
                 placeholder="https://facebook.com/..."
                 className={`rcForm__input h5`}
                 maxLength={2048}
@@ -479,6 +537,7 @@ export default function RunClubRegistrationForm() {
                 id="strava"
                 name="strava"
                 type="url"
+                defaultValue={initialValues?.strava || ""}
                 placeholder="https://strava.com/clubs/..."
                 className={`rcForm__input h5`}
                 maxLength={2048}
@@ -493,6 +552,7 @@ export default function RunClubRegistrationForm() {
                 id="website"
                 name="website"
                 type="url"
+                defaultValue={initialValues?.website || ""}
                 placeholder="https://..."
                 className={`rcForm__input h5`}
                 maxLength={2048}
@@ -507,6 +567,7 @@ export default function RunClubRegistrationForm() {
                 id="email"
                 name="email"
                 type="email"
+                defaultValue={initialValues?.email || ""}
                 placeholder="contact@runclub.ee"
                 required
                 className={`rcForm__input h5`}
@@ -526,14 +587,14 @@ export default function RunClubRegistrationForm() {
       <button
         type="submit"
         className={`rcForm__submit btn_main white white--alt`}
-        data-umami-event="Submitted Run Club Registration Form"
+        data-umami-event={mode === "create" ? "Submitted Run Club Registration Form" : "Updated Run Club"}
         disabled={isPending || !!fileError}
         style={{
           opacity: isPending || fileError ? 0.6 : 1,
           cursor: isPending || fileError ? "not-allowed" : "pointer",
         }}
       >
-        {isPending ? "Submitting..." : "Submit form"}
+         {isPending ? (mode === "create" ? "Submitting..." : "Updating...") : (mode === "create" ? "Submit form" : "Update club")}
       </button>
     </form>
   );

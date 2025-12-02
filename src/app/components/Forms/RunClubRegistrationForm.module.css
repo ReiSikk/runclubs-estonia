@@ -1,6 +1,11 @@
 .rcForm {
   margin-block: 48px 0px;
   margin-inline: auto;
+
+  &.update {
+    align-items: center;
+    max-width: fit-content;
+  }
 }
 .rcForm__header {
   margin-bottom: clamp(40px, 7vw, 64px);

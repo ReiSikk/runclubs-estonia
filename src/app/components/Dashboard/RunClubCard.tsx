@@ -1,7 +1,9 @@
 "use client";
+
+import Link from 'next/link'
 // Styles and assets
 import styles from "./RunClubCard.module.css";
-import { LucideEllipsisVertical, LucidePencil, LucideTrash2 } from "lucide-react";
+import { LucideEllipsisVertical, LucidePencil, LucideTrash2, LucideArrowRight } from "lucide-react";
 // Hooks & Utils
 import { useState } from "react";
 import { RunClub } from "@/app/lib/types/runClub";
@@ -17,9 +19,10 @@ import type { RunClub } from "@/app/lib/types/runClub";
 interface RunClubCardProps {
   club: RunClub;
   onDeleted?: (id: string) => void;
+  onEdit?: (club: RunClub) => void;
 }
 
-const RunClubCard = ({ club, onDeleted }: RunClubCardProps) => {
+const RunClubCard = ({ club, onDeleted, onEdit }: RunClubCardProps) => {
   const { name, distance, city, area, runDays, approvedForPublication } = club;
   // Convert run days to abbreviated format
   const daysList = convertDaysToAbbs(runDays);
@@ -28,15 +31,19 @@ const RunClubCard = ({ club, onDeleted }: RunClubCardProps) => {
 
   const [deleting, setDeleting] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [showEditDialog, setShowEditDialog] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
+  // Handle club UPDATE
   const handleEdit = () => {
-    console.log("Edit club:", name);
+    setDropdownOpen(false);
+    setTimeout(() => {
+      onEdit?.(club);
+    }, 100);
   };
 
   const handleDeleteClick = () => {
-    setDropdownOpen(false); // Close dropdown first
-    // Small delay to let dropdown close animation finish
+    setDropdownOpen(false);
     setTimeout(() => {
       setShowDeleteDialog(true);
     }, 100);
@@ -78,6 +85,14 @@ const RunClubCard = ({ club, onDeleted }: RunClubCardProps) => {
             <DropdownMenu.Content className={styles.dropdownContent} sideOffset={5} align="end">
               <DropdownMenu.Label className={styles.dropdownLabel + " h5"}>Actions</DropdownMenu.Label>
               <DropdownMenu.Separator className={styles.dropdownSeparator} />
+              <DropdownMenu.Item className={styles.dropdownItem + " fp"}>
+                <Link href={`/runclubs/${club.slug}`} target="_blank" className="fp">
+                Visit club page{" "}
+                <div className={styles.dropdownItem__right}>
+                  <LucideArrowRight size={16} />
+                </div>
+                </Link>
+              </DropdownMenu.Item>
               <DropdownMenu.Item className={styles.dropdownItem + " fp"} onSelect={handleEdit}>
                 Edit Club{" "}
                 <div className={styles.dropdownItem__right}>

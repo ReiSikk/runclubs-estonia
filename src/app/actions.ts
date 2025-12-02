@@ -17,10 +17,13 @@ type ActionResult =
   | { success: true; message: string; id?: string }
   | { success: false; message: string; errors?: Record<string, string[]> };
 
-export async function createRunClub(
+export async function saveRunClub(
   prevState: ActionResult | undefined,
   formData: FormData
 ): Promise<ActionResult> {
+
+  const mode = formData.get("mode") as "create" | "update";
+  const clubId = formData.get("clubId") as string | null;
 
   // Get ID token from formData
   const idToken = formData.get("idToken") as string | undefined;
@@ -31,7 +34,7 @@ export async function createRunClub(
     };
   }
 
-    // 2. Verify the token and get the UID
+    // Verify the token and get the UID
   let creatorUid: string;
   try {
     const decodedToken = await getAuth(adminApp).verifyIdToken(idToken);
@@ -41,6 +44,26 @@ export async function createRunClub(
       success: false,
       message: "Invalid or expired authentication token.",
     };
+  }
+
+  // For update mode, verify ownership
+  if (mode === "update") {
+    if (!clubId) {
+      return {
+        success: false,
+        message: "Club ID is required for updates.",
+      };
+    }
+
+    const clubDoc = await adminDb.collection("runclubs").doc(clubId).get();
+    if (!clubDoc.exists) {
+      return { success: false, message: "Club not found." };
+    }
+    
+    const clubData = clubDoc.data();
+    if (clubData?.creator_id !== creatorUid) {
+      return { success: false, message: "You don't have permission to update this club." };
+    }
   }
 
   try {
@@ -138,11 +161,15 @@ export async function createRunClub(
       area: formData.get("area") as string,
       description: formData.get("description") as string,
       email: formData.get("email") as string,
-      approvedForPublication: boolean().default(false).parse(false),
-      createdAt: Timestamp.now(),
       updatedAt: Timestamp.now(),
-      creator_id: creatorUid,
     };
+
+    // Set these fields only when creating doc
+    if (mode === "create") {
+      submission.approvedForPublication = boolean().default(false).parse(false);
+      submission.createdAt = Timestamp.now();
+      submission.creator_id = creatorUid;
+    }
 
     if (logoUrl) {
       submission.logo = logoUrl;
@@ -196,15 +223,27 @@ export async function createRunClub(
       }
     });
 
-    // Save to Firestore using Admin SDK
-    await adminDb.collection("runclubs").add(cleanData);
+    // Save to Firestore - CREATE or UPDATE depending on mode prop in form
+    if (mode === "create") {
+      await adminDb.collection("runclubs").add(cleanData);
+      return {
+        success: true,
+        message: "Success! Your club has been registered and is pending approval.",
+      };
+    } else {
+      await adminDb.collection("runclubs").doc(clubId!).update(cleanData);
+      return {
+        success: true,
+        message: "Success! Your club has been updated.",
+      };
+    }
 
     return {
       success: true,
       message: "Success! Your club has been registered and is pending approval.",
     };
   } catch (error: unknown) {
-    console.error("Registration error:", error);
+    console.error("Error saving run club:", error);
     const errorMessage = error instanceof Error ? error.message : "An unexpected error occurred";
 
     return {

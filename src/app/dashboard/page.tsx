@@ -19,8 +19,10 @@ import Modal from "../components/Modals/Modal";
 import SideBar from "../components/Dashboard/SideBar";
 import * as Tabs from "@radix-ui/react-tabs";
 import { LucidePlus } from "lucide-react";
-import RunClubEventCard from "./RunClubEvent";
+import RunClubEventCard from "../components/Dashboard/RunClubEvent";
+import RunClubRegistrationForm from "../components/Forms/RunClubRegistrationForm";
 import styles from "./page.module.css";
+// Types
 import { RunClubEvent } from "../lib/types/runClubEvent";
 
 function DashboardPage() {
@@ -29,9 +31,11 @@ function DashboardPage() {
   const { user, loading } = useAuth();
   // State for create event modal
   const [showCreateEvent, setShowCreateEvent] = useState(false);
+  // Editing club
+  const [editingClub, setEditingClub] = useState<RunClub | null>(null);
 
   // Find users clubs
-  const { data: clubs = [], isLoading, isError } = getUserRunClubs(user?.uid);
+  const { data: clubs = [], isLoading, isError, refetch: refetchClubs } = getUserRunClubs(user?.uid);
   // Get clubs ids and fetch events
   const clubIds = clubs.map((c) => c.id);
   const { data: events = [], isLoading: eventsLoading, isError: eventsError } = useEventsForRunclubs(clubIds);
@@ -68,6 +72,20 @@ function DashboardPage() {
     setClubsState((prevClubs) => prevClubs.filter((club) => club.id !== deletedClubId));
   };
 
+  // Handle club & event UPDATE
+  const handleClubEdit = (club: RunClub) => {
+    setEditingClub(club);
+  };
+  
+  const handleClubUpdated = (updatedClub: RunClub) => {
+    setClubsState((prevClubs) => {
+      prevClubs.map((club) => 
+        club.id === updatedClub.id ? updatedClub : club
+      )
+    })
+    setEditingClub(null);
+  }
+
   // Handle event CREATE
   const handleEventCreated = (newEvent: RunClubEvent) => {
     setEventsState((prevEvents) => [newEvent, ...prevEvents]); 
@@ -80,12 +98,12 @@ function DashboardPage() {
 
   // Disable body scroll when modal is open
   useEffect(() => {
-    if (showCreateEvent) {
+    if (showCreateEvent || editingClub) {
       document.documentElement.style.overflowY = "hidden";
     } else {
       document.documentElement.style.overflowY = "";
     }
-  }, [showCreateEvent]);
+  }, [showCreateEvent, !!editingClub]);
 
 
   if (!user || loading) {
@@ -182,7 +200,7 @@ function DashboardPage() {
                         {isError && <p>Error loading your clubs. Please try again later.</p>}
                         {clubsState.length === 0 && !isLoading && <p>You are not organizing any clubs yet.</p>}
                         {clubsState.map((club) => (
-                          <RunClubCard key={club.id} club={club} onDeleted={handleClubDeleted} />
+                          <RunClubCard key={club.id} club={club} onDeleted={handleClubDeleted} onEdit={handleClubEdit} />
                         ))}
                       </ul>
                     </div>
@@ -303,6 +321,24 @@ function DashboardPage() {
             <Link href="/submit" className="btn_main accent">Register a new club</Link>
           </div>
         }
+      </Modal>
+      {/* Edit club modal */}
+      <Modal 
+        open={!!editingClub} 
+        onClose={() => setEditingClub(null)} 
+        ariaLabel="Edit run club"
+      >
+        {editingClub && (
+          <RunClubRegistrationForm 
+            mode="update" 
+            clubId={editingClub.id}
+            initialValues={editingClub}
+            onEditSuccess={async () => {
+              setEditingClub(null); // Close modal
+              await refetchClubs(); // get fresh data
+            }}
+          />
+        )}
       </Modal>
     </>
   );
