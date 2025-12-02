@@ -41,6 +41,7 @@ if (typeof window !== "undefined") {
     // CI/Testing: Use registered debug token
     console.log("🔧 [Firebase Init] Test environment - using debug token");
     window.FIREBASE_APPCHECK_DEBUG_TOKEN = debugToken;
+    console.log("App Check Debug Token Set:", window.FIREBASE_APPCHECK_DEBUG_TOKEN ? "PRESENT" : "MISSING");
     
     if (recaptchaKey) {
       initializeAppCheck(app, {
