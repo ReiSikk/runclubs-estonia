@@ -36,14 +36,16 @@ if (typeof window !== "undefined") {
   const isTestEnv = isCI || isHeadless;
 
   // Log token presence (not the actual value for security)
-  console.log("🔍 [Firebase] Environment check:", { 
+  //TODO: REMOVE BEFORE PRODUCTION
+   console.log("🔍 [Firebase] Environment check:", { 
     isDev, 
     isCI, 
     isHeadless, 
     isTestEnv,
     hasDebugToken: !!debugToken,
     debugTokenLength: debugToken?.length || 0,
-    debugTokenPreview: debugToken ? `${debugToken.slice(0, 8)}...` : "MISSING"
+    // Show more characters to verify format (first and last 4)
+    debugTokenFormat: debugToken ? `${debugToken.slice(0, 4)}...${debugToken.slice(-4)} (len: ${debugToken.length})` : "MISSING"
   });
 
   if (isTestEnv && debugToken) {
