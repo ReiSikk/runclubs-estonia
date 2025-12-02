@@ -18,6 +18,8 @@ jobs:
       NEXT_PUBLIC_FIREBASE_APP_ID: ${{ secrets.NEXT_PUBLIC_FIREBASE_APP_ID }}
       NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID: ${{ secrets.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID }}
       NEXT_PUBLIC_RECAPTCHA_ENTERPRISE_SITE_KEY: ${{ secrets.NEXT_PUBLIC_RECAPTCHA_ENTERPRISE_SITE_KEY }}
+      # Firebase App Check debug token for CI
+      NEXT_PUBLIC_APP_CHECK_DEBUG_TOKEN_FROM_CI: ${{ secrets.NEXT_PUBLIC_APP_CHECK_DEBUG_TOKEN_FROM_CI }}
       # Firebase Admin SDK
       FIREBASE_CLIENT_EMAIL: ${{ secrets.FIREBASE_CLIENT_EMAIL }}
       FIREBASE_PRIVATE_KEY: ${{ secrets.FIREBASE_PRIVATE_KEY }}
@@ -45,6 +47,7 @@ jobs:
       run: npm run build
       env:
         NEXT_PUBLIC_CI: "true"
+        NEXT_PUBLIC_APP_CHECK_DEBUG_TOKEN_FROM_CI: ${{ secrets.NEXT_PUBLIC_APP_CHECK_DEBUG_TOKEN_FROM_CI }}
     
     - name: Run Playwright tests
       run: npx playwright test

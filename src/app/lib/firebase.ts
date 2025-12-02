@@ -3,8 +3,7 @@ import { getFirestore } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
 import {
   initializeAppCheck,
-  ReCaptchaEnterpriseProvider,
-  CustomProvider
+  ReCaptchaEnterpriseProvider
 } from "firebase/app-check";
 import { getAuth } from "firebase/auth";
 
@@ -26,43 +25,31 @@ const firebaseConfig = {
 
 const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
 
-/**
- * Create a mock App Check provider for CI/testing environments.
- * Uses CustomProvider with a getToken function that returns a dummy token.
- */
-function createMockAppCheckProvider(): CustomProvider {
-  return new CustomProvider({
-    getToken(): Promise<{ token: string; expireTimeMillis: number }> {
-    console.log("🔧 [Firebase Init] MockAppCheckProvider: Returning dummy token.");
-      return Promise.resolve({
-      token: "mock-app-check-token-for-ci-env",
-      expireTimeMillis: Date.now() + 300 * 1000// Token valid for 5 minutes*
-      });
-    }
-  });
-}
-
 if (typeof window !== "undefined") {
   const isDev = process.env.NODE_ENV === "development";
   const isCI = process.env.NEXT_PUBLIC_CI === "true";
   const debugToken = process.env.NEXT_PUBLIC_APP_CHECK_DEBUG_TOKEN_FROM_CI;
   const recaptchaKey = process.env.NEXT_PUBLIC_RECAPTCHA_ENTERPRISE_SITE_KEY;
 
-  // Detect CI/test environment via env var OR headless browser user agent
+  // Detect CI/test environment
   const isHeadless = /HeadlessChrome|Headless/i.test(navigator.userAgent);
   const isTestEnv = isCI || isHeadless;
 
   console.log("🔍 [Firebase] Environment check:", { isDev, isCI, isHeadless, isTestEnv });
 
-  if (isTestEnv) {
-    // CI/Testing: Use mock provider
-    console.log("🔧 [Firebase Init] Test environment detected - using MockAppCheckProvider");
-    initializeAppCheck(app, {
-      provider: createMockAppCheckProvider(),
-      isTokenAutoRefreshEnabled: false,
-    });
+  if (isTestEnv && debugToken) {
+    // CI/Testing: Use registered debug token
+    console.log("🔧 [Firebase Init] Test environment - using debug token");
+    window.FIREBASE_APPCHECK_DEBUG_TOKEN = debugToken;
+    
+    if (recaptchaKey) {
+      initializeAppCheck(app, {
+        provider: new ReCaptchaEnterpriseProvider(recaptchaKey),
+        isTokenAutoRefreshEnabled: false,
+      });
+    }
   } else if (isDev) {
-    // Development: Use debug token
+    // Development: Use auto-generated debug token
     if (debugToken) {
       window.FIREBASE_APPCHECK_DEBUG_TOKEN = debugToken;
       console.log("🔧 [Firebase Init] Dev mode - using env debug token");
