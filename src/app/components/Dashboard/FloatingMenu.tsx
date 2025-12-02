@@ -1,13 +1,14 @@
 import React, { useState, useRef, useEffect } from "react";
 import styles from "./FloatingMenu.module.css";
 import Link from "next/link";
-import { LucideLayoutDashboard, LucideHome, LucideSend, LucideLogOut, LucideMenu, LucideX } from "lucide-react";
+import { LucideLayoutDashboard, LucideHome, LucideSend, LucideLogOut, LucideMenu, LucideX, LucidePlus } from "lucide-react";
 
 interface FloatingMenuProps {
   handleLogOut: () => void;
+  onEventClicked?: () => void;
 }
 
-export default function FloatingMenu({ handleLogOut }: FloatingMenuProps) {
+export default function FloatingMenu({ handleLogOut, onEventClicked }: FloatingMenuProps) {
   const firstMenuItemRef = useRef<HTMLAnchorElement>(null);
   const burgerButtonRef = useRef<HTMLButtonElement>(null);
   const [isExpanded, setIsExpanded] = useState(false);
@@ -29,17 +30,17 @@ export default function FloatingMenu({ handleLogOut }: FloatingMenuProps) {
     <div className={styles.floatingMenu}>
       <div className={styles.floatingMenu__wrap + " fp-col"}>
         <nav className={styles.menuItems + (isExpanded ? ` ${styles.expanded}` : "") + " fp-col"} role="menu" aria-hidden={!isExpanded}>
-              <Link href="/dashboard" className={`${styles.item} h4 fp`} aria-hidden={!isExpanded} ref={firstMenuItemRef} tabIndex={isExpanded ? 0 : -1}>
-                  <LucideLayoutDashboard size={20} className={styles.item__icon} />
-                  Dashboard
-              </Link>
-              <Link href="/" className={`${styles.item} h4 fp`} tabIndex={isExpanded ? 0 : -1} role="menuitem">
-                  <LucideHome size={20} className={styles.item__icon} />
-                      Home
+              <Link href="/" className={`${styles.item} h4 fp`} tabIndex={isExpanded ? 0 : -1} ref={firstMenuItemRef} role="menuitem">
+                <LucideHome size={20} className={styles.item__icon} />
+                  Home
               </Link>
               <Link href="/submit" className={`${styles.item} h4 fp`} tabIndex={isExpanded ? 0 : -1} role="menuitem">
                   <LucideSend size={20} className={styles.item__icon} />
                       Register club
+              </Link>
+              <Link href="/dashboard" className={`${styles.item} h4 fp`} aria-hidden={!isExpanded} tabIndex={isExpanded ? 0 : -1}>
+                  <LucidePlus size={20} className={styles.item__icon} onClick={onEventClicked}/>
+                  Create new event
               </Link>
               <div className={`${styles.item} fp`} onClick={handleLogOut} tabIndex={isExpanded ? 0 : -1} role="menuitem">
                   <LucideLogOut size={20} className={styles.item__icon} />
@@ -56,6 +57,8 @@ export default function FloatingMenu({ handleLogOut }: FloatingMenuProps) {
                 onClick={toggleMenu}
                 aria-expanded={isExpanded}
                 aria-label={isExpanded ? "Close menu" : "Open menu"}
+                tabIndex={isExpanded ? 0 : -1}
+                role="button"
             >
             {isExpanded ? <LucideX size={24} /> : <LucideMenu size={24} />}
             </button>

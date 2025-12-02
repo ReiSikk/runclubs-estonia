@@ -3,13 +3,3 @@
   padding-block: 12px clamp(64px, 8vw, 84px);
   font-family: var(--font-inter-tight);
 }
-/*
-   Site main content
-   ========================================================================== */
-
-.siteTitle {
-  font-family: var(--font-work-sans);
-  font-size: clamp(2.4rem, 6vw, 6.4rem);
-  font-weight: 600;
-  line-height: 1.1;
-}

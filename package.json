@@ -10,6 +10,7 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@radix-ui/react-dropdown-menu": "^2.1.16",
     "@radix-ui/react-toast": "^1.2.15",
     "@sentry/nextjs": "^10.27.0",
     "@tanstack-query-firebase/react": "^2.1.1",

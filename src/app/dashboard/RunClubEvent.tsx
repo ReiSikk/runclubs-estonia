@@ -56,7 +56,7 @@ export default function RunClubEventCard({ event, onDeleted }: RunClubEventProps
       }
     } catch (err) {
       console.error("Failed to delete event:", err);
-      alert("Could not delete event. Check console for details.");
+      alert("Could not delete event. Please try again.");
     } finally {
       setDeleting(false);
     }
@@ -118,7 +118,6 @@ export default function RunClubEventCard({ event, onDeleted }: RunClubEventProps
             <button
               type="button"
               className="btn_main accent"
-              // onClick={handleDelete}
               disabled={deleting}
               aria-disabled={deleting}
               aria-label={deleting ? "Deleting event" : "Delete event"}

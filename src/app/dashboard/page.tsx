@@ -38,11 +38,19 @@ function DashboardPage() {
 
   // Local state for events to allow updates on delete/create
   const [eventsState, setEventsState] = useState(events);
+  // State for clubs to update UI immediately on del/create
+  const [clubsState, setClubsState] = useState(clubs);
+
   const isMobile = useIsMobile(); // Check for mobile breakpoint
 
   useEffect(() => {
     setEventsState(events);
   }, [events]);
+
+
+  useEffect(() => {
+    setClubsState(clubs);
+  }, [clubs]);
 
   // Log out button handler
   const handleLogOut = useCallback(async () => {
@@ -51,9 +59,13 @@ function DashboardPage() {
   }, [router]);
 
 
-  // Handle event DELETE
+  // Handle event & club DELETE
   const handleEventDeleted = (deletedEventId: string) => {
     setEventsState((prevEvents) => prevEvents.filter((event) => event.id !== deletedEventId));
+  };
+
+  const handleClubDeleted = (deletedClubId: string) => {
+    setClubsState((prevClubs) => prevClubs.filter((club) => club.id !== deletedClubId));
   };
 
   // Handle event CREATE
@@ -155,7 +167,7 @@ function DashboardPage() {
                     <li className={`${styles.dashboardStats__item} ${styles.card_dashboard} ${styles.simple}`}>
                       <div className={`${styles.inner} fp-col`}>
                         <span className={`${styles.dashboardStats__label} txt-label`}>Active clubs</span>
-                        <h4 className="h1">{clubs.length}</h4>
+                        <h4 className="h1">{clubsState.length}</h4>
                       </div>
                     </li>
                   </ul>
@@ -163,14 +175,14 @@ function DashboardPage() {
                     <div className={`${styles.card_dashboard}`}>
                       <div className={`${styles.titlecount} fp`}>
                         <h5 className="h3">Your run clubs</h5>
-                        <div className="txt-label card-label--small">{clubs.length}</div>
+                        <div className="txt-label card-label--small">{clubsState.length}</div>
                       </div>
                       <ul className={`${styles.clubsNevents__list} fp-col`}>
                         {isLoading && <p>Loading your clubs...</p>}
                         {isError && <p>Error loading your clubs. Please try again later.</p>}
-                        {clubs.length === 0 && !isLoading && <p>You are not organizing any clubs yet.</p>}
-                        {clubs.map((club) => (
-                          <RunClubCard key={club.id} {...club} />
+                        {clubsState.length === 0 && !isLoading && <p>You are not organizing any clubs yet.</p>}
+                        {clubsState.map((club) => (
+                          <RunClubCard key={club.id} club={club} onDeleted={handleClubDeleted} />
                         ))}
                       </ul>
                     </div>

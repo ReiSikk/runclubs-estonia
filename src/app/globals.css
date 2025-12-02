@@ -52,6 +52,10 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+body[data-scroll-locked] {
+  margin-right: 0!important;
+}
+
 * {
   box-sizing: border-box;
   padding: 0;
@@ -108,7 +112,7 @@ p,
   font-size: 1.6rem;
   line-height: 1.4;
   max-width: 66ch;
-  font-family: var(--font-work-sans);
+  font-family: var(--font-inter-tight);
   font-weight: 400;
 }
 span {
@@ -255,6 +259,7 @@ button {
   font-size: 1.6rem;
   font-weight: 600;
   letter-spacing: 0.4px;
+  line-height: 1.5;
   border: 1px solid transparent;
   border-radius: var(--bradius-xl);
   background: var(--dark);
@@ -393,18 +398,10 @@ button {
 }
 
 .back-link {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 1.6rem;
-  font-weight: 500;
-  font-family: var(--font-work-sans);
   cursor: pointer;
-  transition: all 0.2s ease;
-  border: 2px solid transparent;
-  border-radius: var(--bradius-xl);
   padding-inline: 8px 16px;
-  padding-block: 8px;
+  background: var(--dark);
+  border: 1px solid transparent;
 }
 
 .card-label--small {
@@ -435,7 +432,7 @@ button {
 
   .back-link:hover,
   .back-link:active {
-    border: 2px solid var(--accent);
+    border-color: var(--accent);
   }
 
   .back-link:hover .icon-main {

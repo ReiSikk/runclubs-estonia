@@ -43,13 +43,13 @@
 }
 .dashboardStats {
   margin-inline: auto;
+  max-width: 1440px;
+  padding-inline: clamp(1.2rem, 2vw, 2.4rem);
 }
 .dashboardStats__header {
   margin-bottom: max(3.2rem, min(4vw, 4rem));
 }
 .dashboardStats__content {
-  max-width: 1440px;
-  padding-inline: clamp(1.2rem, 2vw, 2.4rem);
 }
 .dashboardStats__list {
   gap: 1.6rem;
@@ -138,13 +138,13 @@
     background: var(--dark);
     color: var(--cream);
     backdrop-filter: blur(10px);
-    border-radius: var(--bradius-xl);    align-content: center;
+    border-radius: var(--bradius-xl);
+    align-content: center;
   }
 }
 .clubsNevents__list {
   margin-top: 2.4rem;
   gap: 1.6rem;
-  
 }
 .createEvent {
   justify-content: space-between;
@@ -201,7 +201,6 @@
     margin-inline: auto;
   }
   .list__divider {
-
     align-items: center;
     gap: 1.2rem;
     position: relative;
@@ -229,7 +228,7 @@
   width: 100%;
 
   @media only screen and (min-width: 768px) and (max-width: 1024px), only screen and (min-width: 1025px) {
-      width: fit-content;
+    width: fit-content;
   }
 }
 

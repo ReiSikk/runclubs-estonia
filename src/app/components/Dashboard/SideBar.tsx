@@ -19,7 +19,7 @@ interface SideBarProps {
 function SideBar({ handleLogOut, isMobile, onEventClicked }: SideBarProps) {
 
   if (isMobile) {
-    return <FloatingMenu handleLogOut={handleLogOut} />;
+    return <FloatingMenu handleLogOut={handleLogOut} onEventClicked={onEventClicked} />;
   }
 
   return (
