@@ -35,7 +35,16 @@ if (typeof window !== "undefined") {
   const isHeadless = /HeadlessChrome|Headless/i.test(navigator.userAgent);
   const isTestEnv = isCI || isHeadless;
 
-  console.log("🔍 [Firebase] Environment check:", { isDev, isCI, isHeadless, isTestEnv });
+  // Log token presence (not the actual value for security)
+  console.log("🔍 [Firebase] Environment check:", { 
+    isDev, 
+    isCI, 
+    isHeadless, 
+    isTestEnv,
+    hasDebugToken: !!debugToken,
+    debugTokenLength: debugToken?.length || 0,
+    debugTokenPreview: debugToken ? `${debugToken.slice(0, 8)}...` : "MISSING"
+  });
 
   if (isTestEnv && debugToken) {
     // CI/Testing: Use registered debug token
@@ -48,7 +57,13 @@ if (typeof window !== "undefined") {
         provider: new ReCaptchaEnterpriseProvider(recaptchaKey),
         isTokenAutoRefreshEnabled: false,
       });
+      console.log("🔧 [Firebase Init] App Check initialized");
     }
+  } else if (isTestEnv && !debugToken) {
+    // CI but no debug token - THIS IS THE PROBLEM
+    console.error("❌ [Firebase Init] Test environment but DEBUG TOKEN IS MISSING!");
+    console.error("❌ [Firebase Init] Make sure NEXT_PUBLIC_APP_CHECK_DEBUG_TOKEN_FROM_CI is set in GitHub secrets AND in the build step");
+
   } else if (isDev) {
     // Development: Use auto-generated debug token
     if (debugToken) {
