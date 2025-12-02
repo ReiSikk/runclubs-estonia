@@ -37,15 +37,11 @@ if (typeof window !== "undefined") {
 
   // Log token presence (not the actual value for security)
   //TODO: REMOVE BEFORE PRODUCTION
-   console.log("🔍 [Firebase] Environment check:", { 
-    isDev, 
-    isCI, 
-    isHeadless, 
-    isTestEnv,
-    hasDebugToken: !!debugToken,
-    debugTokenLength: debugToken?.length || 0,
-    // Show more characters to verify format (first and last 4)
-    debugTokenFormat: debugToken ? `${debugToken.slice(0, 4)}...${debugToken.slice(-4)} (len: ${debugToken.length})` : "MISSING"
+   console.log("🔍 [Firebase] Env:", { isDev, isCI, isHeadless, isTestEnv });
+  console.log("🔍 [Firebase] Token info:", { 
+    hasToken: !!debugToken, 
+    length: debugToken?.length,
+    preview: debugToken ? debugToken.substring(0, 8) + "..." + debugToken.substring(debugToken.length - 4) : "NONE"
   });
 
   if (isTestEnv && debugToken) {
@@ -63,8 +59,8 @@ if (typeof window !== "undefined") {
     }
   } else if (isTestEnv && !debugToken) {
     // CI but no debug token - THIS IS THE PROBLEM
-    console.error("❌ [Firebase Init] Test environment but DEBUG TOKEN IS MISSING!");
-    console.error("❌ [Firebase Init] Make sure NEXT_PUBLIC_APP_CHECK_DEBUG_TOKEN_FROM_CI is set in GitHub secrets AND in the build step");
+    console.log("❌ [Firebase Init] Test environment but DEBUG TOKEN IS MISSING!");
+    console.log("❌ [Firebase Init] Make sure NEXT_PUBLIC_APP_CHECK_DEBUG_TOKEN_FROM_CI is set in GitHub secrets AND in the build step");
 
   } else if (isDev) {
     // Development: Use auto-generated debug token
@@ -82,7 +78,7 @@ if (typeof window !== "undefined") {
         isTokenAutoRefreshEnabled: true,
       });
     } else {
-      console.warn("⚠️ [Firebase Init] Missing RECAPTCHA_ENTERPRISE_SITE_KEY in dev");
+      console.log("⚠️ [Firebase Init] Missing RECAPTCHA_ENTERPRISE_SITE_KEY in dev");
     }
   } else {
     // Production: Use reCAPTCHA Enterprise
