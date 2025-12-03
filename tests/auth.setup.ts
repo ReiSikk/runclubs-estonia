@@ -1,11 +1,19 @@
 import { test as setup, expect } from "@playwright/test";
 import path from "path";
+import fs from "fs";
 
 const authFile = path.join(__dirname, "../playwright/.auth/user.json");
+const indexedDBFile = path.join(__dirname, "../playwright/.auth/indexedDB.json");
 
 setup("authenticate", async ({ page }) => {
   // Increase timeout
-  setup.setTimeout(120000);
+  // setup.setTimeout(120000);
+    // Ensure auth directory exists
+  const authDir = path.dirname(authFile);
+  if (!fs.existsSync(authDir)) {
+    fs.mkdirSync(authDir, { recursive: true });
+    console.log("📁 [Auth Setup] Created auth directory:", authDir);
+  }
 
   console.log("🔐 [Auth Setup] Starting authentication...");
   console.log("🔐 [Auth Setup] TEST_USER_EMAIL:", process.env.TEST_USER_EMAIL ? "✅ Set" : "❌ Missing");
@@ -99,5 +107,77 @@ setup("authenticate", async ({ page }) => {
 
   // Save auth state
   await page.context().storageState({ path: authFile });
-  console.log("✅ [Auth Setup] Auth state saved");
+ console.log("✅ [Auth Setup] Auth state saved to:", authFile);
+
+  // Save IndexedDB data for Firebase auth
+  try {
+    console.log("💾 [Auth Setup] Extracting IndexedDB data...");
+    
+    const indexedDBData = await page.evaluate(async () => {
+      return new Promise<unknown[]>((resolve, reject) => {
+        const dbName = "firebaseLocalStorageDb";
+        const request = indexedDB.open(dbName);
+        
+        request.onerror = () => {
+          console.log("Failed to open IndexedDB:", dbName);
+          reject(request.error);
+        };
+        
+        request.onsuccess = () => {
+          const db = request.result;
+          const storeName = "firebaseLocalStorage";
+          
+          // Check if store exists
+          if (!db.objectStoreNames.contains(storeName)) {
+            console.log("Store not found:", storeName);
+            console.log("Available stores:", Array.from(db.objectStoreNames));
+            resolve([]);
+            return;
+          }
+          
+          const transaction = db.transaction(storeName, "readonly");
+          const store = transaction.objectStore(storeName);
+          const getAllRequest = store.getAll();
+          
+          getAllRequest.onsuccess = () => {
+            const result = getAllRequest.result || [];
+            console.log("IndexedDB data retrieved:", result.length, "items");
+            resolve(result);
+          };
+          
+          getAllRequest.onerror = () => {
+            console.log("Failed to get IndexedDB data");
+            reject(getAllRequest.error);
+          };
+        };
+      });
+    });
+
+    if (indexedDBData && Array.isArray(indexedDBData) && indexedDBData.length > 0) {
+      fs.writeFileSync(indexedDBFile, JSON.stringify(indexedDBData, null, 2));
+      console.log("✅ [Auth Setup] IndexedDB saved to:", indexedDBFile);
+      console.log("📊 [Auth Setup] IndexedDB entries:", indexedDBData.length);
+    } else {
+      console.log("⚠️ [Auth Setup] No IndexedDB data found to save");
+      // Create empty array file to prevent file not found errors
+      fs.writeFileSync(indexedDBFile, JSON.stringify([], null, 2));
+      console.log("📝 [Auth Setup] Created empty IndexedDB file");
+    }
+  } catch (error) {
+    console.error("❌ [Auth Setup] Failed to save IndexedDB:", error);
+    // Create empty array file to prevent file not found errors
+    fs.writeFileSync(indexedDBFile, JSON.stringify([], null, 2));
+    console.log("📝 [Auth Setup] Created empty IndexedDB file as fallback");
+  }
+
+   // Verify files were created
+  console.log("📁 [Auth Setup] Verifying saved files...");
+  console.log("  - user.json exists:", fs.existsSync(authFile));
+  console.log("  - indexedDB.json exists:", fs.existsSync(indexedDBFile));
+  
+  if (fs.existsSync(indexedDBFile)) {
+    const stats = fs.statSync(indexedDBFile);
+    console.log("  - indexedDB.json size:", stats.size, "bytes");
+  }
+
 });
