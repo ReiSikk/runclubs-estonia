@@ -24,6 +24,7 @@ import RunClubRegistrationForm from "../Forms/RunClubRegistrationForm";
 import styles from "./DashboardClient.module.css";
 // Types
 import { RunClub } from "../../lib/types/runClub";
+import { User } from "firebase/auth";
 
 export default function DashboardClient() {
   const { user, loading } = useAuth();
@@ -47,7 +48,7 @@ export default function DashboardClient() {
   )
 }
 
-function DashboardContent({ userId, user }: { userId: string; user: any }) {
+function DashboardContent({ userId, user }: { userId: string; user: User }) {
   const [activeTab, setActiveTab] = useState("overview");
   const router = useRouter();
   const [showCreateEvent, setShowCreateEvent] = useState(false);
@@ -283,7 +284,8 @@ function DashboardContent({ userId, user }: { userId: string; user: any }) {
                                       title: ev.title,
                                       about: ev.about,
                                       date: ev.date,
-                                      time: ev.time,
+                                      startTime: ev.startTime,
+                                      endTime: ev.endTime,
                                       location: ev.location,
                                       locationUrl: ev.locationUrl,
                                       runclub_id: ev.runclub_id,

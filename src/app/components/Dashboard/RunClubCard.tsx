@@ -31,18 +31,15 @@ const RunClubCard = ({ club, onDeleted, onEdit, user }: RunClubCardProps) => {
   // Handle deleting actions
   const [deleting, setDeleting] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
-  const [dropdownOpen, setDropdownOpen] = useState(false);
 
   // Handle club UPDATE
   const handleEdit = () => {
-    setDropdownOpen(false);
     setTimeout(() => {
       onEdit?.(club);
     }, 100);
   };
 
   const handleDeleteClick = () => {
-    setDropdownOpen(false);
     setTimeout(() => {
       setShowDeleteDialog(true);
     }, 100);
@@ -132,7 +129,7 @@ const RunClubCard = ({ club, onDeleted, onEdit, user }: RunClubCardProps) => {
             <AlertDialog.Content className={styles.Content}>
               <AlertDialog.Title className={styles.Title + " h3"}>Are you absolutely sure?</AlertDialog.Title>
               <AlertDialog.Description className={styles.Description}>
-                 You're about to permanently delete <strong>{name}</strong> along with all its events. This cannot be undone.
+                 You&apos;re about to permanently delete <strong>{name}</strong> along with all its events. This cannot be undone.
               </AlertDialog.Description>
               <div className={styles.Buttons + " fp"}>
                 <AlertDialog.Cancel asChild>

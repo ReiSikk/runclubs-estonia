@@ -6,7 +6,8 @@ export interface RunClubEvent {
   title: string;
   about: string;
   date: string;
-  time: string;
+  startTime: string;
+  endTime?: string;
   location: string;
   locationUrl?: string;
  // Reference to the RunClub document

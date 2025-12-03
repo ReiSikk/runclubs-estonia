@@ -10,6 +10,7 @@ import { getAuth } from "firebase/auth";
 import { RunClubEvent } from "@/app/lib/types/runClubEvent";
 import { db } from "@/app/lib/firebase";
 import { doc, getDoc } from "firebase/firestore";
+import TimePicker, { TimePickerValue } from "react-accessible-time-picker";
 
 type RunClubOption = { id: string; name?: string; title?: string };
 
@@ -35,6 +36,22 @@ export default function EventCreationForm({ runclubId, runclubs = [], onClose, o
   const [selectedRunclub, setSelectedRunclub] = useState<string>(runclubId || runclubs[0]?.id || "");
   const [toastOpen, setToastOpen] = useState(false);
   const [countdown, setCountdown] = useState<number | null>(null);
+  // Handle time
+  const [startTime, setStartTime] = useState({ hour: "", minute: "" });
+  const [endTime, setEndTime] = useState({ hour: "", minute: "" });
+  // Handle time picker values
+  const handleStartTimeChange = (value: TimePickerValue) => {
+    setStartTime({
+      hour: value.hour,
+      minute: value.minute,
+    });
+  };
+  const handleEndTimeChange = (value: TimePickerValue) => {
+    setEndTime({
+      hour: value.hour,
+      minute: value.minute,
+    });
+  };
 
   useEffect(() => {
     if (runclubId) setSelectedRunclub(runclubId);
@@ -89,6 +106,13 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     }
 
     const formData = new FormData(formRef.current);
+
+     // Add time values directly - format on server if needed
+    formData.set("startTime", `${startTime.hour}:${startTime.minute}`);
+    
+    if (endTime.hour && endTime.minute) {
+      formData.set("endTime", `${endTime.hour}:${endTime.minute}`);
+    }
 
     // Get ID token for authentication
     let idToken: string | undefined;
@@ -226,14 +250,53 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
               <label htmlFor="startTime" className="rcForm__label">
                 Start <span className="rcForm__required">*</span>
               </label>
-              <input id="startTime" name="startTime" type="time" required className="rcForm__input" />
+               <TimePicker
+                id="startTime"
+                label=""
+                value={startTime}
+                onChange={handleStartTimeChange}
+                is24Hour
+                required
+                classes={{
+                  container: "rcForm__timePicker",
+                  timePicker: "pickerInput",
+                  timeInput: "number",
+                  timeTrigger: "trigger",
+                  label: "rcForm__label",
+                  popoverContent: "rcForm__pickerPopover",
+                  popoverColumns: "rcForm__popoverColumns",
+                  popoverColumn: "rcForm__popoverColumn",
+                  popoverColumnTitle: "rcForm__popoverColTitle",
+                  popoverItem: "rcForm__popoverItem",
+                  popoverActiveItem: "popoverActiveItem",
+                }}
+              />
             </div>
 
             <div className={styles.form__timegroup + " fp-col"}>
               <label htmlFor="endTime" className="rcForm__label">
                 End
               </label>
-              <input id="endTime" name="endTime" type="time" className="rcForm__input" />
+              <TimePicker
+                id="endTime"
+                label=""
+                value={endTime}
+                onChange={handleEndTimeChange}
+                is24Hour
+                classes={{
+                  container: "rcForm__timePicker",
+                  timePicker: "pickerInput",
+                  timeInput: "number",
+                  timeTrigger: "trigger",
+                  label: "rcForm__label",
+                  popoverContent: "rcForm__pickerPopover",
+                  popoverColumns: "rcForm__popoverColumns",
+                  popoverColumn: "rcForm__popoverColumn",
+                  popoverColumnTitle: "rcForm__popoverColTitle",
+                  popoverItem: "rcForm__popoverItem",
+                  popoverActiveItem: "popoverActiveItem",
+                }}
+              />
             </div>
           </div>
 

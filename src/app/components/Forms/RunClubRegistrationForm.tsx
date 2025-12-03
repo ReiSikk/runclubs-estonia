@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef, useTransition } from "react";
 import styles from "./RunClubRegistrationForm.module.css";
 import FormToast from "../Toast/Toast";
-import { LucideUpload, LucideX } from "lucide-react";
+import { LucideUpload } from "lucide-react";
 import { saveRunClub } from "@/app/actions";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
@@ -38,7 +38,6 @@ export default function RunClubRegistrationForm({ mode, clubId, initialValues, o
   const [filePreview, setFilePreview] = useState<string | null>(null);
   const [fileError, setFileError] = useState<string | null>(null);
   const [existingLogoUrl, setExistingLogoUrl] = useState<string | null>(null);
-  const [removeExistingLogo, setRemoveExistingLogo] = useState(false);
   // TimePicker state
   const [time, setTime] = useState({ hour: "", minute: "" });
 
@@ -98,29 +97,8 @@ export default function RunClubRegistrationForm({ mode, clubId, initialValues, o
     const reader = new FileReader();
     reader.onloadend = () => {
       setFilePreview(reader.result as string);
-      // When new file is selected, replace existing logo
-      setRemoveExistingLogo(true);
     };
     reader.readAsDataURL(file);
-  };
-
-  // Handle removing existing logo (update mode only)
-  const handleRemoveExistingLogo = () => {
-    setExistingLogoUrl(null);
-    setRemoveExistingLogo(true);
-  };
-
-
-  // Handle removing new file selection
-  const handleRemoveNewFile = () => {
-    setFilePreview(null);
-    if (fileInputRef.current) {
-      fileInputRef.current.value = "";
-    }
-    // If we had an existing logo and haven't explicitly removed it, restore it
-    if (initialValues?.logo && !removeExistingLogo) {
-      setExistingLogoUrl(initialValues.logo);
-    }
   };
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -231,7 +209,6 @@ export default function RunClubRegistrationForm({ mode, clubId, initialValues, o
 
     // Determine which logo to show
   const showExistingLogo = mode === "update" && existingLogoUrl && !filePreview;
-  const showNewPreview = !!filePreview;
 
   return (
     <form onSubmit={handleSubmit} ref={formRef}  className={`${styles.rcForm} ${mode === "create" ? styles.create : styles.update} fp-col`}>
@@ -304,14 +281,6 @@ export default function RunClubRegistrationForm({ mode, clubId, initialValues, o
                     width={250}
                     height={250}
                   />
-                  <button
-                    type="button"
-                    onClick={handleRemoveExistingLogo}
-                    className={styles.removeLogoBtn + " fp"}
-                    aria-label="Remove current logo"
-                  >
-                    <LucideX size={16} color="white" />
-                  </button>
                 </div>
                 <p className="txt-small" style={{ marginTop: "0.5rem", opacity: 0.7 }}>
                   Upload a new image below to replace the current logo
@@ -504,17 +473,17 @@ export default function RunClubRegistrationForm({ mode, clubId, initialValues, o
                 onChange={handleTimeChange}
                 is24Hour
                 classes={{
-                  container: styles.rcForm__timePicker,
-                  timePicker: styles.pickerInput,
-                  timeInput: styles.number,
-                  timeTrigger: styles.trigger,
-                  label: styles.rcForm__label,
-                  popoverContent: styles.rcForm__pickerPopover,
-                  popoverColumns: styles.rcForm__popoverColumns,
-                  popoverColumn: styles.rcForm__popoverColumn,
-                  popoverColumnTitle: styles.rcForm__popoverColTitle,
-                  popoverItem: styles.rcForm__popoverItem,
-                  popoverActiveItem: styles.popoverActiveItem,
+                  container: "rcForm__timePicker",
+                  timePicker: "pickerInput",
+                  timeInput: "number",
+                  timeTrigger: "trigger",
+                  label: "rcForm__label",
+                  popoverContent: "rcForm__pickerPopover",
+                  popoverColumns: "rcForm__popoverColumns",
+                  popoverColumn: "rcForm__popoverColumn",
+                  popoverColumnTitle: "rcForm__popoverColTitle",
+                  popoverItem: "rcForm__popoverItem",
+                  popoverActiveItem: "popoverActiveItem",
                 }}
               />
             </div>

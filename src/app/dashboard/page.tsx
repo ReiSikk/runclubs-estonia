@@ -10,6 +10,7 @@ import { adminAuth } from '../lib/firebaseAdmin';
 import { getUserRunClubs } from '../lib/queries/userRunClubs';
 import { getEventsForRunClubs } from '../lib/queries/clubEvents';
 import DashboardClient from '../components/Dashboard/DashboardClient';
+import { RunClub } from '../lib/types/runClub';
 
 
 export default async function DashboardPage() {
@@ -37,7 +38,7 @@ export default async function DashboardPage() {
     });
 
     // Get club IDs from prefetched data
-    const clubs = queryClient.getQueryData(['runclubs', userId]) as any[] || [];
+    const clubs = queryClient.getQueryData<RunClub[]>(['runclubs', userId]) ?? [];
     const clubIds = clubs.map((c) => c.id).sort();
     console.log("clubIds:", clubIds);
 

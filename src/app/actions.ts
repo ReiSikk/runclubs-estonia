@@ -67,8 +67,8 @@ export async function saveRunClub(
   }
 
   try {
+    let logoUrl: string | null = null;
     const logoFile = formData.get("logo") as File | null;
-    let logoUrl = "";
 
     // File upload with Admin SDK
     if (logoFile && logoFile.size > 0) {

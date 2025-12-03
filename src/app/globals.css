@@ -892,6 +892,9 @@ button {
     font-weight: 500;
   }
 }
+input[type="date"]::-webkit-calendar-picker-indicator {
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="15" viewBox="0 0 24 24"><path fill="100f0e" d="M20 3h-1V1h-2v2H7V1H5v2H4c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 18H4V8h16v13z"/></svg>');
+}
 .textareaRow textarea::placeholder,
 .inputRow input::placeholder {
   font-size: 1.6rem;
@@ -1027,6 +1030,85 @@ button {
 
   @media only screen and (min-width: 768px) and (max-width: 1024px), only screen and (min-width: 1025px) {
     width: fit-content;
+  }
+}
+
+/* Time picker */
+
+.rcForm__timePicker {
+
+  .rcForm__label {
+    font-family: var(--font-inter-tight);
+    font-size: 1.6rem;
+    font-weight: 500;
+    color: var(--dark);
+
+    span {
+      color: var(--accent);
+    }
+  }
+
+  .pickerInput {
+    background: var(--cream);
+    border: 1px solid var(--dark);
+    border-radius: var(--bradius-8);
+    &:hover {
+      border-color: var(--dark);
+    }
+    .number {
+      min-height: 24px;
+      min-width: 32px;
+      font-family: var(--font-inter-tight);
+      font-size: 1.4rem;
+      font-weight: 500;
+      &::placeholder {
+        color: var(--dark);
+      }
+    }
+    .trigger {
+      &:hover {
+        background: var(--white);
+      }
+
+      svg {
+        width: 24px;
+        height: 24px;
+      }
+    }
+  }
+}
+/* Time picker modal */
+.rcForm__pickerPopover {
+  background: var(--cream) !important;
+  border: 1px solid var(--dark) !important;
+  border-radius: 8px !important;
+  padding: 1rem !important;
+  width: 225px !important;
+  height: 225px !important;
+  z-index: 9999!important;
+
+  .rcForm__popoverColTitle {
+    font-family: var(--font-inter-tight);
+    font-size: 1.4rem;
+    opacity: 1;
+    font-weight: 600;
+    margin-bottom: 0.8rem;
+    border-bottom: 1px solid var(--accent);
+  }
+  .rcForm__popoverItem {
+    font-family: var(--font-inter-tight);
+    padding: 0.8rem;
+    color: var(--dark);
+
+    &.popoverActiveItem {
+      background: var(--dark);
+      color: var(--cream);
+    }
+
+    &:hover {
+      background: var(--dark);
+      color: var(--cream);
+    }
   }
 }
 
