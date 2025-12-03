@@ -9,12 +9,19 @@
   background: var(--dark);
   color: var(--cream);
   border-radius: var(--bradius-xl);
-  border: 1px solid var(--accent);
+  border: none;
   gap: 0.8rem;
   box-shadow: rgba(0, 0, 0, 0.3) 0px 12px 25px, rgba(0, 0, 0, 0.22) 0px 15px 12px;
   z-index: 9998;
   transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
   flex-wrap: nowrap;
+  box-shadow: 
+    0 0 0 0.8px #fff3,                /* border glow */
+    inset 0 -3px 4px #0003,           /* dark shadow at bottom inside */
+    inset 0 2px 4px #0003,            /* dark shadow at top inside */
+    inset 0 2px 2px #ffffff1a,        /* light highlight at top inside */
+    inset 0 -3px 2px #ffffff1a,       /* light highlight at bottom inside */
+    0 4px 24px #00000073;  
 }
 .overlay {
   position: fixed;
@@ -98,6 +105,12 @@
     grid-template-columns: repeat(2, 1fr);
     gap: 1.6rem;
 
+
+
+    a, div {
+      border-radius: var(--bradius-16);
+    }
+
     a {
       text-wrap: wrap;
 
@@ -106,6 +119,7 @@
         justify-content: flex-start;
         text-align: left;
         gap: 1.2rem;
+        border-radius: var(--bradius-16);
 
         .icon {
           width: 32px;
@@ -134,7 +148,7 @@
   display: flex;
   align-items: center;
   gap: 1rem;
-  padding: 1rem;
+  padding: 2.4rem;
   background: var(--dark);
   border-radius: var(--bradius-16);
   margin-bottom: 1rem;
@@ -147,7 +161,7 @@
   justify-content: center;
   width: 48px;
   height: 48px;
-  background: var(--dark);
+  background: var(--gray);
   border-radius: 50%;
   overflow: hidden;
   font-size: 1.5rem;

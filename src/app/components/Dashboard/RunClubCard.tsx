@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { deleteRunClub } from '@/app/actions'
 // Styles and assets
 import styles from "./RunClubCard.module.css";
-import { LucideEllipsisVertical, LucidePencil, LucideTrash2, LucideArrowRight } from "lucide-react";
+import { LucideEllipsisVertical, LucidePencil, LucideTrash2, LucideArrowRight, LucideClock, LucideBadgeCheck } from "lucide-react";
 // Hooks & Utils
 import { useState } from "react";
 import { RunClub } from "@/app/lib/types/runClub";
@@ -79,6 +79,7 @@ const RunClubCard = ({ club, onDeleted, onEdit, user }: RunClubCardProps) => {
     <div className={`${styles.clubCard}`}>
       <div className={`${styles.clubCard__header} fp`}>
         <div className={`${styles.clubCard__status} ${statusClass} fp`}>
+          {approvedForPublication ? <LucideBadgeCheck size={16} /> : <LucideClock size={16} />}
           {approvedForPublication ? "Approved" : "Pending"}
         </div>
 

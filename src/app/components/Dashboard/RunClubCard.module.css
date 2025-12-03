@@ -4,14 +4,14 @@
   box-shadow: 0 1px 8px rgba(0, 0, 0, 0.2);
   padding: 1.5rem 1.5rem 1.2rem 1.5rem;
   color: var(--dark);
-  border: 1px solid var(--gray);
+  border: 1px solid transparent;
   cursor: pointer;
   width: 100%;
-  transition: background 0.2s ease;
+  transition: border 0.2s ease-in-out;
 }
 
 .clubCard:hover {
-  background: var(--white);
+  border: 1px solid var(--dark);
 }
 
 .clubCard__content {
@@ -19,27 +19,25 @@
   flex-direction: column;
 }
 .clubCard__status {
-  width: fit-content;
-  padding-inline: 0.8rem;
-  padding-block: 0.4rem 0.2rem;
+  padding: 0.6rem 1.2rem;
   border-radius: var(--bradius-xl);
   font-size: 1.2rem;
   font-weight: 500;
-  letter-spacing: 0.05rem;
-  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.15);
-  background: var(--cream);
+  gap: 0.6rem;
+  align-items: center;
+  border: 1px solid;
 }
 
 .approved {
-  background: #007500;
-  color: var(--cream);
-  border: 1px solid #007500;
+  background: rgba(17, 63, 33, 0.9);
+  color: rgb(51, 255, 116);
+  border-color: rgb(74, 192, 112);
 }
 
 .pending {
-  background: #ffe066;
-  color: var(--dark);
-  border: 1px solid #ffe066;
+  background: #2A1810;
+  color: var(--accent);
+  border-color: var(--accent);
 }
 
 .clubCard__header {
