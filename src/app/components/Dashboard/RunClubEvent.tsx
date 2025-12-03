@@ -18,7 +18,7 @@ interface RunClubEventProps {
 
 function AccordionControlledPreview({ about }: { about: string;}) {
   const [open, setOpen] = useState<string | undefined>(undefined);
-  const truncated = about.length > 200 ? `${about.slice(0, 200)}…` : about;
+  const truncated = about.length > 150 ? `${about.slice(0, 200)}…` : about;
   return (
     <>
       {open !== "desc" && (

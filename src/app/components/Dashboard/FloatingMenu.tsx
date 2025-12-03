@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import styles from "./FloatingMenu.module.css";
 import Link from "next/link";
-import { LucideLayoutDashboard, LucideHome, LucideSend, LucideLogOut, LucideMenu, LucideX, LucidePlus } from "lucide-react";
+import { LucideHome, LucideSend, LucideLogOut, LucideMenu, LucideX, LucidePlus } from "lucide-react";
 
 interface FloatingMenuProps {
   handleLogOut: () => void;

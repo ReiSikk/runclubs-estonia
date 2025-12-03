@@ -13,8 +13,6 @@ import { DropdownMenu, AlertDialog } from "radix-ui";
 // Firebase
 import { deleteDoc, doc } from "firebase/firestore";
 import { db } from "@/app/lib/firebase";
-// Types
-import type { RunClub } from "@/app/lib/types/runClub";
 
 interface RunClubCardProps {
   club: RunClub;
@@ -29,9 +27,9 @@ const RunClubCard = ({ club, onDeleted, onEdit }: RunClubCardProps) => {
   // Determine status label class
   const statusClass = approvedForPublication ? styles.approved : styles.pending;
 
+  // Handle deleting actions
   const [deleting, setDeleting] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
-  const [showEditDialog, setShowEditDialog] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
   // Handle club UPDATE

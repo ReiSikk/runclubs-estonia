@@ -4,7 +4,7 @@ import React, { useEffect, useRef, useState, useTransition } from "react";
 import { useAuth } from "@/app/providers/AuthProvider";
 import { createEvent } from "@/app/actions";
 import FormToast from "../Toast/Toast";
-import styles from "../../dashboard/page.module.css";
+import styles from "../Dashboard/DashboardClient.module.css";
 import { LucideCalendarPlus } from "lucide-react";
 import { getAuth } from "firebase/auth";
 import { RunClubEvent } from "@/app/lib/types/runClubEvent";
@@ -261,6 +261,11 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
       </div>
 
       <div className={styles.form__actions + " fp"}>
+          {onClose && (
+          <button type="button" className={styles.form__cancel + " btn_main accent"} onClick={onClose} disabled={isPending}>
+            Cancel
+          </button>
+        )}
         <button
           type="submit"
           className="rcForm__submit btn_main white white--alt"
@@ -269,11 +274,6 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         >
           {isPending ? "Creating..." : "Create event"}
         </button>
-        {onClose && (
-          <button type="button" className={styles.form__cancel + " btn_main accent"} onClick={onClose} disabled={isPending}>
-            Cancel
-          </button>
-        )}
       </div>
     </form>
   );

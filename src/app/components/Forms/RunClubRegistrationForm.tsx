@@ -10,6 +10,7 @@ import Image from "next/image";
 import TimePicker, { TimePickerValue } from "react-accessible-time-picker";
 import { useAuth } from "@/app/providers/AuthProvider";
 import { FormState } from "@/app/lib/types/serverActionReturn";
+import { RunClub } from "@/app/lib/types/runClub";
 
 const initialState: FormState = undefined;
 
