@@ -10,7 +10,7 @@ function SubmitRunClubPage() {
   return (
     <div className={`${styles.page} page-submit-runclub container`} id='page-top'>
         <NavBar />
-        <RunClubRegistrationForm />
+        <RunClubRegistrationForm mode="create"/>
     </div>
   )
 }

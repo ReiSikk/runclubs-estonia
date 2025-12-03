@@ -12,6 +12,8 @@ export interface RunClubEvent {
  // Reference to the RunClub document
   runclub_id: string;
   runclub: string | DocumentReference;
+  createdAt?: string;
+  updatedAt?: string;
 };
 
 export type RunClubEvents = RunClubEvent[];

@@ -52,7 +52,6 @@ function DashboardContent({ userId, user }: { userId: string; user: any }) {
   const router = useRouter();
   const [showCreateEvent, setShowCreateEvent] = useState(false);
   const [editingClub, setEditingClub] = useState<RunClub | null>(null);
-  const [showClubModal, setShowClubModal] = useState(false);
 
   // Now these hooks only run once with stable userId
   const { data: clubs = [], isLoading, isError, refetch: refetchClubs } = useMyRunClubs(userId);
@@ -197,7 +196,7 @@ function DashboardContent({ userId, user }: { userId: string; user: any }) {
                       {isError && <p>Error loading your clubs. Please try again later.</p>}
                       {clubs.length === 0 && !isLoading && <p>You are not organizing any clubs yet.</p>}
                       {clubs.map((club) => (
-                        <RunClubCard key={club.id} club={club} onDeleted={handleClubDeleted} onEdit={handleClubEdit} />
+                        <RunClubCard key={club.id} club={club} onDeleted={handleClubDeleted} onEdit={handleClubEdit} user={user} />
                       ))}
                     </ul>
                   </div>
@@ -322,7 +321,7 @@ function DashboardContent({ userId, user }: { userId: string; user: any }) {
           <div className="center fp-col">
             <h2 className="h3">No clubs available</h2>
             <p className="txt-body">You need to create a run club before you can create events.</p>
-            <Link href="/submit" className="btn_main accent">
+            <Link href="/submit" className="btn_main accent"  onClick={() => setShowCreateEvent(false)}>
               Register a new club
             </Link>
           </div>
@@ -337,7 +336,6 @@ function DashboardContent({ userId, user }: { userId: string; user: any }) {
             initialValues={editingClub}
             onEditSuccess={async () => {
               setEditingClub(null); // Close modal
-              setShowClubModal(false);
               await refetchClubs(); // get fresh data
             }}
           />

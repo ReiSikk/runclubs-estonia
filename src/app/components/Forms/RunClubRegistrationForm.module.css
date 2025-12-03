@@ -134,3 +134,30 @@
     }
   }
 }
+
+/* Edit club form current logo */
+.existingLogo {
+
+}
+.removeLogoBtn {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  border-radius: var(--bradius-xl);
+  background: var(--accent);
+  border: none;
+  padding: 1rem;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s ease;
+
+  svg {
+    flex-shrink: 0;
+  }
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .removeLogoBtn:hover {
+    background: var(--dark);
+  }
+}

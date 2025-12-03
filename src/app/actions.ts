@@ -3,7 +3,7 @@
 import 'server-only'; // Ensure these server actions don't get bundled into client
 
 import { submitRunClubSchema } from "@/app/lib/types/submitRunClub";
-import { adminApp, adminDb } from "@/app/lib/firebaseAdmin";
+import { adminApp, adminDb, adminAuth } from "@/app/lib/firebaseAdmin";
 import { getStorage } from "firebase-admin/storage";
 import { boolean } from "zod";
 import getOptionalField from "@/app/lib/utils/getOptionalField";
@@ -237,11 +237,6 @@ export async function saveRunClub(
         message: "Success! Your club has been updated.",
       };
     }
-
-    return {
-      success: true,
-      message: "Success! Your club has been registered and is pending approval.",
-    };
   } catch (error: unknown) {
     console.error("Error saving run club:", error);
     const errorMessage = error instanceof Error ? error.message : "An unexpected error occurred";
@@ -371,5 +366,63 @@ export async function createEvent(
       success: false,
       message: errorMessage,
     };
+  }
+}
+
+/*
+   Delete club alongside it's connected events server action
+   ========================================================================== */
+
+export async function deleteRunClub(clubId: string, idToken: string) {
+  // Verify the user
+  let decodedToken;
+  try {
+    decodedToken = await adminAuth.verifyIdToken(idToken);
+  } catch {
+    return { success: false, message: 'Unauthorized' };
+  }
+
+  const userId = decodedToken.uid;
+
+  try {
+    // Verify ownership
+    const clubDoc = await adminDb.collection('runclubs').doc(clubId).get();
+    
+    if (!clubDoc.exists) {
+      return { success: false, message: 'Club not found' };
+    }
+
+    const clubData = clubDoc.data();
+    if (clubData?.creator_id !== userId) {
+      return { success: false, message: 'You do not own this club' };
+    }
+
+    // Delete events first (cascade)
+    const eventsSnapshot = await adminDb
+      .collection('events')
+      .where('runclub_id', '==', clubId)
+      .get();
+
+    const batch = adminDb.batch();
+
+    // Add all events to batch delete
+    for (const doc of eventsSnapshot.docs) {
+      batch.delete(doc.ref);
+    }
+
+    // Add club to batch delete
+    batch.delete(adminDb.collection('runclubs').doc(clubId));
+
+    // Execute batch (atomic - all or nothing)
+    await batch.commit();
+
+    return { 
+      success: true, 
+      message: `Club and ${eventsSnapshot.size} event(s) deleted successfully`,
+      deletedEventsCount: eventsSnapshot.size
+    };
+  } catch (error) {
+    console.error('Error deleting club:', error);
+    return { success: false, message: 'Failed to delete club' };
   }
 }

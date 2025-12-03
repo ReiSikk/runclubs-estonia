@@ -55,10 +55,6 @@
   gap: 1.6rem;
   grid-template-columns: repeat(auto-fit, minmax(275px, 1fr));
   align-items: stretch;
-
-  @media only screen and (min-width: 1025px) {
-    grid-template-columns: repeat(auto-fill, minmax(275px, 1fr));
-  }
 }
 .dashboardStats__item {
   aspect-ratio: 3 / 2;

@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef, useTransition } from "react";
 import styles from "./RunClubRegistrationForm.module.css";
 import FormToast from "../Toast/Toast";
-import { LucideUpload } from "lucide-react";
+import { LucideUpload, LucideX } from "lucide-react";
 import { saveRunClub } from "@/app/actions";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
@@ -37,6 +37,8 @@ export default function RunClubRegistrationForm({ mode, clubId, initialValues, o
   // File preview and error states
   const [filePreview, setFilePreview] = useState<string | null>(null);
   const [fileError, setFileError] = useState<string | null>(null);
+  const [existingLogoUrl, setExistingLogoUrl] = useState<string | null>(null);
+  const [removeExistingLogo, setRemoveExistingLogo] = useState(false);
   // TimePicker state
   const [time, setTime] = useState({ hour: "", minute: "" });
 
@@ -51,7 +53,7 @@ export default function RunClubRegistrationForm({ mode, clubId, initialValues, o
 
       // Set file preview if logo exists
       if (initialValues.logo) {
-        setFilePreview(initialValues.logo);
+         setExistingLogoUrl(initialValues.logo);
       }
     }
   }, [mode, initialValues]);
@@ -68,7 +70,6 @@ export default function RunClubRegistrationForm({ mode, clubId, initialValues, o
     const file = event.target.files?.[0];
 
     if (!file) {
-      setFilePreview(null);
       setFileError(null);
       return;
     }
@@ -97,8 +98,29 @@ export default function RunClubRegistrationForm({ mode, clubId, initialValues, o
     const reader = new FileReader();
     reader.onloadend = () => {
       setFilePreview(reader.result as string);
+      // When new file is selected, replace existing logo
+      setRemoveExistingLogo(true);
     };
     reader.readAsDataURL(file);
+  };
+
+  // Handle removing existing logo (update mode only)
+  const handleRemoveExistingLogo = () => {
+    setExistingLogoUrl(null);
+    setRemoveExistingLogo(true);
+  };
+
+
+  // Handle removing new file selection
+  const handleRemoveNewFile = () => {
+    setFilePreview(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+    // If we had an existing logo and haven't explicitly removed it, restore it
+    if (initialValues?.logo && !removeExistingLogo) {
+      setExistingLogoUrl(initialValues.logo);
+    }
   };
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -159,6 +181,7 @@ export default function RunClubRegistrationForm({ mode, clubId, initialValues, o
             if (formRef.current) {
               formRef.current.reset();
               setFilePreview(null);
+              setExistingLogoUrl(null);
               setFileError(null);
               handleTimeChange({ hour: "", minute: "" });
               if (fileInputRef.current) {
@@ -205,6 +228,10 @@ export default function RunClubRegistrationForm({ mode, clubId, initialValues, o
       setToastOpen(true);
     }
   }, [state?.message]);
+
+    // Determine which logo to show
+  const showExistingLogo = mode === "update" && existingLogoUrl && !filePreview;
+  const showNewPreview = !!filePreview;
 
   return (
     <form onSubmit={handleSubmit} ref={formRef}  className={`${styles.rcForm} ${mode === "create" ? styles.create : styles.update} fp-col`}>
@@ -263,6 +290,35 @@ export default function RunClubRegistrationForm({ mode, clubId, initialValues, o
               )}
             </div>
 
+            {showExistingLogo && (
+              <div className={styles.existingLogo + " fp-col"}>
+                <label htmlFor="logo" className={`rcForm__label h5`}>
+                  Current logo
+                </label>
+                <div style={{ position: "relative", display: "inline-block" }}>
+                    <Image
+                    src={existingLogoUrl}
+                    alt="Current logo"
+                    style={{ maxWidth: "250px", maxHeight: "250px", borderRadius: "0.8rem", objectFit: "cover" }}
+                    loading="lazy"
+                    width={250}
+                    height={250}
+                  />
+                  <button
+                    type="button"
+                    onClick={handleRemoveExistingLogo}
+                    className={styles.removeLogoBtn + " fp"}
+                    aria-label="Remove current logo"
+                  >
+                    <LucideX size={16} color="white" />
+                  </button>
+                </div>
+                <p className="txt-small" style={{ marginTop: "0.5rem", opacity: 0.7 }}>
+                  Upload a new image below to replace the current logo
+                </p>
+              </div>
+            )}
+
             <label htmlFor="logo" className={`rcForm__label h5`}>
               Logo <span className={styles.small}>(JPG, PNG, WEBP, SVG, max 5MB)</span>
             </label>
@@ -279,7 +335,6 @@ export default function RunClubRegistrationForm({ mode, clubId, initialValues, o
                 name="logo"
                 ref={fileInputRef}
                 type="file"
-                defaultValue={initialValues?.logo || ""}
                 accept="image/jpeg,image/jpg,image/png,image/webp,image/svg+xml"
                 className="rcForm__file"
                 onChange={handleFileChange}

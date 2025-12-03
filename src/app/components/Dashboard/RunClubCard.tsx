@@ -1,6 +1,8 @@
 "use client";
 
 import Link from 'next/link'
+// Server Actions
+import { deleteRunClub } from '@/app/actions'
 // Styles and assets
 import styles from "./RunClubCard.module.css";
 import { LucideEllipsisVertical, LucidePencil, LucideTrash2, LucideArrowRight } from "lucide-react";
@@ -10,17 +12,16 @@ import { RunClub } from "@/app/lib/types/runClub";
 import { convertDaysToAbbs } from "@/app/lib/utils/convertDays";
 // Radix UI
 import { DropdownMenu, AlertDialog } from "radix-ui";
-// Firebase
-import { deleteDoc, doc } from "firebase/firestore";
-import { db } from "@/app/lib/firebase";
+import { User } from 'firebase/auth';
 
 interface RunClubCardProps {
   club: RunClub;
   onDeleted?: (id: string) => void;
   onEdit?: (club: RunClub) => void;
+  user?: User;
 }
 
-const RunClubCard = ({ club, onDeleted, onEdit }: RunClubCardProps) => {
+const RunClubCard = ({ club, onDeleted, onEdit, user }: RunClubCardProps) => {
   const { name, distance, city, area, runDays, approvedForPublication } = club;
   // Convert run days to abbreviated format
   const daysList = convertDaysToAbbs(runDays);
@@ -49,13 +50,24 @@ const RunClubCard = ({ club, onDeleted, onEdit }: RunClubCardProps) => {
 
   const handleDelete = async () => {
     setDeleting(true);
-    try {
-      await deleteDoc(doc(db, "runclubs", club.id));
-
-      if (onDeleted) {
-        onDeleted(club.id);
+     try {
+      // Get the current user's ID token
+      if (!user) {
+        alert("Please log in again to delete this club.");
+        return;
       }
-      setShowDeleteDialog(false);
+
+      const idToken = await user.getIdToken();
+      
+      // Call server action
+      const result = await deleteRunClub(club.id, idToken);
+
+      if (result.success) {
+        setShowDeleteDialog(false);
+        onDeleted?.(club.id);
+      } else {
+        alert(result.message);
+      }
     } catch (err) {
       console.error("Failed to delete club:", err);
       alert(
@@ -120,8 +132,7 @@ const RunClubCard = ({ club, onDeleted, onEdit }: RunClubCardProps) => {
             <AlertDialog.Content className={styles.Content}>
               <AlertDialog.Title className={styles.Title + " h3"}>Are you absolutely sure?</AlertDialog.Title>
               <AlertDialog.Description className={styles.Description}>
-                This action cannot be undone. This will permanently delete your club and remove your data from our
-                servers.
+                 You're about to permanently delete <strong>{name}</strong> along with all its events. This cannot be undone.
               </AlertDialog.Description>
               <div className={styles.Buttons + " fp"}>
                 <AlertDialog.Cancel asChild>
