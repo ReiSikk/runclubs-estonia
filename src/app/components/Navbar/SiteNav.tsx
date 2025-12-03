@@ -233,7 +233,7 @@ function SiteNav() {
               <Tooltip.Root>
                 <Tooltip.Trigger asChild>
                   <Link className={`${styles.siteNav__link} ${styles.icon} fp`} href="/submit" role="menulink">
-                    <LucidePencil size={16} />
+                    <LucidePencil size={19} />
                   </Link>
                 </Tooltip.Trigger>
                 <Tooltip.Portal>
@@ -244,21 +244,25 @@ function SiteNav() {
                 </Tooltip.Portal>
               </Tooltip.Root>
             </Tooltip.Provider>
-            <Tooltip.Provider delayDuration={0}>
-              <Tooltip.Root>
-                <Tooltip.Trigger asChild>
-                  <div className={`${styles.siteNav__link} ${styles.icon} fp`} onClick={handleLogout} role="menuitem">
-                    <LucideLogOut size={16} />
-                  </div>
-                </Tooltip.Trigger>
-                <Tooltip.Portal>
-                  <Tooltip.Content className={styles.Content} sideOffset={5}>
-                    Log out
-                    <Tooltip.Arrow className={styles.Arrow} />
-                  </Tooltip.Content>
-                </Tooltip.Portal>
-              </Tooltip.Root>
-            </Tooltip.Provider>
+            {
+              user && (
+                <Tooltip.Provider delayDuration={0}>
+                  <Tooltip.Root>
+                    <Tooltip.Trigger asChild>
+                      <div className={`${styles.siteNav__link} ${styles.icon} fp`} onClick={handleLogout} role="menuitem">
+                        <LucideLogOut size={19} />
+                      </div>
+                    </Tooltip.Trigger>
+                    <Tooltip.Portal>
+                      <Tooltip.Content className={styles.Content} sideOffset={5}>
+                        Log out
+                        <Tooltip.Arrow className={styles.Arrow} />
+                      </Tooltip.Content>
+                    </Tooltip.Portal>
+                  </Tooltip.Root>
+                </Tooltip.Provider>
+              )
+            }
           </>
         )}
       </nav>
