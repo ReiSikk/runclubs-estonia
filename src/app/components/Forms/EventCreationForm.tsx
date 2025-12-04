@@ -5,7 +5,6 @@ import { useAuth } from "@/app/providers/AuthProvider";
 import { createEvent } from "@/app/actions";
 import FormToast from "../Toast/Toast";
 import styles from "../Dashboard/DashboardClient.module.css";
-import { LucideCalendarPlus } from "lucide-react";
 import { getAuth } from "firebase/auth";
 import { RunClubEvent } from "@/app/lib/types/runClubEvent";
 import { db } from "@/app/lib/firebase";

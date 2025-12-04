@@ -31,7 +31,7 @@ function NavBar() {
 
   return (
       <nav className={`siteNav fp container ${isScrolled ? 'siteNav--scrolled' : ''}`}>
-        <Link href="/" className="back-link btn_main" aria-label="Back to home page">
+        <Link href="/" className="back-link" aria-label="Back to home page">
           <div className="icon-carousel-anim left">
             <LucideMoveLeft width={24} height={24} strokeWidth={1.5} className="icon-main"/>
             <LucideMoveLeft width={24} height={24} strokeWidth={1.5} className="icon-hovered"/>
