@@ -16,11 +16,17 @@
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: 1rem;
   border: 1px solid var(--dark);
   padding-inline: clamp(1.2rem, 2vw, 2rem);
   padding-block: clamp(1.6rem, 2vw, 2.4rem);
   width: 100%;
+
+  &.loginForm_signup {
+    button {
+      margin-top: 3.2rem;
+    }
+  }
 }
 
 .loginForm__header {
@@ -49,7 +55,7 @@
 .loginForm__actions {
   align-items: center;
   gap: 1.6rem;
-  margin-top: 0.9rem;
+  margin-top: 1.4rem;
 
   button {
     width: 100%;

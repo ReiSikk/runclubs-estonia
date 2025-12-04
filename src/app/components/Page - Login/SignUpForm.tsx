@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import styles from "@/app/login/page.module.css";
-import Link from "next/link";
 import * as Form from "@radix-ui/react-form";
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { auth } from "@/app/lib/firebase";
@@ -53,7 +52,7 @@ export default function SignUpForm({ showToast, showCountdownToast, setActiveTab
       <div className={styles.loginForm__header}>
         <h1 className={`${styles.loginForm__title} h2`}>Register an account</h1>
       </div>
-      <Form.Root onSubmit={signUpNewUser} className={`${styles.loginForm} bradius-m`}>
+      <Form.Root onSubmit={signUpNewUser} className={`${styles.loginForm} ${styles.loginForm_signup} bradius-m`}>
         <div className="inputRow inputRow--2 fp">
           <Form.Field name="firstName" className="fp-col">
             <Form.Label className="rcForm__label h5">First name</Form.Label>
@@ -149,9 +148,9 @@ export default function SignUpForm({ showToast, showCountdownToast, setActiveTab
       </Form.Root>
       <p className={styles.login__text}>
         Already have an account?{" "}
-        <Link href="/login" className={`${styles.login__link} underline`}>
+        <span onClick={() => setActiveTab && setActiveTab("tab1")} className={`${styles.login__link} underline`}>
           Sign In
-        </Link>{" "}
+        </span>{" "}
       </p>
     </div>
   );

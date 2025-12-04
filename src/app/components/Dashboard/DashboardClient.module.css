@@ -238,18 +238,14 @@
   width: fit-content;
   margin-inline: auto;
   width: 100%;
-  max-width: 550px;
+  max-width: 768px;
 }
 .form__section {
   gap: 1.2rem;
   width: 100%;
 }
-.form__header {
-  gap: 0.8rem;
-  margin-bottom: 1.6rem;
-}
 .form__body {
-  padding-block: clamp(3.2rem, 4vw, 4rem);
+  padding-bottom: clamp(3.2rem, 4vw, 4rem);
   width: 100%;
 }
 .form__timegroup {

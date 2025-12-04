@@ -12,19 +12,20 @@
 
 .modal {
   position: relative;
+  overflow-y: auto;
   justify-content: center;
   align-items: stretch;
   background: var(--card-bg, #0f0f0f);
   color: var(--text, #fff);
   border-radius: var(--bradius-16);
-  overflow: hidden;
   width: 100%;
   max-width: 800px;
-  max-height: 85vh;
+  max-height: 90dvh;
   box-shadow: 0 10px 40px rgba(0,0,0,0.6);
+  padding-block: 0 4rem;
 
   &.noClubsModal {
-    padding-block: 40px;
+    padding-block: 4rem;
 
     div {
         gap: 1.6rem;
@@ -33,34 +34,52 @@
   }
 
 }
+.modal__header {
+  position: sticky;
+  top: 0;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: nowrap;
+  background: var(--dark-gray);
+  color: var(--cream);
+  padding-inline: 2.4rem 1.6rem;
+  padding-block: 1.6rem;
+  border-top-left-radius: var(--bradius-16);
+  border-top-right-radius: var(--bradius-16);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.6);
+  z-index: 9999;
+
+  .title {
+    gap: 0.8rem;
+    align-items: center;
+  }
+}
 .modal__wrapper {
-  position: relative;
-  overflow-y: auto;
-  padding-block: 40px;
-  padding-inline: 16px;
+  padding-inline: clamp(1.6rem, 3vw, 2.4rem);
+  padding-top: 3.2rem;
 }
 
 /* close button top-right */
 .close {
-  position: fixed;
-  right: 32px;
-  top: clamp(20px, 3vw, 32px);
-  background: transparent;
-  border: 1px solid transparent;
-  color: inherit;
+  position: relative;
   cursor: pointer;
-  line-height: 1;
-  transition: color 0.2s ease, background 0.2s ease;
   border-radius: var(--bradius-12);
-  background: var(--accent);
+  color: var(--accent);
+  background: transparent;
+  border: 1px solid var(--white);
   display: flex;
   align-items: center;
   justify-content: center;
+  height: 50px;
+  transition: color 0.2s ease, background 0.2s ease, border 0.2s ease;
+
+  svg {
+    flex-shrink: 0;
+  }
 
   &:hover {
-    color: var(--accent);
-    background: var(--dark);
     border: 1px solid var(--accent);
+    background: var(--dark);
   }
 }
 

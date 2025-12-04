@@ -190,13 +190,6 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
       )}
 
       <div className={`${styles.form__body} rcForm__block fp-col`}>
-        <div className={styles.form__header + " rcForm__step h1 fp"}>
-          <span className="icon">
-            <LucideCalendarPlus size={32} />
-          </span>{" "}
-          Create an event
-        </div>
-
         <section className={styles.form__section + " rcForm__section bradius-m fp-col"}>
           {!runclubId && (
             <div className="inputRow fp-col">
@@ -304,7 +297,7 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
             <label htmlFor="locationName" className="rcForm__label">
               Location <span className="rcForm__required">*</span>
             </label>
-            <input id="locationName" name="locationName" className="rcForm__input" maxLength={256} required  />
+            <input id="locationName" name="locationName" className="rcForm__input" maxLength={256} placeholder="e.g. Tallinn, Kadriorg Park" required  />
           </div>
 
           <div className="inputRow fp-col">
@@ -318,7 +311,7 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
             <label htmlFor="about" className="rcForm__label">
               About <span className="rcForm__required">*</span>
             </label>
-            <textarea id="about" name="about" rows={6} className="rcForm__textarea" maxLength={5000} required />
+            <textarea id="about" name="about" placeholder="What should runners know? Describe the route, pace (easy/moderate/fast), difficulty level, what to bring, and any post-run plans like coffee or stretching together!" rows={6} className="rcForm__textarea" maxLength={5000} required />
           </div>
         </section>
       </div>
