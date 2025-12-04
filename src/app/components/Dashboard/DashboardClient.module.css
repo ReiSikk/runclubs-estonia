@@ -56,7 +56,7 @@
 .dashboardStats__list {
   gap: 1.6rem;
   align-items: stretch;
-  grid-template-columns: repeat(auto-fit, minmax(275px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(225px, 1fr));
 }
 .dashboardStats__item {
   aspect-ratio: 3 / 2;

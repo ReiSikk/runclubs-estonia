@@ -1,13 +1,28 @@
 .overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,0.6);
-  backdrop-filter: blur(2px);
   display: flex;
-  align-items: center;
   justify-content: center;
+  align-items: flex-end;
   z-index: 9999;
-  padding: 32px;
+  background: rgba(0, 0, 0, 0);
+  backdrop-filter: blur(0px);
+  visibility: hidden;
+  pointer-events: none;
+  transition: background 0.3s ease, backdrop-filter 0.3s ease, visibility 0.3s;
+  
+  &.visible {
+    visibility: visible;
+    pointer-events: auto;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(2px);
+  }
+  
+  
+  @media only screen and (min-width: 768px) and (max-width: 1024px), only screen and (min-width: 1025px) {
+    padding: 3.2rem;
+    align-items: center;
+  }
 }
 
 .modal {
@@ -20,9 +35,28 @@
   border-radius: var(--bradius-16);
   width: 100%;
   max-width: 800px;
-  max-height: 90dvh;
   box-shadow: 0 10px 40px rgba(0,0,0,0.6);
-  padding-block: 0 4rem;
+  max-height: 90dvh;
+   /* Mobile: slide up + fade */
+  opacity: 0;
+  transform: translateY(100%);
+  transition: transform 0.3s cubic-bezier(0.32, 0.72, 0, 1), opacity 0.3s ease;
+
+  &.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  
+  
+  @media only screen and (min-width: 768px) and (max-width: 1024px), only screen and (min-width: 1025px) {
+    transform: none;
+    transition: opacity 0.3s ease;
+    padding-block: 0 4rem;
+
+    &.visible {
+      transform: none;
+    }
+  }
 
   &.noClubsModal {
     padding-block: 4rem;

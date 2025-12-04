@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import ReactDOM from "react-dom";
 import styles from "./Modal.module.css";
 import { LucideX } from "lucide-react";
@@ -28,14 +28,12 @@ export default function Modal({ open, onClose, children, ariaLabel = "Modal dial
     };
   }, [open, onClose]);
 
-  if (!open) return null;
-
   if (typeof document === "undefined" || !document.body) return null;
 
   return ReactDOM.createPortal(
-    <div className={styles.overlay} role="presentation" onClick={onClose}>
+    <div className={`${styles.overlay} ${open ? styles.visible : ""}`} role="presentation" onClick={onClose}>
       <div
-        className={`${styles.modal} ${noClubsModal ? styles.noClubsModal : ""}`}
+        className={`${styles.modal} ${open ? styles.visible : ""} ${noClubsModal ? styles.noClubsModal : ""}`}
         role="dialog"
         aria-modal="true"
         aria-label={ariaLabel}
