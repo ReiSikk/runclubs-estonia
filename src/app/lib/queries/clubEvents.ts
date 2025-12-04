@@ -3,6 +3,10 @@ import { convertTimestamp } from '../utils/fireStoreConverter';
 
 export async function getEventsForRunClubs(clubIds: string[]): Promise<RunClubEvent[]> {
   if (!clubIds || clubIds.length === 0) return [];
+    // Get today's date at midnight (start of day)
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const todayISO = today.toISOString().split("T")[0]; // "2025-12-04"
 
   if (typeof window === 'undefined') {
     // Admin SDK (server-side)
@@ -12,7 +16,8 @@ export async function getEventsForRunClubs(clubIds: string[]): Promise<RunClubEv
       const snapshot = await adminDb
         .collection('events')
         .where('runclub_id', 'in', clubIds)
-        .orderBy('date', 'desc')
+        .where("date", ">=", todayISO)
+        .orderBy('date', 'asc')
         .get();
 
       const events = snapshot.docs.map(doc => {
@@ -40,7 +45,8 @@ export async function getEventsForRunClubs(clubIds: string[]): Promise<RunClubEv
       const q = query(
         collection(db, 'events'),
         where('runclub_id', 'in', clubIds),
-        orderBy('date', 'desc')
+        where("date", ">=", todayISO),
+        orderBy('date', 'asc')
       );
       
       const snapshot = await getDocs(q);

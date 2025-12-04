@@ -224,7 +224,7 @@ function DashboardContent({ userId, user }: { userId: string; user: User }) {
                     <p className="txt-body">
                       {events.length < 1
                         ? "You have no upcoming events. Create one to get started!"
-                        : `You have ${events.length} event${events.length > 1 ? "s" : ""}.`}
+                        : `You have published ${events.length} event${events.length > 1 ? "s" : ""}.`}
                     </p>
                   </div>
                   <button
@@ -286,7 +286,7 @@ function DashboardContent({ userId, user }: { userId: string; user: User }) {
                                       date: ev.date,
                                       startTime: ev.startTime,
                                       endTime: ev.endTime,
-                                      location: ev.location,
+                                      locationName: ev.locationName,
                                       locationUrl: ev.locationUrl,
                                       runclub_id: ev.runclub_id,
                                       runclub: ev.runclub,

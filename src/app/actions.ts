@@ -289,6 +289,7 @@ export async function createEvent(
     const locationUrl = getOptionalField(formData, "locationUrl") || null;
     const about = getOptionalField(formData, "about") || "";
     const runclub_id = String(formData.get("runclub_id") || "").trim();
+    console.log("Creating event for runclub_id:", runclub_id);
 
     // Ensure runclub exists and that the requesting user is the creator
     const runclubRef = adminDb.collection("runclubs").doc(runclub_id);
@@ -322,6 +323,10 @@ export async function createEvent(
 
     // Validate with Zod schema
     const validatedFields = submitEventSchema.safeParse(submission);
+
+          console.log("❌ Validation failed:");
+      console.log("Submission:", JSON.stringify(submission, null, 2));
+      console.log("Errors:", validatedFields.success ? "None" : JSON.stringify(validatedFields.error, null, 2));
 
     if (!validatedFields.success) {
       const errors: Record<string, string[]> = {};

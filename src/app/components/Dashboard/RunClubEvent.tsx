@@ -42,7 +42,7 @@ function AccordionControlledPreview({ about }: { about: string;}) {
 }
 
 export default function RunClubEventCard({ event, onDeleted }: RunClubEventProps) {
-  const { id, title, about, date, startTime, endTime, location } = event;
+  const { id, title, about, date, startTime, endTime, locationName } = event;
 
     const [deleting, setDeleting] = useState(false);
 
@@ -98,10 +98,10 @@ export default function RunClubEventCard({ event, onDeleted }: RunClubEventProps
           </span>
         </div>
 
-        {location && (
+        {locationName && (
           <div className={styles.runClubEvent__metaItem}>
             <span className={styles.runClubEvent__metaLabel}>Where</span>
-            <span className={styles.runClubEvent__metaValue}>{location}</span>
+            <span className={styles.runClubEvent__metaValue}>{locationName}</span>
           </div>
         )}
       </div>
