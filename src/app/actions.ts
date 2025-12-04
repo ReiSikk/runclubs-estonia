@@ -3,7 +3,7 @@
 import 'server-only'; // Ensure these server actions don't get bundled into client
 
 import { submitRunClubSchema } from "@/app/lib/types/submitRunClub";
-import { adminApp, adminDb, adminAuth } from "@/app/lib/firebaseAdmin";
+import { adminApp, adminDb, adminAuth } from "@/app/lib/firebase/firebaseAdmin";
 import { getStorage } from "firebase-admin/storage";
 import { boolean } from "zod";
 import getOptionalField from "@/app/lib/utils/getOptionalField";

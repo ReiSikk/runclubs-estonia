@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import styles from '@/app/login/page.module.css'
 import { signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider } from 'firebase/auth';
-import { auth } from '@/app/lib/firebase';
+import { auth } from '@/app/lib/firebase/firebase';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/app/providers/AuthProvider';
 

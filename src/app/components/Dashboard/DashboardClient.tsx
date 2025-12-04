@@ -10,7 +10,7 @@ import { useAuth } from "../../providers/AuthProvider";
 import { useRouter } from "next/navigation";
 import { useIsMobile } from "../../lib/hooks/useIsMobile";
 // Firebase
-import { auth } from "@/app/lib/firebase";
+import { auth } from "@/app/lib/firebase/firebase";
 // Components and styles
 import EventCreationForm from "../Forms/EventCreationForm";
 import RunClubCard from "./RunClubCard";

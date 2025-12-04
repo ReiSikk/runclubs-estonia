@@ -8,7 +8,7 @@ export async function getUserRunClubs(userId?: string): Promise<RunClub[]> {
   if (typeof window === 'undefined') {
     // Admin SDK (server-side)
     try {
-      const { adminDb } = await import('../firebaseAdmin');
+      const { adminDb } = await import('../firebase/firebaseAdmin');
       
       const snapshot = await adminDb
         .collection('runclubs')
@@ -34,7 +34,7 @@ export async function getUserRunClubs(userId?: string): Promise<RunClub[]> {
   } else {
     // Client SDK with App Check (client-side)
     try {
-      const { db } = await import('@/app/lib/firebase');
+      const { db } = await import('@/app/lib/firebase/firebase');
       const { collection, getDocs, query, where, orderBy } = await import('firebase/firestore');
       
       const q = query(

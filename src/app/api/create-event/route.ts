@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { submitEventSchema } from "@/app/lib/types/submitEvent";
-import { adminAuth, adminDb } from "@/app/lib/firebaseAdmin";
+import { adminAuth, adminDb } from "@/app/lib/firebase/firebaseAdmin";
 
 export async function POST(req: NextRequest) {
   try {

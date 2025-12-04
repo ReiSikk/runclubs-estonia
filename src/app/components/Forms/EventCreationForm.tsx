@@ -7,7 +7,7 @@ import FormToast from "../Toast/Toast";
 import styles from "../Dashboard/DashboardClient.module.css";
 import { getAuth } from "firebase/auth";
 import { RunClubEvent } from "@/app/lib/types/runClubEvent";
-import { db } from "@/app/lib/firebase";
+import { db } from "@/app/lib/firebase/firebase";
 import { doc, getDoc } from "firebase/firestore";
 import TimePicker, { TimePickerValue } from "react-accessible-time-picker";
 

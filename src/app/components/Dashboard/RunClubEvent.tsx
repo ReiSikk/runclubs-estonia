@@ -7,7 +7,7 @@ import type { RunClubEvent } from "@/app/lib/types/runClubEvent";
 import * as Accordion from "@radix-ui/react-accordion";
 import { useState } from "react";
 import { deleteDoc, doc } from "firebase/firestore";
-import { db } from "@/app/lib/firebase";
+import { db } from "@/app/lib/firebase/firebase";
 import { AlertDialog } from "radix-ui";
 
 interface RunClubEventProps {

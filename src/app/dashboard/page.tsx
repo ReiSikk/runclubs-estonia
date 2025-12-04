@@ -5,7 +5,7 @@ import {
   QueryClient,
 } from '@tanstack/react-query'
 import { cookies } from 'next/headers';
-import { adminAuth } from '../lib/firebaseAdmin';
+import { adminAuth } from '../lib/firebase/firebaseAdmin';
 // Hooks 
 import { getUserRunClubs } from '../lib/queries/userRunClubs';
 import { getEventsForRunClubs } from '../lib/queries/clubEvents';

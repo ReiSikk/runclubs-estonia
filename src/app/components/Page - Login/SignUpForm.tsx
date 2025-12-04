@@ -4,7 +4,7 @@ import { useState } from "react";
 import styles from "@/app/login/page.module.css";
 import * as Form from "@radix-ui/react-form";
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
-import { auth } from "@/app/lib/firebase";
+import { auth } from "@/app/lib/firebase/firebase";
 
 interface SignUpFormProps {
   showToast: (msg: string, type?: "success" | "error") => void;

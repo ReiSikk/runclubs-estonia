@@ -19,7 +19,7 @@ import {
 } from "lucide-react";
 import { Tooltip } from "radix-ui";
 import { useAuth } from "@/app/providers/AuthProvider";
-import { auth } from "@/app/lib/firebase";
+import { auth } from "@/app/lib/firebase/firebase";
 import { useRouter } from "next/navigation";
 import { useIsMobile } from "@/app/lib/hooks/useIsMobile";
 
