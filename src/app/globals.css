@@ -1256,10 +1256,11 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 .page--loading {
   margin-inline: auto;
   pointer-events: none;
-  min-height: 100dvh;
+  height: 100dvh;
   align-items: center;
   justify-content: center;
 }
 .loader {
   gap: 1.2rem;
+  pointer-events: auto;
 }

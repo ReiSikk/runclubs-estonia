@@ -41,6 +41,7 @@ export default function Modal({ open, onClose, children, ariaLabel = "Modal dial
         aria-label={ariaLabel}
         onClick={(e) => e.stopPropagation()}
       >
+        {!noClubsModal &&
         <div className={styles.modal__header + " fp"}>
             <div className={styles.title + " rcForm__step h2 fp"}>
               <span className="icon">
@@ -51,6 +52,7 @@ export default function Modal({ open, onClose, children, ariaLabel = "Modal dial
             <LucideX  size={20} />
           </button>
         </div>
+        }
         <div className={styles.modal__wrapper}>
         {children}
         </div>

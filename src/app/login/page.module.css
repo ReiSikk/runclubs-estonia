@@ -8,7 +8,7 @@
   padding-block: clamp(6.4rem, 8vw, 8rem);
   padding-inline: 1.6rem;
   background: var(--cream);
-
+  width: 100%;
 }
 
 /* Login Form */
