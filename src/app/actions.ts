@@ -5,7 +5,6 @@ import 'server-only'; // Ensure these server actions don't get bundled into clie
 import { submitRunClubSchema } from "@/app/lib/types/submitRunClub";
 import { adminApp, adminDb, adminAuth } from "@/app/lib/firebase/firebaseAdmin";
 import { getStorage } from "firebase-admin/storage";
-import { boolean } from "zod";
 import getOptionalField from "@/app/lib/utils/getOptionalField";
 import normalizeToSlug from "@/app/lib/utils/generateSlugFromName";
 import sanitizeSVGs from "@/app/lib/utils/sanitizeSvgs";
@@ -166,7 +165,7 @@ export async function saveRunClub(
 
     // Set these fields only when creating doc
     if (mode === "create") {
-      submission.approvedForPublication = boolean().default(false).parse(false);
+      submission.approvedForPublication = false;
       submission.createdAt = Timestamp.now();
       submission.creator_id = creatorUid;
     }
@@ -289,7 +288,6 @@ export async function createEvent(
     const locationUrl = getOptionalField(formData, "locationUrl") || null;
     const about = getOptionalField(formData, "about") || "";
     const runclub_id = String(formData.get("runclub_id") || "").trim();
-    console.log("Creating event for runclub_id:", runclub_id);
 
     // Ensure runclub exists and that the requesting user is the creator
     const runclubRef = adminDb.collection("runclubs").doc(runclub_id);
@@ -324,10 +322,6 @@ export async function createEvent(
     // Validate with Zod schema
     const validatedFields = submitEventSchema.safeParse(submission);
 
-          console.log("❌ Validation failed:");
-      console.log("Submission:", JSON.stringify(submission, null, 2));
-      console.log("Errors:", validatedFields.success ? "None" : JSON.stringify(validatedFields.error, null, 2));
-
     if (!validatedFields.success) {
       const errors: Record<string, string[]> = {};
       validatedFields.error.issues.forEach((issue) => {
@@ -338,7 +332,7 @@ export async function createEvent(
 
       return {
         success: false,
-        message: "Please fix the validation errors",
+        message: "Please check the form for errors.",
         errors,
       };
     }

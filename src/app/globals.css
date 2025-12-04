@@ -988,6 +988,10 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   font-size: 1.3rem;
   color: var(--error);
   opacity: 0.8;
+
+  &.white {
+    color: var(--white);
+  }
 }
 .inputRow__error {
   color: var(--error);

@@ -62,6 +62,7 @@ export default function EventCreationForm({ runclubId, runclubs = [], onClose, o
     if (state?.message) setToastOpen(true);
   }, [state?.message]);
 
+  console.log(state);
   // Countdown timer
   useEffect(() => {
     if (countdown === null || countdown <= 0) return;
@@ -227,7 +228,7 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
             <label htmlFor="title" className="rcForm__label">
               Event title <span className="rcForm__required">*</span>
             </label>
-            <input id="title" name="title" required className="rcForm__input" maxLength={200} />
+            <input id="title" name="title" required className="rcForm__input" maxLength={256} />
           </div>
 
           <div className="inputRow fp">
@@ -235,6 +236,11 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
               Date <span className="rcForm__required">*</span>
             </label>
             <input id="date" name="date" type="date" required className="rcForm__input" />
+              {state && !state.success && state.errors?.date && (
+                <p id="date-error" className="rcForm__hint white" role="alert">
+                  {state.errors.date[0]}
+                </p>
+              )}
           </div>
 
           <div className="inputRow inputRow--2 fp">

@@ -14,6 +14,7 @@ interface RunClubEventProps {
   event: RunClubEvent;
   onShowMore?: (id: string) => void;
   onDeleted?: (id: string) => void;
+  showActions?: boolean;
 }
 
 function AccordionControlledPreview({ about }: { about: string;}) {
@@ -41,7 +42,7 @@ function AccordionControlledPreview({ about }: { about: string;}) {
   );
 }
 
-export default function RunClubEventCard({ event, onDeleted }: RunClubEventProps) {
+export default function RunClubEventCard({ event, onDeleted, showActions }: RunClubEventProps) {
   const { id, title, about, date, startTime, endTime, locationName } = event;
 
     const [deleting, setDeleting] = useState(false);
@@ -112,7 +113,8 @@ export default function RunClubEventCard({ event, onDeleted }: RunClubEventProps
           <AccordionControlledPreview about={about} />
         </div>
       )}
-       <div className={styles.runClubEvent__actions + " fp"}>
+      {showActions && (
+      <div className={styles.runClubEvent__actions + " fp"}>
           <AlertDialog.Root>
             <AlertDialog.Trigger asChild>
             <button
@@ -150,7 +152,8 @@ export default function RunClubEventCard({ event, onDeleted }: RunClubEventProps
           </AlertDialog.Root>
 
 
-        </div>
+      </div>
+      )}
     </article>
   );
 }

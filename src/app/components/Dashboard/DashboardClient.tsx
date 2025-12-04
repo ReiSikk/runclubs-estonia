@@ -252,8 +252,8 @@ function DashboardContent({ userId, user }: { userId: string; user: User }) {
                           grouped[key].push(ev);
                         }
 
-                        // Sort date keys descending (newest first). Date string have to be in ISO format
-                        const sortedDates = Object.keys(grouped).sort((a, b) => (a < b ? 1 : a > b ? -1 : 0));
+                        // Sort date keys ascending (closest to today first). Date string have to be in ISO format
+                        const sortedDates = Object.keys(grouped).sort((a, b) => (a > b ? 1 : a < b ? -1 : 0));
 
                         const formatDividerDate = (d: string) => {
                           try {
