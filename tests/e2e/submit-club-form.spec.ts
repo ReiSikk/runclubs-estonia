@@ -59,25 +59,6 @@ test.describe('Run Club Registration Form', () => {
   });
 
   test('should successfully submit a complete run club registration with image', async ({ page }) => {
-    // Restore IndexedDB for Firebase auth session retrieval
-    const indexedDBData = JSON.parse(fs.readFileSync(indexedDBFile, "utf-8"));
-    await page.evaluate(async (data) => {
-      const dbName = "firebaseLocalStorageDb";
-      const storeName = "firebaseLocalStorage";
-      const dbRequest = indexedDB.open(dbName);
-      await new Promise((resolve, reject) => {
-        dbRequest.onsuccess = () => {
-          const db = dbRequest.result;
-          const transaction = db.transaction(storeName, "readwrite");
-          const store = transaction.objectStore(storeName);
-          data.forEach((item: unknown) => store.put(item));
-          transaction.oncomplete = () => resolve(true);
-          transaction.onerror = () => reject(transaction.error);
-        };
-        dbRequest.onerror = () => reject(dbRequest.error);
-      });
-    }, indexedDBData);
-
     // Fill in club name
     await page.fill('input[name="name"]', 'Test Running Club E2E');
 
