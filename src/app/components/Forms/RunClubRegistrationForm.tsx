@@ -233,7 +233,7 @@ export default function RunClubRegistrationForm({ mode, clubId, initialValues, o
         <p>
           {mode === "create" 
             ? "Fill out the form below to submit your club to our list." 
-            : "Update your club information below."}
+            : "Make changes to your club information as needed."}
         </p>
         <p>
           Please feel free to answer in <strong>Estonian</strong> or <strong>English</strong> as you prefer.

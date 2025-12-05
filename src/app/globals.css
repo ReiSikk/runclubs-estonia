@@ -859,7 +859,6 @@ button {
 
     div {
       flex: 1;
-      min-width: 175px;
     }
 
     @media only screen and (min-width: 768px) and (max-width: 1024px), only screen and (min-width: 1025px) {
@@ -983,6 +982,16 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     color: var(--accent);
   }
 }
+
+[data-radix-form-label],
+.rcForm__label {
+  display: block;
+  margin-inline: 0;
+  margin-block: 0 4px;
+  padding: 0;
+  line-height: 1.4;
+}
+
 .rcForm__hint {
   margin-top: 4px;
   font-size: 1.3rem;

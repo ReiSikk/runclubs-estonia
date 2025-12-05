@@ -38,10 +38,10 @@ export default function FloatingMenu({ handleLogOut, onEventClicked }: FloatingM
                   <LucideSend size={20} className={styles.item__icon} />
                       Register club
               </Link>
-              <Link href="/dashboard" className={`${styles.item} h4 fp`} aria-hidden={!isExpanded} tabIndex={isExpanded ? 0 : -1}>
-                  <LucidePlus size={20} className={styles.item__icon} onClick={onEventClicked}/>
+              <div className={`${styles.item} h4 fp`} aria-hidden={!isExpanded} tabIndex={isExpanded ? 0 : -1} onClick={onEventClicked}>
+                  <LucidePlus size={20} className={styles.item__icon} />
                   Create new event
-              </Link>
+              </div>
               <div className={`${styles.item} fp`} onClick={handleLogOut} tabIndex={isExpanded ? 0 : -1} role="menuitem">
                   <LucideLogOut size={20} className={styles.item__icon} />
                   <div onClick={handleLogOut} className="h4">

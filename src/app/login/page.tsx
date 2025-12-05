@@ -2,8 +2,8 @@
 
 import { useState, useEffect, useRef, Suspense, use } from "react";
 import * as Tabs from "@radix-ui/react-tabs";
-import LoginWithUsername from "@/app/components/Page - Login/LoginForm";
-import SignUpForm from "@/app/components/Page - Login/SignUpForm";
+import LoginWithUsername from "@/app/components/Forms/LoginForm";
+import SignUpForm from "@/app/components/Forms/SignUpForm";
 import styles from "./page.module.css";
 import FormToast from "../components/Toast/Toast";
 

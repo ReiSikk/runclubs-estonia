@@ -122,9 +122,8 @@ function DashboardContent({ userId, user }: { userId: string; user: User }) {
           <div className={`${styles.header}`}>
             <h1 className="h1">Welcome to your dashboard, {user.displayName?.split(" ")[0] || ""}! 👋</h1>
             <p>
-              Here you can manage your account and view your clubs and activities.
-              <br />
-              Keep building the running community of Estonia!
+              Here you can manage your clubs and activities.
+              Delete or edit existing clubs & events, or create new events and clubs to keep your community active.
             </p>
           </div>
           <Tabs.Root
