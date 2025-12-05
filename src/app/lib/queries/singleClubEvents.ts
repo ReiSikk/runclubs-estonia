@@ -22,7 +22,7 @@ export async function getSingleClubEvents(clubId: string): Promise<RunClubEvent[
 
     return snapshot.docs.map((doc) => {
       const data = doc.data();
-      console.log("Event data fetched:", data);
+
       return {
         id: doc.id,
         ...data,

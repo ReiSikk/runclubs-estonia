@@ -13,6 +13,7 @@ export interface RunClubEvent {
  // Reference to the RunClub document
   runclub_id: string;
   runclub: string | DocumentReference;
+  runclub_slug?: string;
   createdAt?: string;
   updatedAt?: string;
 };

@@ -1,11 +1,8 @@
 import { initializeApp, getApps, getApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
-import {
-  initializeAppCheck,
-  ReCaptchaEnterpriseProvider
-} from "firebase/app-check";
 import { getAuth } from "firebase/auth";
+import { initializeAppCheck, ReCaptchaEnterpriseProvider } from "firebase/app-check";
 
 declare global {
   interface Window {
@@ -26,6 +23,7 @@ const firebaseConfig = {
 const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
 
 if (typeof window !== "undefined") {
+
   const isDev = process.env.NODE_ENV === "development";
   const isCI = process.env.NEXT_PUBLIC_CI === "true";
   const debugToken = process.env.NEXT_PUBLIC_APP_CHECK_DEBUG_TOKEN_FROM_CI;
@@ -58,11 +56,15 @@ if (typeof window !== "undefined") {
   } else {
     // Production: Use reCAPTCHA Enterprise
     if (recaptchaKey) {
-      console.log("🔧 [Firebase Init] Production - using reCAPTCHA Enterprise");
-      initializeAppCheck(app, {
-        provider: new ReCaptchaEnterpriseProvider(recaptchaKey),
-        isTokenAutoRefreshEnabled: true,
-      });
+      try {
+        initializeAppCheck(app, {
+          provider: new ReCaptchaEnterpriseProvider(recaptchaKey),
+          isTokenAutoRefreshEnabled: true,
+        });
+        console.log("✅ [Firebase Init] App Check initialized (prod)");
+      } catch (error) {
+        console.warn("⚠️ [Firebase Init] App Check already initialized:", error);
+      }
     } else {
       console.error("❌ [Firebase Init] Missing RECAPTCHA_ENTERPRISE_SITE_KEY in production!");
     }

@@ -1,0 +1,89 @@
+.page {
+  min-height: 100vh;
+  background: var(--dark);
+  color: var(--cream);
+}
+
+.header {
+  position: sticky;
+  top: 0;
+  background: var(--dark-gray);
+  padding-block: 1.6rem;
+  z-index: 100;
+}
+
+.header__inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.backLink {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  color: var(--accent);
+  text-decoration: none;
+  transition: opacity 0.2s ease;
+}
+
+.backLink:hover {
+  opacity: 0.8;
+}
+
+.clubLogo {
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.hero {
+  padding-block: 4.8rem 3.2rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.title {
+  font-size: clamp(2.4rem, 5vw, 4rem);
+  margin-bottom: 2.4rem;
+}
+
+.meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2.4rem;
+}
+
+.metaItem {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  color: var(--text-secondary);
+}
+
+.metaItem a {
+  color: var(--accent);
+  text-decoration: underline;
+}
+
+.body {
+  padding-block: 3.2rem;
+}
+
+.about {
+  white-space: pre-wrap;
+  line-height: 1.6;
+  max-width: 65ch;
+}
+
+.cta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.6rem;
+  padding-block: 3.2rem 6.4rem;
+}
+
+@media (max-width: 768px) {
+  .meta {
+    flex-direction: column;
+    gap: 1.2rem;
+  }
+}

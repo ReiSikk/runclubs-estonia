@@ -8,9 +8,10 @@ import { useSingleClubEvents } from "@/app/lib/hooks/useSingleClubEvents";
 interface UpcomingEventsProps {
   clubId: string;
   clubName: string;
+  slug?: string;
 }
 
-export default function EventsSection({ clubId, clubName }: UpcomingEventsProps) {
+export default function EventsSection({ clubId, clubName, slug }: UpcomingEventsProps) {
   const { data: events = [], isLoading, isError } = useSingleClubEvents(clubId);
 
   if (isLoading) {
@@ -40,7 +41,12 @@ export default function EventsSection({ clubId, clubName }: UpcomingEventsProps)
       {events.length > 0 ? (
         <div className={styles.upcomingEvents__list}>
           {events.map((event) => (
-            <RunClubEventCard key={event.id} event={event} showActions={false} />
+            <RunClubEventCard 
+              key={event.id} 
+              event={event} 
+              showActions={false}  
+              slug={slug}
+              />
           ))}
         </div>
       ) : (

@@ -30,7 +30,7 @@ export default async function SingleRunClubPage({ params }: PageProps) {
       <ClubHeader club={club} />
       <main className={`${styles.pageMain}`}>
         <CtaSection variant="white-bg"/>
-        <EventsSection clubId={club.id} clubName={club.name} />
+        <EventsSection clubId={club.id} slug={club.slug} clubName={club.name} />
       </main>
     </div>
   )

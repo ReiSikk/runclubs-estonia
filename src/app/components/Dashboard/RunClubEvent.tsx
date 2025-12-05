@@ -9,12 +9,14 @@ import { useState } from "react";
 import { deleteDoc, doc } from "firebase/firestore";
 import { db } from "@/app/lib/firebase/firebase";
 import { AlertDialog } from "radix-ui";
+import  Link  from "next/link";
 
 interface RunClubEventProps {
   event: RunClubEvent;
   onShowMore?: (id: string) => void;
   onDeleted?: (id: string) => void;
   showActions?: boolean;
+  slug?: string;
 }
 
 function AccordionControlledPreview({ about }: { about: string;}) {
@@ -42,10 +44,10 @@ function AccordionControlledPreview({ about }: { about: string;}) {
   );
 }
 
-export default function RunClubEventCard({ event, onDeleted, showActions }: RunClubEventProps) {
+export default function RunClubEventCard({ event, onDeleted, showActions, slug }: RunClubEventProps) {
   const { id, title, about, date, startTime, endTime, locationName } = event;
 
-    const [deleting, setDeleting] = useState(false);
+  const [deleting, setDeleting] = useState(false);
 
   const handleDelete = async () => {
     setDeleting(true);
@@ -81,6 +83,7 @@ export default function RunClubEventCard({ event, onDeleted, showActions }: RunC
 
   return (
     <article className={styles.runClubEvent} aria-labelledby={`event-${id}-title`}>
+      <Link href={`/runclubs/${slug}/events/${id}`} className={styles.runClubEvent__linkOverlay} aria-label={`View details for ${title}`}>
       <header className={styles.runClubEvent__header}>
         <div className={styles.runClubEvent__tags}>
           <span className={styles.runClubEvent__tag}>{displayDate}</span>
@@ -150,10 +153,9 @@ export default function RunClubEventCard({ event, onDeleted, showActions }: RunC
               </AlertDialog.Content>
             </AlertDialog.Portal>
           </AlertDialog.Root>
-
-
       </div>
       )}
+      </Link>
     </article>
   );
 }

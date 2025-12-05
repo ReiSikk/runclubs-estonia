@@ -299,26 +299,32 @@ function DashboardContent({ userId, user }: { userId: string; user: User }) {
                             </div>
 
                             <div className={styles.list__item_wrap + " fp-col"}>
-                              {grouped[dateKey].map((ev) => (
-                                <div key={ev.id} className={styles.list__item}>
-                                  <RunClubEventCard
-                                    event={{
-                                      id: ev.id,
-                                      title: ev.title,
-                                      about: ev.about,
-                                      date: ev.date,
-                                      startTime: ev.startTime,
-                                      endTime: ev.endTime,
-                                      locationName: ev.locationName,
-                                      locationUrl: ev.locationUrl,
-                                      runclub_id: ev.runclub_id,
-                                      runclub: ev.runclub,
-                                    }}
-                                    onDeleted={handleEventDeleted}
-                                    showActions={true}
-                                  />
-                                </div>
-                              ))}
+                              {grouped[dateKey].map((ev) => {
+                                // Find the club for this event
+                                const club = clubs.find(c => c.id === ev.runclub_id);
+                                
+                                return (
+                                  <div key={ev.id} className={styles.list__item}>
+                                    <RunClubEventCard
+                                      event={{
+                                        id: ev.id,
+                                        title: ev.title,
+                                        about: ev.about,
+                                        date: ev.date,
+                                        startTime: ev.startTime,
+                                        endTime: ev.endTime,
+                                        locationName: ev.locationName,
+                                        locationUrl: ev.locationUrl,
+                                        runclub_id: ev.runclub_id,
+                                        runclub: ev.runclub,
+                                      }}
+                                      onDeleted={handleEventDeleted}
+                                      showActions={true}
+                                      slug={club?.slug || ''}
+                                    />
+                                  </div>
+                                );
+                              })}
                             </div>
                           </li>
                         ));
