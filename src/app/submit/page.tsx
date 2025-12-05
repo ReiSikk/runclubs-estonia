@@ -1,15 +1,19 @@
 "use client"
 
-import React from 'react'
+import React, { useState } from 'react'
 import RunClubRegistrationForm from '../components/Forms/RunClubRegistrationForm'
 import styles from './page.module.css'
 import NavBar from '../components/Navbar/NavBar'
 import { useAuth } from '../providers/AuthProvider'
 import LoaderSpinner from '../components/Loader/LoaderSpinner'
 import Link from 'next/link'
+import FormToast from '../components/Toast/Toast'
 
 function SubmitRunClubPage() {
   const { user, loading } = useAuth();
+  // Add toast state
+  const [toast, setToast] = useState<{ message: string; type: 'success' | 'error'; countdown?: number | null } | null>(null);
+  const [toastOpen, setToastOpen] = useState(false);
 
   if (loading) {
     return (
@@ -38,7 +42,20 @@ function SubmitRunClubPage() {
   return (
     <div className={`${styles.page} page-submit-runclub container`} id='page-top'>
         <NavBar />
-        <RunClubRegistrationForm mode="create"/>
+          {toast && toastOpen && (
+          <FormToast
+            message={toast.type === 'success' && toast.countdown ? `${toast.message} Redirecting in (${toast.countdown})...` : toast.message}
+            type={toast.type}
+            open={toastOpen}
+            onOpenChange={setToastOpen}
+            aria-live="polite"
+          />
+        )}
+        <RunClubRegistrationForm 
+          mode="create"   
+          onToastUpdate={setToast}
+          onToastOpenChange={setToastOpen}
+        />
     </div>
   )
 }

@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useRef, useTransition } from "react";
 import styles from "./RunClubRegistrationForm.module.css";
-import FormToast from "../Toast/Toast";
 import { LucideUpload } from "lucide-react";
 import { saveRunClub } from "@/app/actions";
 import { useRouter } from "next/navigation";
@@ -11,6 +10,7 @@ import TimePicker, { TimePickerValue } from "react-accessible-time-picker";
 import { useAuth } from "@/app/providers/AuthProvider";
 import { FormState } from "@/app/lib/types/serverActionReturn";
 import { RunClub } from "@/app/lib/types/runClub";
+import { useQueryClient } from "@tanstack/react-query";
 
 const initialState: FormState = undefined;
 
@@ -19,18 +19,19 @@ interface Props {
   clubId?: string;
   initialValues?: RunClub;
   onEditSuccess?: () => void;
+  onToastUpdate?: (toast: { message: string; type: 'success' | 'error'; countdown?: number | null }) => void;
+  onToastOpenChange?: (open: boolean) => void;
 }
 
-export default function RunClubRegistrationForm({ mode, clubId, initialValues, onEditSuccess }: Props) {
+export default function RunClubRegistrationForm({ mode, clubId, initialValues, onEditSuccess, onToastUpdate, onToastOpenChange }: Props) {
   const router = useRouter();
+  const queryClient = useQueryClient();
   const [state, setState] = useState<FormState>(initialState);
   const [isPending, startTransition] = useTransition();
   const [countdown, setCountdown] = useState<number | null>(null);
   // Get current user from auth context
   const { user } = useAuth();
 
-  // Feedback toast state
-  const [toastOpen, setToastOpen] = useState(false);
   // Form and file input refs
   const formRef = useRef<HTMLFormElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -52,7 +53,7 @@ export default function RunClubRegistrationForm({ mode, clubId, initialValues, o
 
       // Set file preview if logo exists
       if (initialValues.logo) {
-         setExistingLogoUrl(initialValues.logo);
+        setExistingLogoUrl(initialValues.logo);
       }
     }
   }, [mode, initialValues]);
@@ -142,10 +143,9 @@ export default function RunClubRegistrationForm({ mode, clubId, initialValues, o
     if (clubId) {
       formData.append("clubId", clubId);
     }
-    
+
     // Add idToken to form data
     formData.append("idToken", idToken);
-
 
     startTransition(async () => {
       try {
@@ -165,6 +165,12 @@ export default function RunClubRegistrationForm({ mode, clubId, initialValues, o
               if (fileInputRef.current) {
                 fileInputRef.current.value = "";
               }
+            }
+
+            // Invalidate queries before redirect so dashboard fetches fresh data
+            if (user?.uid) {
+              queryClient.removeQueries({ queryKey: ['runclubs', user.uid] });
+              queryClient.removeQueries({ queryKey: ['events'] });
             }
 
             // Start countdown and redirect
@@ -201,38 +207,34 @@ export default function RunClubRegistrationForm({ mode, clubId, initialValues, o
     return () => clearTimeout(timer);
   }, [countdown]);
 
+  // Notify parent about toast updates
   useEffect(() => {
-    if (state?.message) {
-      setToastOpen(true);
+    if (state?.message && onToastUpdate) {
+      onToastUpdate({
+        message: state.message,
+        type: state.success ? "success" : "error",
+        countdown: state.success && mode === "create" ? countdown : undefined,
+      });
+      onToastOpenChange?.(true);
     }
-  }, [state?.message]);
+  }, [state, countdown, onToastUpdate, onToastOpenChange, mode]);
 
-    // Determine which logo to show
+  // Determine which logo to show
   const showExistingLogo = mode === "update" && existingLogoUrl && !filePreview;
 
   return (
-    <form onSubmit={handleSubmit} ref={formRef}  className={`${styles.rcForm} ${mode === "create" ? styles.create : styles.update} fp-col`}>
-      {state?.message && (
-        <FormToast
-          message={
-            state.success && mode === "create" && countdown !== null && countdown > 0
-              ? `${state.message} Redirecting in (${countdown})...`
-              : state.message
-          }
-          type={state?.success ? "success" : "error"}
-          open={toastOpen}
-          onOpenChange={setToastOpen}
-          aria-live="polite"
-        />
-      )}
-
+    <form
+      onSubmit={handleSubmit}
+      ref={formRef}
+      className={`${styles.rcForm} ${mode === "create" ? styles.create : styles.update} fp-col`}
+    >
       <div className={styles.rcForm__header}>
         <h1 className={styles.rcForm__title}>
-           {mode === "create" ? "Register a new running club" : "Update your running club"}
+          {mode === "create" ? "Register a new running club" : "Update your running club"}
         </h1>
         <p>
-          {mode === "create" 
-            ? "Fill out the form below to submit your club to our list." 
+          {mode === "create"
+            ? "Fill out the form below to submit your club to our list."
             : "Make changes to your club information as needed."}
         </p>
         <p>
@@ -257,7 +259,7 @@ export default function RunClubRegistrationForm({ mode, clubId, initialValues, o
                 placeholder="E.g. Kesklinna Jooksuklubi"
                 defaultValue={initialValues?.name || ""}
                 required
-                className={`rcForm__input h5`}
+                className={`rcForm__input`}
                 aria-invalid={!!(state && !state.success && state.errors?.name)}
               />
               {state && !state.success && state.errors?.name && (
@@ -273,7 +275,7 @@ export default function RunClubRegistrationForm({ mode, clubId, initialValues, o
                   Current logo
                 </label>
                 <div style={{ position: "relative", display: "inline-block" }}>
-                    <Image
+                  <Image
                     src={existingLogoUrl}
                     alt="Current logo"
                     style={{ maxWidth: "250px", maxHeight: "250px", borderRadius: "0.8rem", objectFit: "cover" }}
@@ -345,7 +347,7 @@ export default function RunClubRegistrationForm({ mode, clubId, initialValues, o
                 placeholder="E.g. Tallinn"
                 defaultValue={initialValues?.city || ""}
                 required
-                className={`rcForm__input h5`}
+                className={`rcForm__input`}
                 maxLength={256}
                 aria-invalid={!!(state && !state.success && state.errors?.city)}
               />
@@ -367,7 +369,7 @@ export default function RunClubRegistrationForm({ mode, clubId, initialValues, o
                 defaultValue={initialValues?.area || ""}
                 placeholder="E.g. Rotermanni kvartal"
                 required
-                className={`rcForm__input h5`}
+                className={`rcForm__input`}
                 maxLength={256}
                 aria-invalid={!!(state && !state.success && state.errors?.area)}
               />
@@ -388,7 +390,7 @@ export default function RunClubRegistrationForm({ mode, clubId, initialValues, o
                 type="text"
                 defaultValue={initialValues?.address || ""}
                 placeholder="E.g. Rotermanni 2, Tallinn"
-                className={`rcForm__input h5`}
+                className={`rcForm__input`}
                 maxLength={256}
               />
             </div>
@@ -407,13 +409,13 @@ export default function RunClubRegistrationForm({ mode, clubId, initialValues, o
               <div className={`rcForm__checkboxGroup fp-col`} role="group" aria-labelledby="runDays-label">
                 {["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"].map((day) => (
                   <label key={day} className={`rcForm__checkboxLabel txt-body`}>
-                    <input 
-                      type="checkbox" 
-                      name="runDays" 
-                      value={day} 
-                      defaultChecked={initialValues?.runDays?.includes(day)} 
-                      className="rcForm__checkbox" 
-                      />
+                    <input
+                      type="checkbox"
+                      name="runDays"
+                      value={day}
+                      defaultChecked={initialValues?.runDays?.includes(day)}
+                      className="rcForm__checkbox"
+                    />
                     <span>{day}</span>
                   </label>
                 ))}
@@ -436,7 +438,7 @@ export default function RunClubRegistrationForm({ mode, clubId, initialValues, o
                 defaultValue={initialValues?.distance || ""}
                 placeholder="E.g. 5-8 km"
                 required
-                className={`rcForm__input h5`}
+                className={`rcForm__input`}
                 maxLength={256}
                 aria-invalid={!!(state && !state.success && state.errors?.distance)}
               />
@@ -534,7 +536,7 @@ export default function RunClubRegistrationForm({ mode, clubId, initialValues, o
                 type="url"
                 defaultValue={initialValues?.instagram || ""}
                 placeholder="https://instagram.com/..."
-                className={`rcForm__input h5`}
+                className={`rcForm__input`}
                 maxLength={2048}
               />
             </div>
@@ -549,7 +551,7 @@ export default function RunClubRegistrationForm({ mode, clubId, initialValues, o
                 type="url"
                 defaultValue={initialValues?.facebook || ""}
                 placeholder="https://facebook.com/..."
-                className={`rcForm__input h5`}
+                className={`rcForm__input`}
                 maxLength={2048}
               />
             </div>
@@ -564,7 +566,7 @@ export default function RunClubRegistrationForm({ mode, clubId, initialValues, o
                 type="url"
                 defaultValue={initialValues?.strava || ""}
                 placeholder="https://strava.com/clubs/..."
-                className={`rcForm__input h5`}
+                className={`rcForm__input`}
                 maxLength={2048}
               />
             </div>
@@ -579,7 +581,7 @@ export default function RunClubRegistrationForm({ mode, clubId, initialValues, o
                 type="url"
                 defaultValue={initialValues?.website || ""}
                 placeholder="https://..."
-                className={`rcForm__input h5`}
+                className={`rcForm__input`}
                 maxLength={2048}
               />
             </div>
@@ -595,7 +597,7 @@ export default function RunClubRegistrationForm({ mode, clubId, initialValues, o
                 defaultValue={initialValues?.email || ""}
                 placeholder="contact@runclub.ee"
                 required
-                className={`rcForm__input h5`}
+                className={`rcForm__input`}
                 maxLength={254}
                 aria-invalid={!!(state && !state.success && state.errors?.email)}
               />
@@ -619,7 +621,13 @@ export default function RunClubRegistrationForm({ mode, clubId, initialValues, o
           cursor: isPending || fileError ? "not-allowed" : "pointer",
         }}
       >
-         {isPending ? (mode === "create" ? "Submitting..." : "Updating...") : (mode === "create" ? "Submit form" : "Update club")}
+        {isPending
+          ? mode === "create"
+            ? "Submitting..."
+            : "Updating..."
+          : mode === "create"
+          ? "Submit form"
+          : "Update club"}
       </button>
     </form>
   );

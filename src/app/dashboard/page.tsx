@@ -40,7 +40,6 @@ export default async function DashboardPage() {
     // Get club IDs from prefetched data
     const clubs = queryClient.getQueryData<RunClub[]>(['runclubs', userId]) ?? [];
     const clubIds = clubs.map((c) => c.id).sort();
-    console.log("clubIds:", clubIds);
 
     // Prefetch events for those clubs
     if (clubIds.length > 0) {

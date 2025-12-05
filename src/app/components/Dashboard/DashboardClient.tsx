@@ -9,6 +9,7 @@ import { formatMonthYear } from "../../lib/utils/convertTime";
 import { useAuth } from "../../providers/AuthProvider";
 import { useRouter } from "next/navigation";
 import { useIsMobile } from "../../lib/hooks/useIsMobile";
+import { useQueryClient } from '@tanstack/react-query'; 
 // Firebase
 import { auth } from "@/app/lib/firebase/firebase";
 // Components and styles
@@ -25,6 +26,7 @@ import styles from "./DashboardClient.module.css";
 // Types
 import { RunClub } from "../../lib/types/runClub";
 import { User } from "firebase/auth";
+import { RunClubEvent } from "@/app/lib/types/runClubEvent";
 
 export default function DashboardClient() {
   const { user, loading } = useAuth();
@@ -53,6 +55,12 @@ function DashboardContent({ userId, user }: { userId: string; user: User }) {
   const router = useRouter();
   const [showCreateEvent, setShowCreateEvent] = useState(false);
   const [editingClub, setEditingClub] = useState<RunClub | null>(null);
+  // toast states for both modals
+  const [eventToast, setEventToast] = useState<{ message: string; type: 'success' | 'error'; countdown?: number | null } | null>(null);
+  const [eventToastOpen, setEventToastOpen] = useState(false);
+  const [clubToast, setClubToast] = useState<{ message: string; type: 'success' | 'error'; countdown?: number | null } | null>(null);
+  const [clubToastOpen, setClubToastOpen] = useState(false);
+  const queryClient = useQueryClient();
 
   // Now these hooks only run once with stable userId
   const { data: clubs = [], isLoading, isError, refetch: refetchClubs } = useMyRunClubs(userId);
@@ -68,7 +76,6 @@ function DashboardContent({ userId, user }: { userId: string; user: User }) {
     data: events = [],
     isLoading: eventsLoading,
     isError: eventsError,
-    refetch: refetchEvents,
   } = useClubEvents(clubIds);
 
   // Check for mobile
@@ -90,16 +97,33 @@ function DashboardContent({ userId, user }: { userId: string; user: User }) {
   }, [router]);
 
   const handleEventDeleted = async () => {
-    await refetchEvents();
+    await queryClient.invalidateQueries({ queryKey: ['events'] });
   };
 
   const handleEventCreated = async () => {
-    await refetchEvents();
+    await queryClient.invalidateQueries({ queryKey: ['events'] });
   };
 
-  const handleClubDeleted = async () => {
-    await refetchClubs();
-    await refetchEvents();
+  const handleClubDeleted = async (clubId: string) => {
+     try {
+    // 1. Immediately remove the club from the cache (no refetch needed yet)
+    queryClient.setQueryData(['runclubs', userId], (oldClubs: RunClub[] | undefined) => {
+      if (!oldClubs) return [];
+      return oldClubs.filter(club => club.id !== clubId);
+    });
+
+    // 2. Immediately remove events for this club from the cache
+    queryClient.setQueryData(['events', clubIds], (oldEvents: RunClubEvent[] | undefined) => {
+      if (!oldEvents) return [];
+      return oldEvents.filter(event => event.runclub_id !== clubId);
+    });
+
+    // 3. Optionally refetch in background to sync with server (no await needed)
+    refetchClubs();
+    
+  } catch (error) {
+    console.error("Failed to update cache after club deletion:", error);
+  }
   };
 
   const handleClubEdit = (club: RunClub) => {
@@ -291,6 +315,7 @@ function DashboardContent({ userId, user }: { userId: string; user: User }) {
                                       runclub: ev.runclub,
                                     }}
                                     onDeleted={handleEventDeleted}
+                                    showActions={true}
                                   />
                                 </div>
                               ))}
@@ -311,12 +336,17 @@ function DashboardContent({ userId, user }: { userId: string; user: User }) {
         onClose={() => setShowCreateEvent(false)}
         ariaLabel="Create event"
         noClubsModal={clubs.length === 0}
+        toast={eventToast}
+        toastOpen={eventToastOpen}
+        onToastOpenChange={setEventToastOpen}
       >
         {clubs.length > 0 ? (
           <EventCreationForm
             runclubs={clubs.map((c) => ({ id: c.id, name: c.name }))}
             onClose={() => setShowCreateEvent(false)}
             onEventCreated={handleEventCreated}
+             onToastUpdate={setEventToast}
+            onToastOpenChange={setEventToastOpen}
           />
         ) : (
           <div className="center fp-col">
@@ -329,7 +359,15 @@ function DashboardContent({ userId, user }: { userId: string; user: User }) {
         )}
       </Modal>
       {/* Edit club modal */}
-      <Modal open={!!editingClub} onClose={() => setEditingClub(null)} ariaLabel="Edit run club">
+      <Modal 
+        open={!!editingClub} 
+        onClose={() => setEditingClub(null)} 
+        ariaLabel="Edit run club" 
+        isClubsModal={true}
+        toast={clubToast}
+        toastOpen={clubToastOpen}
+        onToastOpenChange={setClubToastOpen}
+        >
         {editingClub && (
           <RunClubRegistrationForm
             mode="update"
@@ -339,6 +377,8 @@ function DashboardContent({ userId, user }: { userId: string; user: User }) {
               setEditingClub(null); // Close modal
               await refetchClubs(); // get fresh data
             }}
+            onToastUpdate={setClubToast}
+            onToastOpenChange={setClubToastOpen}
           />
         )}
       </Modal>

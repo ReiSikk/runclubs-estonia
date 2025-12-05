@@ -3,7 +3,6 @@
 import React, { useEffect, useRef, useState, useTransition } from "react";
 import { useAuth } from "@/app/providers/AuthProvider";
 import { createEvent } from "@/app/actions";
-import FormToast from "../Toast/Toast";
 import styles from "../Dashboard/DashboardClient.module.css";
 import { getAuth } from "firebase/auth";
 import { RunClubEvent } from "@/app/lib/types/runClubEvent";
@@ -18,6 +17,8 @@ type Props = {
   runclubs?: RunClubOption[];
   onClose?: () => void;
   onEventCreated?: (newEvent: RunClubEvent) => void;
+  onToastUpdate?: (toast: { message: string; type: 'success' | 'error'; countdown?: number | null }) => void;
+  onToastOpenChange?: (open: boolean) => void;
 };
 
 type FormState =
@@ -27,13 +28,12 @@ type FormState =
 
 const initialState: FormState = undefined;
 
-export default function EventCreationForm({ runclubId, runclubs = [], onClose, onEventCreated }: Props) {
+export default function EventCreationForm({ runclubId, runclubs = [], onClose, onEventCreated, onToastUpdate, onToastOpenChange }: Props) {
   const { user } = useAuth();
   const formRef = useRef<HTMLFormElement | null>(null);
   const [state, setState] = useState<FormState>(initialState);
   const [isPending, startTransition] = useTransition();
   const [selectedRunclub, setSelectedRunclub] = useState<string>(runclubId || runclubs[0]?.id || "");
-  const [toastOpen, setToastOpen] = useState(false);
   const [countdown, setCountdown] = useState<number | null>(null);
   // Handle time
   const [startTime, setStartTime] = useState({ hour: "", minute: "" });
@@ -58,11 +58,17 @@ export default function EventCreationForm({ runclubId, runclubs = [], onClose, o
   }, [runclubId, runclubs]);
 
   // Open toast when we receive a message
-  useEffect(() => {
-    if (state?.message) setToastOpen(true);
-  }, [state?.message]);
+   useEffect(() => {
+    if (state?.message && onToastUpdate) {
+      onToastUpdate({
+        message: state.message,
+        type: state.success ? 'success' : 'error',
+        countdown: state.success ? countdown : undefined
+      });
+      onToastOpenChange?.(true);
+    }
+  }, [state, countdown, onToastUpdate, onToastOpenChange]);
 
-  console.log(state);
   // Countdown timer
   useEffect(() => {
     if (countdown === null || countdown <= 0) return;
@@ -73,11 +79,11 @@ export default function EventCreationForm({ runclubId, runclubs = [], onClose, o
   // When countdown finishes: close form (no redirect) — per request
   useEffect(() => {
     if (countdown === 0) {
-      setToastOpen(false);
+      onToastOpenChange?.(false);
       setCountdown(null);
       if (onClose) onClose();
     }
-  }, [countdown, onClose]);
+  }, [countdown, onClose, onToastOpenChange]);
 
 const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -88,20 +94,20 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
 
     if (!formRef.current) {
       setState({ success: false, message: "Form is not available." });
-      setToastOpen(true);
+      onToastOpenChange?.(true);
       return;
     }
 
     if (!currentUser) {
       setState({ success: false, message: "You must be signed in to create an event." });
-      setToastOpen(true);
+      onToastOpenChange?.(true);
       return;
     }
 
     const finalRunclubId = runclubId || selectedRunclub;
     if (!finalRunclubId) {
       setState({ success: false, message: "Please select a run club to create the event for." });
-      setToastOpen(true);
+      onToastOpenChange?.(true);
       return;
     }
 
@@ -129,7 +135,7 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         
     if (!idToken) {
       setState({ success: false, message: "Authentication expired. Please log in again." });
-      setToastOpen(true);
+      onToastOpenChange?.(true);
       return;
     }
     formData.set("idToken", idToken);
@@ -167,28 +173,18 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
           setSelectedRunclub(runclubs[0]?.id || "");
           setCountdown(5);
         } else {
-          setToastOpen(true);
+          onToastOpenChange?.(true);
         }
       } catch (err: unknown) {
         console.error("Event submit error:", err);
         setState({ success: false, message: (err as Error)?.message || "Unexpected error" });
-        setToastOpen(true);
+        onToastOpenChange?.(true);
       }
     });
   };
 
   return (
     <form ref={formRef} onSubmit={handleSubmit} className={`${styles.form} rcForm fp-col`}>
-      {state?.message && (
-        <FormToast
-          message={state.success && countdown ? `${state.message} Closing in (${countdown})...` : state.message}
-          type={state?.success ? "success" : "error"}
-          open={toastOpen}
-          onOpenChange={setToastOpen}
-          aria-live="polite"
-        />
-      )}
-
       <div className={`${styles.form__body} rcForm__block fp-col`}>
         <section className={styles.form__section + " rcForm__section bradius-m fp-col"}>
           {!runclubId && (

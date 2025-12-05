@@ -7,7 +7,6 @@ export default function useMyRunClubs(userId?: string) {
   return useQuery({
     queryKey: ['runclubs', userId],
     queryFn: () => {
-      console.log('queryFn executing for userId:', userId); // Debug
       return getUserRunClubs(userId);
     },
     staleTime: 5 * 60 * 1000, // 5 mins
