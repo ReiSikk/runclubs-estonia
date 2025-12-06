@@ -4,8 +4,9 @@
   color: var(--white);
   border-radius: var(--bradius-12);
   padding: 20px;
-  box-shadow: 0 6px 20px rgba(0,0,0,0.4);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
   overflow: hidden;
+  transition: box-shadow 0.2s ease;
 }
 
 /* Status badge */
@@ -16,22 +17,23 @@
   transform: translateX(-50%);
   z-index: 3;
   padding: 6px 14px;
-  border-radius: var(--bradius-xl);  background: rgba(40,40,40,0.9);
+  border-radius: var(--bradius-xl);
+  background: rgba(40, 40, 40, 0.9);
   color: var(--white);
-  border: 1px solid rgba(255,255,255,0.03);
+  border: 1px solid rgba(255, 255, 255, 0.03);
 }
 
 /* Status modifiers */
 .runClubEvent__status--approved {
-  background: rgba(20,60,20,0.95);
+  background: rgba(20, 60, 20, 0.95);
   color: #bff1bf;
-  border-color: rgba(75,176,75,0.18);
+  border-color: rgba(75, 176, 75, 0.18);
 }
 
 .runClubEvent__status--in-review {
-  background: rgba(60,50,20,0.95);
+  background: rgba(60, 50, 20, 0.95);
   color: #ffdca8;
-  border-color: rgba(255,220,100,0.12);
+  border-color: rgba(255, 220, 100, 0.12);
 }
 
 .runClubEvent__header {
@@ -53,7 +55,8 @@
   background: #222;
   color: var(--white);
   padding: 8px 12px;
-  border-radius: var(--bradius-xl);  font-size: 1.4rem;
+  border-radius: var(--bradius-xl);
+  font-size: 1.4rem;
   user-select: none;
   white-space: nowrap;
 }
@@ -114,45 +117,45 @@
 /*
    Alert modal when deleting club
    ========================================================================== */
-   .Overlay {
-  background-color: rgba(0,0,0,0.6);
+.Overlay {
+  background-color: rgba(0, 0, 0, 0.6);
   backdrop-filter: blur(2px);
-	position: fixed;
-	inset: 0;
-	animation: overlayShow 150ms cubic-bezier(0.16, 1, 0.3, 1);
+  position: fixed;
+  inset: 0;
+  animation: overlayShow 150ms cubic-bezier(0.16, 1, 0.3, 1);
   z-index: 999;
 }
 
 .Content {
-	background-color: var(--dark-gray);
-	border-radius: 6px;
-  box-shadow: 0 10px 40px rgba(0,0,0,0.6);
-	position: fixed;
-	top: 50%;
-	left: 50%;
-	transform: translate(-50%, -50%);
-	width: 90vw;
-	max-width: 500px;
-	max-height: 85vh;
-	padding: 25px;
+  background-color: var(--dark-gray);
+  border-radius: 6px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 90vw;
+  max-width: 500px;
+  max-height: 85vh;
+  padding: 25px;
   z-index: 1000;
-	animation: contentShow 150ms cubic-bezier(0.16, 1, 0.3, 1);
-	&:focus {
-		outline: none;
-	}
+  animation: contentShow 150ms cubic-bezier(0.16, 1, 0.3, 1);
+  &:focus {
+    outline: none;
+  }
 }
 
 .Title {
-	margin: 0;
-	color: var(--cream);
-	font-weight: 500;
+  margin: 0;
+  color: var(--cream);
+  font-weight: 500;
   margin-bottom: 0.8rem;
 }
 
 .Description {
-	margin-bottom: 20px;
-	color: var(--cream);
-	line-height: 1.5;
+  margin-bottom: 20px;
+  color: var(--cream);
+  line-height: 1.5;
 }
 
 .Buttons {
@@ -160,8 +163,8 @@
   gap: 1.6rem;
 }
 .Button {
-	height: 35px;
-	user-select: none;
+  height: 35px;
+  user-select: none;
   cursor: pointer;
   padding-block: 4px;
 
@@ -169,37 +172,40 @@
     background: var(--accent);
     color: var(--dark);
   }
-	&:focus:not(:focus-visible) {
-		outline: 0;
-	}
+  &:focus:not(:focus-visible) {
+    outline: 0;
+  }
 
-	&:focus-visible {
-		outline: 2px solid var(--gray);
-		outline-offset: 1px;
-	}
+  &:focus-visible {
+    outline: 2px solid var(--gray);
+    outline-offset: 1px;
+  }
 }
 
 @keyframes overlayShow {
-	from {
-		opacity: 0;
-	}
-	to {
-		opacity: 1;
-	}
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 @keyframes contentShow {
-	from {
-		opacity: 0;
-		transform: translate(-50%, -48%) scale(0.96);
-	}
-	to {
-		opacity: 1;
-		transform: translate(-50%, -50%) scale(1);
-	}
+  from {
+    opacity: 0;
+    transform: translate(-50%, -48%) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
 }
 
-@media (hover:hover) and (pointer:fine) {
+@media (hover: hover) and (pointer: fine) {
+  .runClubEvent:hover {
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  }
   .runClubEvent__showMoreTrigger {
     &:hover {
       opacity: 0.75;

@@ -8,10 +8,14 @@ export interface RunClubEvent {
   date: string;
   startTime: string;
   endTime?: string | null;
-  locationName: string;
+  locationAddress: string;
   locationUrl?: string | null;
- // Reference to the RunClub document
+  imageUrl?: string | null;
+  tags?: string[];
+  distance?: number | null;
+  pace?: string | null;
   runclub_id: string;
+  // Reference to the RunClub document
   runclub: string | DocumentReference;
   runclub_slug?: string;
   createdAt?: string;

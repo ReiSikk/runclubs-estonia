@@ -35,7 +35,7 @@
 }
 
 .pending {
-  background: #2A1810;
+  background: #2a1810;
   color: var(--accent);
   border-color: var(--accent);
 }
@@ -54,7 +54,7 @@
     border: 1px solid var(--dark);
     background: transparent;
     color: var(--cream);
-    transition: opacity 0.2s ease, transform 0.2s ease;
+    transition: opacity 0.2s ease;
 
     circle {
       stroke: var(--dark);
@@ -62,8 +62,6 @@
 
     &:hover {
       opacity: 0.9;
-      transform: scale(0.975);
-
     }
   }
 }
@@ -128,7 +126,7 @@
   border: 1px solid transparent;
   cursor: pointer;
   outline: none;
-  transition: background-color 0.2s  border 0.2s ease;
+  transition: background-color 0.2s border 0.2s ease;
   color: var(--dark);
 }
 .dropdownItem__right {

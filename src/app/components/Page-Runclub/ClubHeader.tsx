@@ -3,18 +3,14 @@ import Image from 'next/image';
 import SocialsList from './SocialsList';
 // Types
 import { RunClub } from '@/app/lib/types/runClub';
-import { EventInfoCard } from '@/app/lib/types/eventInfoCard';
-import { RunClubEvent } from '@/app/lib/types/runClubEvent';
 // Styles
 import styles from '../../runclubs/[slug]/page.module.css';
 
 interface ClubHeaderProps {
   club: RunClub;
-  eventHeader?: boolean;
-  event?: RunClubEvent;
 }
 
-export default function ClubHeader({ club, eventHeader, event }: ClubHeaderProps) {
+export default function ClubHeader({ club }: ClubHeaderProps) {
 
 
 const infoCards = [
@@ -41,36 +37,10 @@ const infoCards = [
   }
 ].filter(card => card.show);
 
-  let eventInfoCards: EventInfoCard[] = [];
-
-  if (eventHeader && event) {
-    eventInfoCards = [
-      {
-        id: 'date',
-        label: 'Event Date',
-        title: event?.date ?? null, // Safe: undefined -> null
-        show: !!event?.date
-      },
-      {
-        id: 'time',
-        label: 'Event Time',
-        title: event?.startTime ? `${event.startTime}${event.endTime ? ` - ${event.endTime}` : ''}` : null,
-        show: !!event?.startTime
-      },
-      {
-        id: 'location',
-        label: 'Event Location',
-        title: event?.locationName ?? null, // Safe: undefined -> null
-        description: event?.locationUrl ?? null,
-        show: !!event?.locationName
-      }
-    ].filter(card => card.show);
-  }
-
 
   return (
     <header className={`${styles.pageHeader} container fp`}>
-      {club.logo && !eventHeader ? (
+      {club.logo ? (
         <div className={styles.pageHeader__imgwrapper}>
           <Image
             src={club.logo}
@@ -96,13 +66,13 @@ const infoCards = [
       )}
       <div className={`${styles.pageHeader__titledes} fp-col`}>
         <h1 className={styles.pageHeader__title}>
-          {!eventHeader ? club.name : `${event?.title} by ${club.name}`}
+          {club.name}
         </h1>
         <p className={styles.pageHeader__description}>
           {club.description}
         </p>
       </div>
-      {!eventHeader && infoCards.length > 0 && (
+      {infoCards.length > 0 && (
         <ul className={`${styles.pageHeader__cards}`}>
           {infoCards.map((card) => (
             <li key={card.id} className={`${styles.pageHeader__card} fp`}>
@@ -117,24 +87,6 @@ const infoCards = [
                 )}
                 {card.description && (
                   <p>{card.description}</p>
-                )}
-              </div>
-            </li>
-          ))}
-        </ul>
-      )}
-      {eventHeader && (
-           <ul className={`${styles.pageHeader__cards}`}>
-          {eventInfoCards.map((card) => (
-            <li key={card.id} className={`${styles.pageHeader__card} fp`}>
-              <span className={`${styles.label} uppercase txt-label`}>
-                {card.label}
-              </span>
-              <div className={styles.card_main}>
-                {card.title && (
-                  <h2 className={`${styles.cardTitle} h4`}>
-                    {card.title}
-                  </h2>
                 )}
               </div>
             </li>

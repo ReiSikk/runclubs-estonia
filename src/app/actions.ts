@@ -284,7 +284,7 @@ export async function createEvent(
     const date = String(formData.get("date") || "").trim(); // expect yyyy-mm-dd or ISO
     const startTime = String(formData.get("startTime") || "").trim();
     const endTime = String(formData.get("endTime") || "").trim() || null;
-    const locationName = getOptionalField(formData, "locationName") || null;
+    const locationAddress = getOptionalField(formData, "locationAddress") || null;
     const locationUrl = getOptionalField(formData, "locationUrl") || null;
     const about = getOptionalField(formData, "about") || "";
     const runclub_id = String(formData.get("runclub_id") || "").trim();
@@ -312,7 +312,7 @@ export async function createEvent(
       date,
       startTime,
       endTime,
-      locationName,
+      locationAddress,
       locationUrl,
       about,
       runclub_id,

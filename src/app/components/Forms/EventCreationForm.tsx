@@ -295,10 +295,10 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
           </div>
 
           <div className="inputRow fp-col">
-            <label htmlFor="locationName" className="rcForm__label">
+            <label htmlFor="locationAddress" className="rcForm__label">
               Location <span className="rcForm__required">*</span>
             </label>
-            <input id="locationName" name="locationName" className="rcForm__input" maxLength={256} placeholder="e.g. Tallinn, Kadriorg Park" required  />
+            <input id="locationAddress" name="locationAddress" className="rcForm__input" maxLength={256} placeholder="e.g. Tallinn, Kadriorg Park" required  />
           </div>
 
           <div className="inputRow fp-col">

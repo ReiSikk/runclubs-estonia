@@ -11,7 +11,7 @@ export const submitEventSchema = z.object({
     }, "Date must be today or in the future"),
   startTime: z.string().min(1), // "HH:mm"
   endTime: z.string().nullable().optional(),
-  locationName: z.string().min(1).max(256),
+  locationAddress: z.string().min(1).max(256),
   locationUrl: z.string().nullable().optional(),
   about: z.string().min(1).max(5000), // HTML or markdown string from rich-editor
   runclub_id: z.string().min(1),

@@ -26,7 +26,7 @@ export default async function SingleRunClubPage({ params }: PageProps) {
 
   return (
     <div className={`${styles.page} page-single-runclub`} id="page-top">
-      <NavBar />
+      <NavBar backTo='/'/>
       <ClubHeader club={club} />
       <main className={`${styles.pageMain}`}>
         <CtaSection variant="white-bg"/>

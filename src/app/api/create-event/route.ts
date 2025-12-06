@@ -47,7 +47,7 @@ export async function POST(req: NextRequest) {
       date: data.date,
       startTime: data.startTime ?? null,
       endTime: data.endTime ?? null,
-      locationName: data.locationName ?? null,
+      locationAddress: data.locationAddress ?? null,
       locationUrl: data.locationUrl ?? null,
       runclub_id: data.runclub_id,
       creator_id: uid,

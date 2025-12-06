@@ -41,7 +41,7 @@ function SubmitRunClubPage() {
 
   return (
     <div className={`${styles.page} page-submit-runclub container`} id='page-top'>
-        <NavBar />
+        <NavBar backTo='/' />
           {toast && toastOpen && (
           <FormToast
             message={toast.type === 'success' && toast.countdown ? `${toast.message} Redirecting in (${toast.countdown})...` : toast.message}

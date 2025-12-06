@@ -2,7 +2,8 @@ import { notFound } from "next/navigation";
 import { Metadata } from "next";
 import { getEventById } from "@/app/lib/queries/currentEvent";
 import { getCurrentClub } from "@/app/lib/queries/currentClub";
-import EventDetail from "./EventDetail";
+import EventDetail from "../../../../components/Page-SingleEvent/EventDetail";
+import NavBar from "@/app/components/Navbar/NavBar";
 
 type Props = {
   params: Promise<{ slug: string; eventId: string }>;
@@ -52,7 +53,12 @@ export default async function EventPage({ params }: Props) {
       notFound();
     }
 
-    return <EventDetail club={club} event={event} />;
+    return (
+      <>
+        <NavBar backTo={`/runclubs/${club.slug}`} isBackToClubPage={true} />
+        <EventDetail club={club} event={event} />
+      </>
+    )
   } catch (error) {
     console.error("❌ EventPage error:", error);
     notFound();

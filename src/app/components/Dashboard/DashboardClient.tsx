@@ -313,7 +313,7 @@ function DashboardContent({ userId, user }: { userId: string; user: User }) {
                                         date: ev.date,
                                         startTime: ev.startTime,
                                         endTime: ev.endTime,
-                                        locationName: ev.locationName,
+                                        locationAddress: ev.locationAddress,
                                         locationUrl: ev.locationUrl,
                                         runclub_id: ev.runclub_id,
                                         runclub: ev.runclub,

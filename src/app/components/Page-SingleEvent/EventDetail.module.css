@@ -1,7 +1,12 @@
 .page {
   min-height: 100vh;
+  padding-bottom: clamp(6.4rem, 8vw, 8rem);
   background: var(--dark);
   color: var(--cream);
+
+  section:last-of-type {
+    padding-inline: 0;
+  }
 }
 
 .header {
@@ -65,20 +70,21 @@
 }
 
 .body {
-  padding-block: 3.2rem;
+  padding-block: 3.2rem 6.4rem;
+  justify-content: space-between;
+
+  @media only screen and (min-width: 768px) and (max-width: 1024px), only screen and (min-width: 1025px) {
+    padding-block: 3.2rem clamp(2.4rem, 4vw, 4rem);
+  }
+
+  h2 {
+    margin-bottom: 1.2rem;
+  }
 }
 
 .about {
   white-space: pre-wrap;
-  line-height: 1.6;
   max-width: 65ch;
-}
-
-.cta {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1.6rem;
-  padding-block: 3.2rem 6.4rem;
 }
 
 @media (max-width: 768px) {

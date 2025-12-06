@@ -9,8 +9,12 @@ import Link from 'next/link';
 import LogoImg from '@/app/assets/runclubs__logo.svg';
 import { LucideMoveLeft } from 'lucide-react';
 
+interface NavBarProps {
+  backTo: string;
+  isBackToClubPage?: boolean;
+}
 
-function NavBar() {
+function NavBar({ backTo, isBackToClubPage }: NavBarProps) {
     const [isScrolled, setScrolled] = useState(false);
 
     const handleScroll = () => {
@@ -31,12 +35,12 @@ function NavBar() {
 
   return (
       <nav className={`siteNav fp container ${isScrolled ? 'siteNav--scrolled' : ''}`}>
-        <Link href="/" className="back-link" aria-label="Back to home page">
+        <Link href={backTo} className="back-link" aria-label="Back to previous page">
           <div className="icon-carousel-anim left">
             <LucideMoveLeft width={24} height={24} strokeWidth={1.5} className="icon-main"/>
             <LucideMoveLeft width={24} height={24} strokeWidth={1.5} className="icon-hovered"/>
           </div>
-          All clubs
+          {isBackToClubPage ? 'Back to club' : 'All clubs'}
         </Link>
         <Link className="siteNav__logo" href={'/'}>
           <Image 
