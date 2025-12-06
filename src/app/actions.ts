@@ -11,6 +11,7 @@ import sanitizeSVGs from "@/app/lib/utils/sanitizeSvgs";
 import { Timestamp } from "firebase-admin/firestore";
 import { getAuth } from "firebase-admin/auth";
 import { submitEventSchema } from './lib/types/submitEvent';
+import { uploadImageToStorage } from './lib/firebase/uploadImageToStorage';
 
 type ActionResult =
   | { success: true; message: string; id?: string }
@@ -288,6 +289,16 @@ export async function createEvent(
     const locationUrl = getOptionalField(formData, "locationUrl") || null;
     const about = getOptionalField(formData, "about") || "";
     const runclub_id = String(formData.get("runclub_id") || "").trim();
+    const imageFile = formData.get("image") as File | null;
+    let imageUrl: string | null = null;
+    const tags = formData.getAll("tags") as string[];
+    const distance = formData.get("distance") ? Number(formData.get("distance")) : null;
+    const pace = formData.get("pace") ? String(formData.get("pace")) : null;
+
+    if (imageFile) {
+      // Use event-images folder, fileName can be eventId or Date.now()
+      imageUrl = await uploadImageToStorage(imageFile, "event-images", `${Date.now()}-${imageFile.name}`);
+    }
 
     // Ensure runclub exists and that the requesting user is the creator
     const runclubRef = adminDb.collection("runclubs").doc(runclub_id);
@@ -317,6 +328,12 @@ export async function createEvent(
       about,
       runclub_id,
       creator_id: creatorUid,
+      image: imageUrl,
+      tags,
+      distance,
+      pace,
+      createdAt: Timestamp.now(),
+      updatedAt: Timestamp.now(),
     };
 
     // Validate with Zod schema

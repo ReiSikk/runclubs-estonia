@@ -16,9 +16,9 @@ export default function EventHeader({ club, event }: Props) {
       <div className={styles.eventHeader__container}>
         <div className={styles.eventHeader__left}>
           <div className={styles.eventHeader__image}>
-            {event.imageUrl ? (
+            {event.image ? (
               <Image
-                src={event.imageUrl}
+                src={event.image}
                 alt={event.title}
                 fill
                 className={styles["eventHeader__image-img"]}
@@ -55,15 +55,9 @@ export default function EventHeader({ club, event }: Props) {
               </div>
             </div>
             <button className={styles.eventHeader__contactBtn}>
-              <Mail size={18} /> Contact Organiser
+              <Mail size={18} />
+              <a href={`mailto:${club.email}`}>Contact Organiser</a>
             </button>
-          </div>
-          <div className={styles.eventHeader__tags}>
-            {event.tags?.map(tag => (
-              <span key={tag} className={styles["eventHeader__tag"] + " tag"}>
-                {tag}
-              </span>
-            ))}
           </div>
         </div>
 
@@ -71,10 +65,17 @@ export default function EventHeader({ club, event }: Props) {
           <div className={styles.eventHeader__main}>
             <h1 className={styles.eventHeader__title}>{event.title}</h1>
             <div className={styles.eventHeader__datetime}>
-              <CalendarDays size={18} />
+              <CalendarDays size={20} />
               <span className="txt-label">{formatEventDate(event.date)}</span>
-              <Clock size={18} style={{ marginLeft: "1.2rem" }} />
+              <Clock size={20} />
               <span className="txt-label">{event.startTime}</span>
+            </div>
+              <div className={styles.eventHeader__tags}>
+              {event.tags?.map(tag => (
+                <span key={tag} className={styles["eventHeader__tag"] + " card-label card-label--big"}>
+                  {tag}
+                </span>
+              ))}
             </div>
             <div className={styles.eventHeader__desc + " txt-body"}>
               {event.about}

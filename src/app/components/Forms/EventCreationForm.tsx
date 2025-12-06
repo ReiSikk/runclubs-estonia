@@ -9,6 +9,8 @@ import { RunClubEvent } from "@/app/lib/types/runClubEvent";
 import { db } from "@/app/lib/firebase/firebase";
 import { doc, getDoc } from "firebase/firestore";
 import TimePicker, { TimePickerValue } from "react-accessible-time-picker";
+import EventTagsField from "./EvenTagsField";
+import ImageUploadField from "./ImageUploadField";
 
 type RunClubOption = { id: string; name?: string; title?: string };
 
@@ -34,8 +36,10 @@ export default function EventCreationForm({ runclubId, runclubs = [], onClose, o
   const [state, setState] = useState<FormState>(initialState);
   const [isPending, startTransition] = useTransition();
   const [selectedRunclub, setSelectedRunclub] = useState<string>(runclubId || runclubs[0]?.id || "");
-  const [countdown, setCountdown] = useState<number | null>(null);
+  const imageUploadFieldRef = useRef<{ reset: () => void } | null>(null);
+  const eventTagsFieldRef = useRef<{ reset: () => void } | null>(null);
   // Handle time
+  const [countdown, setCountdown] = useState<number | null>(null);
   const [startTime, setStartTime] = useState({ hour: "", minute: "" });
   const [endTime, setEndTime] = useState({ hour: "", minute: "" });
   // Handle time picker values
@@ -170,7 +174,11 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
             }
 
           formRef.current.reset();
+          setStartTime({ hour: "", minute: "" });
+          setEndTime({ hour: "", minute: "" });
           setSelectedRunclub(runclubs[0]?.id || "");
+          imageUploadFieldRef.current?.reset?.();
+          eventTagsFieldRef.current?.reset?.();
           setCountdown(5);
         } else {
           onToastOpenChange?.(true);
@@ -307,6 +315,21 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
             </label>
             <input id="locationUrl" name="locationUrl" type="url" className="rcForm__input" placeholder="https://maps.google.com/..." />
           </div>
+
+          <div className="inputRow fp-col">
+            <label htmlFor="distance" className="rcForm__label">Distance (km) <span className="rcForm__required">*</span></label>
+            <input id="distance" name="distance" type="number" step="0.1" min="0" required className="rcForm__input" />
+          </div>
+          <div className="inputRow fp-col">
+            <label htmlFor="pace" className="rcForm__label">Pace (e.g. 6:00 min/km)</label>
+            <input id="pace" name="pace" type="text" className="rcForm__input" />
+          </div>
+
+          <label htmlFor="image" className={`rcForm__label h5`}>
+            Event image <span className={styles.small}>(JPG, PNG, WEBP, SVG, max 5MB)</span>
+          </label>
+          <ImageUploadField name="image" altStyle={true} allowedTypes={["image/jpeg", "image/jpg", "image/png", "image/webp", "image/svg+xml"]} />
+          <EventTagsField name="tags" maxTags={3} />
 
           <div className="textareaRow fp-col">
             <label htmlFor="about" className="rcForm__label">

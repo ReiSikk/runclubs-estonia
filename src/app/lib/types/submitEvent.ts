@@ -15,4 +15,10 @@ export const submitEventSchema = z.object({
   locationUrl: z.string().nullable().optional(),
   about: z.string().min(1).max(5000), // HTML or markdown string from rich-editor
   runclub_id: z.string().min(1),
+  image: z.any().optional(),
+  tags: z.array(z.string()).optional(),
+  distance: z.number().nullable().optional(),
+  pace: z.string().nullable().optional(),
+  createdAt: z.any(),
+  updatedAt: z.any(),
 });    

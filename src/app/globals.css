@@ -415,14 +415,20 @@ button {
   transition: all 0.2s ease;
 }
 
-.card-label--small {
+.card-label {
   padding-block: 2px;
   padding-inline: 14px;
   border-radius: var(--bradius-xl);
   border: 1px solid var(--dark);
   text-transform: uppercase;
-  font-size: 1.2rem;
   font-weight: 500;
+
+  &.card-label--small {
+    font-size: 1.2rem;
+  }
+  &.card-label--big {
+    font-size: 1.6rem;
+  }
 }
 
 /* Only non-touch devices */
@@ -927,6 +933,12 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   transition: all 0.2s ease;
   position: relative;
 
+  &.alt {
+    border: 1px solid var(--cream);
+    color: var(--dark);
+    background: var(--cream);
+  }
+
   .icon {
     align-items: center;
     border: 2px solid var(--accent);
@@ -1030,7 +1042,9 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   }
 }
 .rcForm__checkboxGroup {
-  gap: 1.2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
   margin-top: 8px;
 }
 .rcForm__checkboxLabel {

@@ -61,7 +61,7 @@ function AllClubsListItem({ club }: { club: RunClub }) {
           {daysList && daysList.length > 0 && (
               <ul className={`${styles.allClubsList__days} fp`}>
                 {daysList.map((day) => (
-                    <li key={day} className={`${styles.allClubsList__day} card-label--small`}>
+                    <li key={day} className={`${styles.allClubsList__day} card-label card-label--small`}>
                         {day}
                     </li>
                 ))}

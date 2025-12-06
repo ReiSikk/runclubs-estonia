@@ -155,7 +155,7 @@ const RunClubCard = ({ club, onDeleted, onEdit, user }: RunClubCardProps) => {
         </p>
         <div className={` ${styles.clubCard__days} fp`}>
           {daysList.map((day) => (
-            <li key={day} className={`${styles.day} fp card-label--small`}>
+            <li key={day} className={`${styles.day} fp card-label card-label--small`}>
               {day}
             </li>
           ))}

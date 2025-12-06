@@ -213,7 +213,7 @@ function DashboardContent({ userId, user }: { userId: string; user: User }) {
                   <div className={`${styles.card_dashboard}`}>
                     <div className={`${styles.titlecount} fp`}>
                       <h5 className="h3">Your run clubs</h5>
-                      <div className="txt-label card-label--small">{clubs.length}</div>
+                      <div className="txt-label card-label card-label--small">{clubs.length}</div>
                     </div>
                     <ul className={`${styles.clubsNevents__list} fp-col`}>
                       {isLoading && <p>Loading your clubs...</p>}

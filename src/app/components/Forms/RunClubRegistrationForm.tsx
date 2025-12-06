@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useRef, useTransition } from "react";
 import styles from "./RunClubRegistrationForm.module.css";
-import { LucideUpload } from "lucide-react";
 import { saveRunClub } from "@/app/actions";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
@@ -11,6 +10,7 @@ import { useAuth } from "@/app/providers/AuthProvider";
 import { FormState } from "@/app/lib/types/serverActionReturn";
 import { RunClub } from "@/app/lib/types/runClub";
 import { useQueryClient } from "@tanstack/react-query";
+import ImageUploadField from "./ImageUploadField";
 
 const initialState: FormState = undefined;
 
@@ -64,42 +64,6 @@ export default function RunClubRegistrationForm({ mode, clubId, initialValues, o
       hour: value.hour,
       minute: value.minute,
     });
-  };
-
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-
-    if (!file) {
-      setFileError(null);
-      return;
-    }
-
-    const maxSize = 5 * 1024 * 1024; // 5MB
-    const allowedTypes = ["image/jpeg", "image/jpg", "image/png", "image/webp", "image/svg+xml"];
-
-    // Validate file size
-    if (file.size > maxSize) {
-      setFileError(`File is too large (${(file.size / 1024 / 1024).toFixed(2)}MB). Maximum size is 5MB.`);
-      setFilePreview(null);
-      event.target.value = "";
-      return;
-    }
-
-    // Validate file type
-    if (!allowedTypes.includes(file.type)) {
-      setFileError("Accepted formats: JPG, JPEG, PNG, WEBP, SVG.");
-      setFilePreview(null);
-      event.target.value = "";
-      return;
-    }
-
-    // File is valid, show preview
-    setFileError(null);
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      setFilePreview(reader.result as string);
-    };
-    reader.readAsDataURL(file);
   };
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -293,41 +257,13 @@ export default function RunClubRegistrationForm({ mode, clubId, initialValues, o
             <label htmlFor="logo" className={`rcForm__label h5`}>
               Logo <span className={styles.small}>(JPG, PNG, WEBP, SVG, max 5MB)</span>
             </label>
-            <div className={`inputRow inputRow__file fp-col`}>
-              <span className={`rcForm__label h5`}>Drop your file here or...</span>
-              <div className={`rcForm__uploadBtn btn_main`}>
-                Select file
-                <div className={`icon fp`}>
-                  <LucideUpload size={16} strokeWidth={2} aria-hidden="true" focusable="false" />
-                </div>
-              </div>
-              <input
-                id="logo"
-                name="logo"
-                ref={fileInputRef}
-                type="file"
-                accept="image/jpeg,image/jpg,image/png,image/webp,image/svg+xml"
-                className="rcForm__file"
-                onChange={handleFileChange}
-              />
-              {fileError && (
-                <p id="logo-error" className="rcForm__hint" role="alert">
-                  {fileError}
-                </p>
-              )}
-              {filePreview && (
-                <div style={{ marginTop: "0.8rem" }}>
-                  <Image
-                    src={filePreview || initialValues?.logo || ""}
-                    alt="Logo preview"
-                    style={{ maxWidth: "250px", maxHeight: "250px", borderRadius: "0.8rem", objectFit: "cover" }}
-                    loading="lazy"
-                    width={250}
-                    height={250}
-                  />
-                </div>
-              )}
-            </div>
+            <ImageUploadField
+              name="logo"
+              altStyle={true}
+              initialUrl={showExistingLogo ? existingLogoUrl! : undefined}
+              allowedTypes={["image/jpeg", "image/jpg", "image/png", "image/webp", "image/svg+xml"]}
+              maxSizeMB={5}
+            />
           </section>
         </div>
 
