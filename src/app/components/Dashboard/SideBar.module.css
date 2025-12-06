@@ -1,0 +1,49 @@
+.sideBar {
+  padding-block: 4rem;
+  border-right: 1px solid var(--gray);
+  padding-right: 1.2rem;
+  max-width: 325px;
+  width: 100%;
+  height: 100dvh;
+}
+.item {
+  position: relative;
+  width: 100%;
+  color: var(--white);
+  padding-block: 1.6rem;
+  padding-inline: 1.2rem;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background 0.2s ease;
+  align-items: center;
+  flex-wrap: nowrap;
+  gap: 0.8rem;
+
+  .item__icon {
+    flex-shrink: 0;
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  a {
+    text-wrap: nowrap;
+  }
+
+  &:last-child {
+    margin-top: auto;
+  }
+}
+
+@media (hover: hover) and (pointer: fine) {
+
+
+
+  .sideBar .item:hover {
+    background: var(--dark-gray);
+  }
+  .sideBar .item.rotate:hover {
+    svg {
+      transform: rotate(90deg);
+      transition: transform 0.3s ease;
+    }
+  }
+}

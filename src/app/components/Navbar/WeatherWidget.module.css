@@ -1,7 +1,6 @@
 .weatherWidget {
   display: flex;
   align-items: center;
-  font-family: var(--font-work-sans);
   font-size: 1.4rem;
   font-weight: 600;
   color: var(--cream);

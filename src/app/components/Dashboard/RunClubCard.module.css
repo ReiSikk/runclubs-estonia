@@ -1,0 +1,192 @@
+.clubCard {
+  background: var(--cream);
+  border-radius: 10px;
+  box-shadow: 0 1px 8px rgba(0, 0, 0, 0.2);
+  padding: 1.5rem 1.5rem 1.2rem 1.5rem;
+  color: var(--dark);
+  border: 1px solid transparent;
+  cursor: pointer;
+  width: 100%;
+  transition: border 0.2s ease-in-out;
+}
+
+.clubCard:hover {
+  border: 1px solid var(--dark);
+}
+
+.clubCard__content {
+  display: flex;
+  flex-direction: column;
+}
+.clubCard__status {
+  padding: 0.6rem 1.2rem;
+  border-radius: var(--bradius-xl);
+  font-size: 1.2rem;
+  font-weight: 500;
+  gap: 0.6rem;
+  align-items: center;
+  border: 1px solid;
+}
+
+.approved {
+  background: rgba(17, 63, 33, 0.9);
+  color: rgb(51, 255, 116);
+  border-color: rgb(74, 192, 112);
+}
+
+.pending {
+  background: #2a1810;
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+.clubCard__header {
+  margin-bottom: 1.2rem;
+  justify-content: space-between;
+  align-items: center;
+
+  .icon {
+    padding: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--bradius-8);
+    border: 1px solid var(--dark);
+    background: transparent;
+    color: var(--cream);
+    transition: opacity 0.2s ease;
+
+    circle {
+      stroke: var(--dark);
+    }
+
+    &:hover {
+      opacity: 0.9;
+    }
+  }
+}
+
+.clubCard__title {
+  color: var(--dark);
+}
+
+.clubCard__description {
+  color: var(--dark);
+  opacity: 0.8;
+  margin-bottom: 1.2rem;
+}
+
+.clubCard__days {
+  align-items: center;
+  gap: 0.4rem;
+
+  .day {
+    background: var(--dark);
+    color: var(--cream);
+  }
+}
+
+.clubCard__location,
+.clubCard__members,
+.clubCard__nextRun {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 1.4rem;
+  color: var(--gray);
+}
+
+.clubCard__icon {
+  width: 16px;
+  height: 16px;
+  color: var(--gray);
+  flex-shrink: 0;
+}
+
+/*
+   Alert modal when deleting club
+   ========================================================================== */
+.Overlay {
+  background-color: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(2px);
+  position: fixed;
+  inset: 0;
+  animation: overlayShow 150ms cubic-bezier(0.16, 1, 0.3, 1);
+  z-index: 999;
+}
+
+.Content {
+  background-color: var(--dark-gray);
+  border-radius: 6px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 90vw;
+  max-width: 500px;
+  max-height: 85vh;
+  padding: 25px;
+  z-index: 1000;
+  animation: contentShow 150ms cubic-bezier(0.16, 1, 0.3, 1);
+  &:focus {
+    outline: none;
+  }
+}
+
+.Title {
+  margin: 0;
+  color: var(--cream);
+  font-weight: 500;
+  margin-bottom: 0.8rem;
+}
+
+.Description {
+  margin-bottom: 20px;
+  color: var(--cream);
+  line-height: 1.5;
+}
+
+.Buttons {
+  justify-content: flex-end;
+  gap: 1.6rem;
+}
+.Button {
+  height: 35px;
+  user-select: none;
+  cursor: pointer;
+  padding-block: 4px;
+
+  &:last-of-type {
+    background: var(--accent);
+    color: var(--dark);
+  }
+  &:focus:not(:focus-visible) {
+    outline: 0;
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--gray);
+    outline-offset: 1px;
+  }
+}
+
+@keyframes overlayShow {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes contentShow {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -48%) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}

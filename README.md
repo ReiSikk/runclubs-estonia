@@ -20,6 +20,7 @@ I handled everything from concept to design, development, testing, and infrastru
 - **Next.js 15**
 - **TypeScript**
 - **React 19**
+- **Google Firebase**
 
 ### Content & Data
 - **Google Firestore** - BaaS used for database and file storing

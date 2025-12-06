@@ -19,14 +19,14 @@ function AllClubsListItem({ club }: { club: RunClub }) {
 
   if (!club) {
     return (
-      <li className={styles.allClubsList__item}>
+      <li className={`${styles.allClubsList__item} bradius-m`}>
         <p>No club data available</p>
       </li>
     )
   }
 
   return (
-     <li className={styles.allClubsList__item} key={club.id}>
+     <li className={`${styles.allClubsList__item} bradius-m`} key={club.id}>
         <Link href={`runclubs/${slug}`} className={`${styles.allClubsList__link} fp-col`}  data-testid="club-link">
           {logo ? (
             <div className={styles.allClubsList__imageWrapper}>
@@ -61,7 +61,7 @@ function AllClubsListItem({ club }: { club: RunClub }) {
           {daysList && daysList.length > 0 && (
               <ul className={`${styles.allClubsList__days} fp`}>
                 {daysList.map((day) => (
-                    <li key={day} className={`${styles.allClubsList__day} card-label--small`}>
+                    <li key={day} className={`${styles.allClubsList__day} card-label card-label--small`}>
                         {day}
                     </li>
                 ))}

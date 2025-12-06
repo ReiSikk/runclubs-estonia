@@ -46,7 +46,7 @@ function TodaysClubsListItem({ club }: {club: RunClub}) {
                     </div>
                     <ul className={styles.todayClubsList__row}>
                         {daysList.map((day) => (
-                            <li key={day} className={`${styles.todayClubsList__day} card-label--small`}>
+                            <li key={day} className={`${styles.todayClubsList__day} card-label card-label--small`}>
                                 {day}
                             </li>
                         ))}

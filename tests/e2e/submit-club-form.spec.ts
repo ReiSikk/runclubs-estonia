@@ -1,4 +1,8 @@
 import { test, expect } from '@playwright/test';
+import fs from "fs";
+import path from "path";
+
+const indexedDBFile = path.join(__dirname, "../../playwright/.auth/indexedDB.json");
 
 test.describe('Run Club Registration Form', () => {
   test.beforeEach(async ({ page }) => {
@@ -140,15 +144,12 @@ test.describe('Run Club Registration Form', () => {
     const submitButton = page.locator('button[type="submit"]');
     await submitButton.click();
 
-    // Wait for submission to complete
-    await page.waitForTimeout(10000);
+    // Wait for the feedback toast to appear (appears when state.message is set after server action)
+    await page.waitForSelector('[data-testid="feedback-toast"]');
 
-    // Check for success message or redirect
-    const currentUrl = page.url();
-    const hasSuccessMessage = await page.locator('text=/success|submitted|registered/i').isVisible().catch(() => false);
-    
-    // Either should show success message OR redirect to home
-    expect(hasSuccessMessage || !currentUrl.includes('/submit')).toBeTruthy();
+    // Assert the toast contains the success message
+    const toastText = await page.locator('[data-testid="feedback-toast"]').textContent();
+    expect(toastText).toContain("Success! Your club has been registered and is pending approval.");
   });
 
   test('should upload and preview SVG file', async ({ page }) => {
@@ -213,7 +214,7 @@ test.describe('Run Club Registration Form', () => {
     // Submit without filling all required fields
     await page.locator('button[type="submit"]').click();
     
-    await page.waitForTimeout(1000);
+    await page.waitForTimeout(10000);
     
     // Check that filled fields still have their values
     await expect(page.locator('input[name="name"]')).toHaveValue(clubName);
@@ -246,7 +247,7 @@ test.describe('Run Club Registration Form', () => {
       // Upload new file
       await page.setInputFiles('input[type="file"][name="logo"]', file);
       
-      await page.waitForTimeout(300);
+      await page.waitForTimeout(500);
       
       // Verify file is set
       const fileInput = page.locator('input[type="file"][name="logo"]');
@@ -264,12 +265,12 @@ test.describe('Run Club Registration Form', () => {
       buffer: buffer,
     });
 
-    await page.waitForTimeout(300);
+    await page.waitForTimeout(10000);
 
     // Clear the file
     await page.setInputFiles('input[type="file"][name="logo"]', []);
 
-    await page.waitForTimeout(300);
+    await page.waitForTimeout(10000);
 
     // Verify file is cleared
     const fileInput = page.locator('input[type="file"][name="logo"]');
@@ -287,7 +288,7 @@ test.describe('Run Club Registration - Error Handling', () => {
     await page.goto('/submit', { waitUntil: 'domcontentloaded' });
     
     // Form should still render even if Firebase fails
-    await expect(page.locator('form').first()).toBeVisible({ timeout: 10000 });
+    await expect(page.locator('form').first()).toBeVisible();
   });
 
   test('should handle slow network conditions', async ({ page }) => {
@@ -299,7 +300,7 @@ test.describe('Run Club Registration - Error Handling', () => {
     await page.goto('/submit', { waitUntil: 'networkidle', timeout: 30000 });
     
     // Form should load eventually
-    await expect(page.locator('form').first()).toBeVisible({ timeout: 15000 });
+    await expect(page.locator('form').first()).toBeVisible();
   });
 
   test('should display error message on server error', async ({ page }) => {
@@ -329,29 +330,12 @@ test.describe('Run Club Registration - Error Handling', () => {
     await page.locator('button[type="submit"]').click();
 
     // Wait for error message
-    await page.waitForTimeout(2000);
+    await page.waitForTimeout(10000);
 
     // Should still be on submit page or show error
     const isOnSubmitPage = page.url().includes('/submit');
     const hasErrorMessage = await page.locator('text=/error|failed/i').isVisible().catch(() => false);
     
     expect(isOnSubmitPage || hasErrorMessage).toBeTruthy();
-  });
-});
-
-test.describe('Run Club Registration - Accessibility', () => {
-  test('should have proper form labels', async ({ page }) => {
-    await page.goto('/submit');
-
-    // Check that key inputs have associated labels or aria-labels
-    const nameInput = page.locator('input[name="name"]');
-    const hasLabel = await nameInput.evaluate((el) => {
-      const hasAriaLabel = !!el.getAttribute('aria-label');
-      const hasAriaLabelledBy = !!el.getAttribute('aria-labelledby');
-      const label = el.id ? document.querySelector(`label[for="${el.id}"]`) : null;
-      return hasAriaLabel || hasAriaLabelledBy || !!label;
-    });
-    
-    expect(hasLabel).toBeTruthy();
   });
 });

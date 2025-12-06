@@ -11,29 +11,32 @@ interface ClubHeaderProps {
 }
 
 export default function ClubHeader({ club }: ClubHeaderProps) {
-  const infoCards = [
-    {
-      id: 'schedule',
-      label: 'Schedule',
-      title: club?.runDays?.map(day => day.charAt(0).toUpperCase() + day.slice(1)).join(', '),
-      description: club?.startTime ? `Usually starts at ${club.startTime}` : null,
-      show: club?.runDays && club.runDays.length > 0
-    },
-    {
-      id: 'area',
-      label: 'Meeting Point',
-      title: club?.area,
-      description: club?.address,
-      show: club?.area || club?.address
-    },
-    {
-      id: 'distance',
-      label: 'Distance',
-      title: club?.distance ? `${club.distance} kilometers` : null,
-      description: club?.distanceDescription,
-      show: club?.distance
-    }
-  ].filter(card => card.show);
+
+
+const infoCards = [
+  {
+    id: 'schedule',
+    label: 'Schedule',
+    title: club?.runDays?.map(day => day.charAt(0).toUpperCase() + day.slice(1)).join(', '),
+    description: club?.startTime ? `Usually starts at ${club.startTime}` : null,
+    show: club?.runDays && club.runDays.length > 0
+  },
+  {
+    id: 'area',
+    label: 'Meeting Point',
+    title: club?.area,
+    description: club?.address,
+    show: club?.area || club?.address
+  },
+  {
+    id: 'distance',
+    label: 'Distance',
+    title: club?.distance ? `${club.distance} kilometers` : null,
+    description: club?.distanceDescription,
+    show: club?.distance
+  }
+].filter(card => card.show);
+
 
   return (
     <header className={`${styles.pageHeader} container fp`}>
@@ -49,15 +52,17 @@ export default function ClubHeader({ club }: ClubHeaderProps) {
           />
         </div>
       ) : (
-        <Image
-          unoptimized
-          src="https://placehold.co/200x200/svg?text=No+image+found"
-          alt={`${club.name} logo`}
-          width={614}
-          height={416}
-          className={styles.pageHeader__image}
-          priority
-        />
+        <div className={styles.pageHeader__imgwrapper}>
+          <Image
+            unoptimized
+            src="https://placehold.co/614x416/svg?text=No+image+found"
+            alt={`${club.name} logo`}
+            width={614}
+            height={416}
+            className={styles.pageHeader__image}
+            priority
+          />
+        </div>
       )}
       <div className={`${styles.pageHeader__titledes} fp-col`}>
         <h1 className={styles.pageHeader__title}>

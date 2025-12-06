@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 // Types
 import { submitRunClubSchema } from "@/app/lib/types/submitRunClub";
 // Firbase
-import { db, storage } from "@/app/lib/firebase";
+import { db, storage } from "@/app/lib/firebase/firebase";
 import { collection, addDoc, Timestamp } from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import getOptionalField  from "@/app/lib/utils/getOptionalField";
@@ -77,6 +77,7 @@ export async function POST(request: NextRequest) {
       approvedForPublication: false,
       createdAt: Timestamp.now(),
       updatedAt: Timestamp.now(),
+      creator_id: formData.get("creator_id") as string,
     };
 
     // Add logo URL if uploaded

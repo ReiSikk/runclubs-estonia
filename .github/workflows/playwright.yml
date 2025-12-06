@@ -17,14 +17,19 @@ jobs:
       NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID: ${{ secrets.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID }}
       NEXT_PUBLIC_FIREBASE_APP_ID: ${{ secrets.NEXT_PUBLIC_FIREBASE_APP_ID }}
       NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID: ${{ secrets.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID }}
-      NEXT_PUBLIC_APP_CHECK_DEBUG_TOKEN_FROM_CI: ${{ secrets.NEXT_PUBLIC_APP_CHECK_DEBUG_TOKEN_FROM_CI }}
       NEXT_PUBLIC_RECAPTCHA_ENTERPRISE_SITE_KEY: ${{ secrets.NEXT_PUBLIC_RECAPTCHA_ENTERPRISE_SITE_KEY }}
+      # Firebase App Check debug token for CI
+      NEXT_PUBLIC_APP_CHECK_DEBUG_TOKEN_FROM_CI: ${{ secrets.NEXT_PUBLIC_APP_CHECK_DEBUG_TOKEN_FROM_CI }}
       # Firebase Admin SDK
       FIREBASE_CLIENT_EMAIL: ${{ secrets.FIREBASE_CLIENT_EMAIL }}
       FIREBASE_PRIVATE_KEY: ${{ secrets.FIREBASE_PRIVATE_KEY }}
       # Sentry
       SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
-      CI: true
+      # Auth env for CI
+      TEST_USER_EMAIL: ${{ secrets.TEST_USER_EMAIL }}
+      TEST_USER_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
+      CI: "true"
+      NEXT_PUBLIC_CI: "true"
     steps:
     - uses: actions/checkout@v4
     
@@ -40,9 +45,22 @@ jobs:
     
     - name: Build Next.js app
       run: npm run build
+      env:
+        NEXT_PUBLIC_CI: "true"
+        NEXT_PUBLIC_APP_CHECK_DEBUG_TOKEN_FROM_CI: ${{ secrets.NEXT_PUBLIC_APP_CHECK_DEBUG_TOKEN_FROM_CI }}
+        NEXT_PUBLIC_RECAPTCHA_ENTERPRISE_SITE_KEY: ${{ secrets.NEXT_PUBLIC_RECAPTCHA_ENTERPRISE_SITE_KEY }}
     
     - name: Run Playwright tests
       run: npx playwright test
+
+    - name: Upload screenshots on failure
+      if: failure()
+      uses: actions/upload-artifact@v4
+      with:
+        name: debug-screenshots
+        path: test-results/*.png
+        retention-days: 7
+      
     
     - uses: actions/upload-artifact@v4
       if: ${{ !cancelled() }}
