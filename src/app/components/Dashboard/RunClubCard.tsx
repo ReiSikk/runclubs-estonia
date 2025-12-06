@@ -90,32 +90,32 @@ const RunClubCard = ({ club, onDeleted, onEdit, user }: RunClubCardProps) => {
             </div>
           </DropdownMenu.Trigger>
           <DropdownMenu.Portal>
-            <DropdownMenu.Content className={styles.dropdownContent} sideOffset={5} align="end">
-              <DropdownMenu.Label className={styles.dropdownLabel + " h5"}>Actions</DropdownMenu.Label>
-              <DropdownMenu.Separator className={styles.dropdownSeparator} />
-              <DropdownMenu.Item className={styles.dropdownItem + " fp"}>
+            <DropdownMenu.Content className="dropdownContent" sideOffset={5} align="end">
+              <DropdownMenu.Label className="dropdownLabel h5">Actions</DropdownMenu.Label>
+              <DropdownMenu.Separator className="dropdownSeparator" />
+              <DropdownMenu.Item className="dropdownItem fp">
                 <Link href={`/runclubs/${club.slug}`} target="_blank" className="fp">
                 Visit club page{" "}
-                <div className={styles.dropdownItem__right}>
+                <div className="dropdownItem__right">
                   <LucideArrowRight size={16} />
                 </div>
                 </Link>
               </DropdownMenu.Item>
-              <DropdownMenu.Item className={styles.dropdownItem + " fp"} onSelect={handleEdit}>
+              <DropdownMenu.Item className="dropdownItem fp" onSelect={handleEdit}>
                 Edit Club{" "}
-                <div className={styles.dropdownItem__right}>
+                <div className="dropdownItem__right">
                   <LucidePencil size={16} />
                 </div>
               </DropdownMenu.Item>
               <DropdownMenu.Item
-                className={`${styles.dropdownItem} ${styles.dropdownItemDelete} fp`}
+                className="dropdownItem dropdownItemDelete fp"
                 disabled={deleting}
                 aria-disabled={deleting}
                 aria-label={deleting ? "Deleting club" : "Delete club"}
                 onSelect={handleDeleteClick}
               >
                 {deleting ? "Deleting…" : "Delete"} Club{" "}
-                <div className={styles.dropdownItem__right}>
+                <div className="dropdownItem__right">
                   <LucideTrash2 size={16} />
                 </div>
               </DropdownMenu.Item>

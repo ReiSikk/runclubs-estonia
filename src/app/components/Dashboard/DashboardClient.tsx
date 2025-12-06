@@ -321,6 +321,7 @@ function DashboardContent({ userId, user }: { userId: string; user: User }) {
                                       onDeleted={handleEventDeleted}
                                       showActions={true}
                                       slug={club?.slug || ''}
+                                      directLink={false}
                                     />
                                   </div>
                                 );

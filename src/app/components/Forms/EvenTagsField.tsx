@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 const TAG_OPTIONS = [
   "Trail Run",
@@ -16,9 +16,10 @@ type Props = {
   name: string;
   maxTags?: number;
   initialTags?: string[];
+  resetKey?: number;
 };
 
-export default function EventTagsField({ name, maxTags = 3, initialTags = [] }: Props) {
+export default function EventTagsField({ name, maxTags = 3, initialTags = [], resetKey }: Props) {
   const [selected, setSelected] = useState<string[]>(initialTags);
 
   const handleChange = (tag: string) => {
@@ -28,6 +29,11 @@ export default function EventTagsField({ name, maxTags = 3, initialTags = [] }: 
       setSelected([...selected, tag]);
     }
   };
+
+    // Reset selected tags when form is submitted successfully
+    useEffect(() => {
+    setSelected([]);
+    }, [resetKey]);
 
   return (
     <div className="inputRow fp-col">

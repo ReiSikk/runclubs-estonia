@@ -37,7 +37,8 @@ export default function EventCreationForm({ runclubId, runclubs = [], onClose, o
   const [isPending, startTransition] = useTransition();
   const [selectedRunclub, setSelectedRunclub] = useState<string>(runclubId || runclubs[0]?.id || "");
   const imageUploadFieldRef = useRef<{ reset: () => void } | null>(null);
-  const eventTagsFieldRef = useRef<{ reset: () => void } | null>(null);
+  // For resetting tags
+  const [resetKey, setResetKey] = useState(0);
   // Handle time
   const [countdown, setCountdown] = useState<number | null>(null);
   const [startTime, setStartTime] = useState({ hour: "", minute: "" });
@@ -157,6 +158,7 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
             console.error("No event ID returned from server.");
             return;
             }
+
             // Fetch the newly created event document
             const eventDoc = await getDoc(doc(db, "events", eventId));
             if (eventDoc.exists()) {
@@ -173,12 +175,12 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
             console.error("Event document not found:", eventId);
             }
 
+          setResetKey(k => k + 1); // Triggers reset in children
           formRef.current.reset();
           setStartTime({ hour: "", minute: "" });
           setEndTime({ hour: "", minute: "" });
           setSelectedRunclub(runclubs[0]?.id || "");
           imageUploadFieldRef.current?.reset?.();
-          eventTagsFieldRef.current?.reset?.();
           setCountdown(5);
         } else {
           onToastOpenChange?.(true);
@@ -329,7 +331,7 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
             Event image <span className={styles.small}>(JPG, PNG, WEBP, SVG, max 5MB)</span>
           </label>
           <ImageUploadField name="image" altStyle={true} allowedTypes={["image/jpeg", "image/jpg", "image/png", "image/webp", "image/svg+xml"]} />
-          <EventTagsField name="tags" maxTags={3} />
+          <EventTagsField name="tags" maxTags={3} resetKey={resetKey} />
 
           <div className="textareaRow fp-col">
             <label htmlFor="about" className="rcForm__label">

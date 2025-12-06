@@ -46,6 +46,7 @@ export default function EventsSection({ clubId, clubName, slug }: UpcomingEvents
               event={event} 
               showActions={false}  
               slug={slug}
+              directLink={true}
               />
           ))}
         </div>

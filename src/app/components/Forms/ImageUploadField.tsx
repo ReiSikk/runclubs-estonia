@@ -12,6 +12,10 @@ type Props = {
   onError?: (msg: string | null) => void;
 };
 
+export type ImageUploadFieldHandle = {
+  reset: () => void;
+};
+
 export default function ImageUploadField({
   name,
   altStyle = false,
