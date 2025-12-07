@@ -32,7 +32,6 @@
   align-items: stretch;
   background: var(--card-bg, #0f0f0f);
   color: var(--text, #fff);
-  border-radius: var(--bradius-16);
   width: 100%;
   max-width: 800px;
   box-shadow: 0 10px 40px rgba(0,0,0,0.6);
@@ -42,6 +41,8 @@
   transform: translateY(100%);
   transition: height 0.3s cubic-bezier(0.25, 0.1, 0.25, 1), opacity 0.3s cubic-bezier(0.25, 0.1, 0.25, 1),
   transform 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
+  border-top-left-radius: var(--bradius-16);
+  border-top-right-radius: var(--bradius-16);
 
   &.visible {
     opacity: 1;
@@ -53,6 +54,7 @@
     transform: none;
     transition: opacity 0.3s ease;
     padding-block: 0 4rem;
+    border-radius: var(--bradius-16);
 
     &.visible {
       transform: none;

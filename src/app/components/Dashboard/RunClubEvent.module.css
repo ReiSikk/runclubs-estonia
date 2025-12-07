@@ -72,18 +72,27 @@
 .runClubEvent__tags {
   display: flex;
   gap: 8px;
-  align-items: center;
+  align-items: flex-end;
   flex-wrap: nowrap;
 }
 
 .runClubEvent__tag {
-  background: #222;
+  background: var(--pill);
   color: var(--white);
   padding: 8px 12px;
   border-radius: var(--bradius-xl);
   font-size: 1.4rem;
   user-select: none;
   white-space: nowrap;
+
+  &.light {
+    background: var(--cream);
+    color: var(--dark);
+  }
+}
+
+.hint {
+  gap: 8px;
 }
 
 .runClubEvent__title {
@@ -103,20 +112,24 @@
 }
 
 .runClubEvent__metaLabel {
-  color: var(--muted-text);
   font-size: 1.2rem;
   text-transform: uppercase;
-  letter-spacing: 0.06rem;
+  letter-spacing: 0.1rem;
+  opacity: 0.9;
 }
 
 .runClubEvent__metaValue {
   color: var(--muted-text);
-  font-size: 1.4rem;
+  font-size: 1.6rem;
   font-weight: 500;
 }
 
 .runClubEvent__about {
-  margin-block: 8px 12px;
+  margin-block: 3.2rem 0;
+  .label {
+    display: block;
+    margin-bottom: 0.8rem;
+  }
 }
 .runClubEvent__actions {
   justify-content: flex-end;

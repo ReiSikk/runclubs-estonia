@@ -11,6 +11,7 @@ import { db } from "@/app/lib/firebase/firebase";
 import { AlertDialog, DropdownMenu } from "radix-ui";
 import  Link  from "next/link";
 import { LucideArrowRight, LucideEllipsisVertical, LucidePencil, LucideTrash2 } from "lucide-react";
+import { RunClub } from "@/app/lib/types/runClub";
 
 interface RunClubEventProps {
   event: RunClubEvent;
@@ -19,6 +20,7 @@ interface RunClubEventProps {
   showActions?: boolean;
   slug?: string;
   directLink?: boolean;
+  club?: RunClub;
 }
 
 function AccordionControlledPreview({ about }: { about: string;}) {
@@ -46,7 +48,7 @@ function AccordionControlledPreview({ about }: { about: string;}) {
   );
 }
 
-export default function RunClubEventCard({ event, onDeleted, showActions, slug, directLink }: RunClubEventProps) {
+export default function RunClubEventCard({ event, onDeleted, showActions, slug, directLink, club }: RunClubEventProps) {
   const { id, title, about, date, startTime, endTime, locationAddress } = event;
 
   // Handle deleting actions
@@ -94,7 +96,7 @@ export default function RunClubEventCard({ event, onDeleted, showActions, slug, 
 
   return (
     <article className={styles.runClubEvent} aria-labelledby={`event-${id}-title`}>
-      {directLink &&
+      {directLink && 
         <Link href={`/runclubs/${slug}/events/${id}`} className={styles.runClubEvent__link} aria-label={`View details for ${title}`}>
         </Link>
       }
@@ -104,7 +106,7 @@ export default function RunClubEventCard({ event, onDeleted, showActions, slug, 
         </div>
       </header>
 
-      <h3 id={`event-${id}-title`} className={styles.runClubEvent__title}>
+      <h3 id={`event-${id}-title`} className={styles.runClubEvent__title + " h2"}>
         {title}
       </h3>
 
@@ -124,8 +126,13 @@ export default function RunClubEventCard({ event, onDeleted, showActions, slug, 
         )}
       </div>
 
+       <div className={`${styles.hint} fp-col`}>
+          <p className={styles.label + " h4"}>Organised by <br /> <span className="italic h5">{club?.name}</span></p>
+        </div>
+
       {about && (
         <div className={styles.runClubEvent__about}>
+          <span className={styles.label + " txt-label uppercase "}>About this event</span>
           {/* truncated preview shown only when accordion is closed */}
           <AccordionControlledPreview about={about} />
         </div>
@@ -141,14 +148,16 @@ export default function RunClubEventCard({ event, onDeleted, showActions, slug, 
             <DropdownMenu.Content className="dropdownContent" sideOffset={5} align="end">
               <DropdownMenu.Label className="dropdownLabel h5">Actions</DropdownMenu.Label>
               <DropdownMenu.Separator className="dropdownSeparator" />
-              <DropdownMenu.Item className="dropdownItem fp">
-                <Link href={`/runclubs/${slug}/events/${id}`} target="_blank" className="fp">
-                Visit event page{" "}
-                <div className="dropdownItem__right">
-                  <LucideArrowRight size={16} />
-                </div>
-                </Link>
-              </DropdownMenu.Item>
+              {club?.approvedForPublication &&
+                <DropdownMenu.Item className="dropdownItem fp">
+                  <Link href={`/runclubs/${slug}/events/${id}`} target="_blank" className="fp">
+                  Visit event page{" "}
+                  <div className="dropdownItem__right">
+                    <LucideArrowRight size={16} />
+                  </div>
+                  </Link>
+                </DropdownMenu.Item>
+              }
               <DropdownMenu.Item className="dropdownItem fp" onSelect={() => console.log("Edit event handler here")}>
                 Edit event{" "}
                 <div className="dropdownItem__right">

@@ -167,6 +167,12 @@
 .eventHeader__tag {
 }
 
+.eventHeader__subtitle {
+  display: block;
+  margin-bottom: 0.8rem;
+  color: var(--gray);
+}
+
 .eventHeader__right {
   flex: 2 1 480px;
   display: flex;

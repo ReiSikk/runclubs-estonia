@@ -12,3 +12,17 @@ export function formatEventDate(dateString: string): string {
     day: "numeric",
   });
 }
+
+export function formatDividerDate (d: string): string {
+    try {
+      const dt = new Date(d);
+      if (isNaN(dt.getTime())) return d;
+      return dt.toLocaleDateString(undefined, {
+        weekday: "short",
+        month: "short",
+        day: "numeric",
+      });
+    } catch {
+      return d;
+    }
+  };

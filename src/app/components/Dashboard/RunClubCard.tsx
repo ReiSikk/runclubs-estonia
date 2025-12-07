@@ -93,6 +93,7 @@ const RunClubCard = ({ club, onDeleted, onEdit, user }: RunClubCardProps) => {
             <DropdownMenu.Content className="dropdownContent" sideOffset={5} align="end">
               <DropdownMenu.Label className="dropdownLabel h5">Actions</DropdownMenu.Label>
               <DropdownMenu.Separator className="dropdownSeparator" />
+              {club.approvedForPublication &&
               <DropdownMenu.Item className="dropdownItem fp">
                 <Link href={`/runclubs/${club.slug}`} target="_blank" className="fp">
                 Visit club page{" "}
@@ -101,6 +102,7 @@ const RunClubCard = ({ club, onDeleted, onEdit, user }: RunClubCardProps) => {
                 </div>
                 </Link>
               </DropdownMenu.Item>
+              }
               <DropdownMenu.Item className="dropdownItem fp" onSelect={handleEdit}>
                 Edit Club{" "}
                 <div className="dropdownItem__right">

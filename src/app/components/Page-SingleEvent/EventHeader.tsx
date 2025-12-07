@@ -77,6 +77,7 @@ export default function EventHeader({ club, event }: Props) {
                 </span>
               ))}
             </div>
+            <span className={styles.eventHeader__subtitle + " txt-label uppercase"}>About this event</span>
             <div className={styles.eventHeader__desc + " txt-body"}>
               {event.about}
             </div>

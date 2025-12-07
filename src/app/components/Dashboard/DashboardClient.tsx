@@ -10,6 +10,7 @@ import { useAuth } from "../../providers/AuthProvider";
 import { useRouter } from "next/navigation";
 import { useIsMobile } from "../../lib/hooks/useIsMobile";
 import { useQueryClient } from '@tanstack/react-query'; 
+import { formatDividerDate } from "@/app/lib/utils/convertTime";
 // Firebase
 import { auth } from "@/app/lib/firebase/firebase";
 // Components and styles
@@ -19,7 +20,6 @@ import LoaderSpinner from "../Loader/LoaderSpinner";
 import Modal from "../Modals/Modal";
 import SideBar from "./SideBar";
 import * as Tabs from "@radix-ui/react-tabs";
-import { LucidePlus } from "lucide-react";
 import RunClubEventCard from "./RunClubEvent";
 import RunClubRegistrationForm from "../Forms/RunClubRegistrationForm";
 import styles from "./DashboardClient.module.css";
@@ -27,6 +27,7 @@ import styles from "./DashboardClient.module.css";
 import { RunClub } from "../../lib/types/runClub";
 import { User } from "firebase/auth";
 import { RunClubEvent } from "@/app/lib/types/runClubEvent";
+import DashboardEventsHeader from "./DashboardEventsHeader";
 
 export default function DashboardClient() {
   const { user, loading } = useAuth();
@@ -133,6 +134,19 @@ function DashboardContent({ userId, user }: { userId: string; user: User }) {
   const openEventModal = () => {
     setShowCreateEvent(true);
   };
+
+  /* Handle filter */
+  const [selectedClubId, setSelectedClubId] = useState<string | "all">("all");
+
+  const handleFilterChange = useCallback((clubId: string | "all") => {
+    setSelectedClubId(clubId);
+  }, []);
+
+  // Apply filter before grouping
+  const filteredEvents = useMemo(() => {
+    if (selectedClubId === "all") return events;
+    return events.filter(ev => ev.runclub_id === selectedClubId);
+  }, [events, selectedClubId]);
 
   return (
     <>
@@ -241,23 +255,12 @@ function DashboardContent({ userId, user }: { userId: string; user: User }) {
             </Tabs.Content>
             <Tabs.Content className="tabs__content" value="events">
               <div className={styles.dashboardEvents}>
-                <div className={`${styles.dashboardEvents__header} ${events.length < 1 ? styles.noEvents : ""} fp`}>
-                  <div className={`${styles.main}`}>
-                    <h6 className="h2">My events</h6>
-                    <p className="txt-body">
-                      {events.length < 1
-                        ? "You have no upcoming events. Create one to get started!"
-                        : `You have published ${events.length} event${events.length > 1 ? "s" : ""}.`}
-                    </p>
-                  </div>
-                  <button
-                    className={`${styles.dashboardEvents__btn} btn_main accent`}
-                    onClick={() => setShowCreateEvent(true)}
-                  >
-                    <LucidePlus size={16} />
-                    Create Event
-                  </button>
-                </div>
+                <DashboardEventsHeader
+                  events={events}
+                  clubs={clubs}
+                  setShowCreateEvent={setShowCreateEvent}
+                  onFilterChange={handleFilterChange}
+                />
                 <div className={styles.dashboardEvents__content}>
                   {eventsLoading && (
                     <div className="loader fp">
@@ -268,8 +271,8 @@ function DashboardContent({ userId, user }: { userId: string; user: User }) {
                   {!eventsError && !eventsLoading && (
                     <ul className={styles.list + " list-grid list-grid--1"}>
                       {(() => {
-                        const grouped: Record<string, typeof events> = {};
-                        for (const ev of events) {
+                        const grouped: Record<string, typeof filteredEvents> = {};
+                        for (const ev of filteredEvents) {
                           const key = ev.date ?? "No date";
                           if (!grouped[key]) grouped[key] = [];
                           grouped[key].push(ev);
@@ -277,20 +280,6 @@ function DashboardContent({ userId, user }: { userId: string; user: User }) {
 
                         // Sort date keys ascending (closest to today first). Date string have to be in ISO format
                         const sortedDates = Object.keys(grouped).sort((a, b) => (a > b ? 1 : a < b ? -1 : 0));
-
-                        const formatDividerDate = (d: string) => {
-                          try {
-                            const dt = new Date(d);
-                            if (isNaN(dt.getTime())) return d;
-                            return dt.toLocaleDateString(undefined, {
-                              weekday: "short",
-                              month: "short",
-                              day: "numeric",
-                            });
-                          } catch {
-                            return d;
-                          }
-                        };
 
                         return sortedDates.map((dateKey) => (
                           <li key={dateKey} className={styles.list__item}>
@@ -302,7 +291,7 @@ function DashboardContent({ userId, user }: { userId: string; user: User }) {
                               {grouped[dateKey].map((ev) => {
                                 // Find the club for this event
                                 const club = clubs.find(c => c.id === ev.runclub_id);
-                                
+
                                 return (
                                   <div key={ev.id} className={styles.list__item}>
                                     <RunClubEventCard
@@ -322,6 +311,7 @@ function DashboardContent({ userId, user }: { userId: string; user: User }) {
                                       showActions={true}
                                       slug={club?.slug || ''}
                                       directLink={false}
+                                      club={club}
                                     />
                                   </div>
                                 );
