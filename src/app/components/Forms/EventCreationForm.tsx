@@ -101,7 +101,7 @@ export default function EventCreationForm({ mode, eventId, initialValues, runclu
     setResetKey((k) => k + 1);
     imageUploadFieldRef.current?.reset?.();
     formRef.current?.reset();
-  }, [mode]);
+  }, [mode, runclubId, runclubs]);
 
   // Determine if we should show existing image
   const showExistingImage = mode === "update" && existingImageUrl;

@@ -4,7 +4,6 @@ import { useState, useEffect, useRef, useTransition } from "react";
 import styles from "./RunClubRegistrationForm.module.css";
 import { saveRunClub } from "@/app/actions";
 import { useRouter } from "next/navigation";
-import Image from "next/image";
 import TimePicker, { TimePickerValue } from "react-accessible-time-picker";
 import { useAuth } from "@/app/providers/AuthProvider";
 import { FormState } from "@/app/lib/types/serverActionReturn";

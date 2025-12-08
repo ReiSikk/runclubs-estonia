@@ -38,7 +38,7 @@ function DashboardEventsHeader({ events, clubs, setEventModalToShow, onFilterCha
         </button>
       </div>
       <div className={styles.dashboardEvents__filters + " fp-col"}>
-        <h3 className="txt-body">Show me events for:</h3>
+        <h3 className="txt-body">Showing events for:</h3>
         <DashboardEventsFilters clubs={clubs} selectedClubId={selectedClubId} onChange={handleChange} />
       </div>
     </header>

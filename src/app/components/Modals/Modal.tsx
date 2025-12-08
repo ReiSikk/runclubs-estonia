@@ -19,7 +19,7 @@ type ModalProps = {
   onToastOpenChange?: (open: boolean) => void;
 };
 
-export default function Modal({ open, onClose, children, ariaLabel = "Modal dialog", noClubsModal, isClubsModal, title, toast, toastOpen, onToastOpenChange }: ModalProps) {
+export default function Modal({ open, onClose, children, ariaLabel = "Modal dialog", noClubsModal, title, toast, toastOpen, onToastOpenChange }: ModalProps) {
   // Countdown state for toast
   const [countdown, setCountdown] = useState<number | null>(null);
 

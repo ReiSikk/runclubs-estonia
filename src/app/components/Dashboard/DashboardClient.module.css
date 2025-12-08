@@ -163,12 +163,11 @@
    Dashboard Events Tab View
    ========================================================================== */
 .dashboardEvents {
-  margin-inline: auto;
-  max-width: 650px;
   padding-inline: clamp(1.2rem, 2vw, 2.4rem);
 
   .main {
     width: 100%;
+    gap: 1.2rem;
 
     h6 {
       margin-bottom: 0.4rem;
@@ -178,7 +177,7 @@
 .dashboardEvents__header {
   margin-bottom: clamp(3.2rem, 4vw, 4rem);
   justify-content: space-between;
-  gap: 2.4rem 1.6rem;
+  gap: 4rem;
 
   /* In case user has no events */
   &.noEvents {
@@ -199,6 +198,9 @@
   }
   .list__item {
     width: 100%;
+    div:first-child {
+      height: 100%;
+    }
   }
   .list__item_wrap {
     gap: 1.6rem;
@@ -238,7 +240,7 @@
 .dashboardEvents__filters {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.6rem;
+  gap: 1.2rem;
 }
 
 .pill {
@@ -246,7 +248,7 @@
   border: 1px solid transparent;
   background: var(--pill);
   padding: 8px 12px;
-  font-size: 1.8rem;
+  font-size: clamp(1.4rem, 2vw, 1.6rem);
   color: var(--cream);
   border-radius: var(--bradius-xl);
   cursor: pointer;

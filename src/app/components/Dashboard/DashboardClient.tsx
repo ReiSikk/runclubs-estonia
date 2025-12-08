@@ -79,12 +79,10 @@ function DashboardContent({ userId, user }: { userId: string; user: User }) {
     data: events = [],
     isLoading: eventsLoading,
     isError: eventsError,
-    refetch: refetchEvents,
   } = useClubEvents(clubIds);
 
   // Check for mobile
   const isMobile = useIsMobile();
-
 
   // Handle modal states
   const openEditEventModal = (event: RunClubEvent) => {
@@ -169,6 +167,10 @@ const isAnyModalOpen = eventModalToShow || !!editingClub;
     if (selectedClubId === "all") return events;
     return events.filter(ev => ev.runclub_id === selectedClubId);
   }, [events, selectedClubId]);
+
+
+  // Memoize runclubs to prevent unnecessary re-renders of EventCreationForm
+  const runclubs = useMemo(() => clubs.map((c) => ({ id: c.id, name: c.name })), [clubs]);
 
   return (
     <>
@@ -366,7 +368,7 @@ const isAnyModalOpen = eventModalToShow || !!editingClub;
             mode={eventModalToShow}
             eventId={editingEvent?.id}
             initialValues={editingEvent}
-            runclubs={clubs.map((c) => ({ id: c.id, name: c.name }))}
+            runclubs={runclubs}
             onClose={closeModal}
             onEventCreated={handleEventCreated}
             onEventUpdated={handleEventUpdated}

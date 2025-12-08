@@ -1,16 +1,23 @@
 "use client";
 
 import React from "react";
+import Image from "next/image";
 import styles from "./RunClubEvent.module.css";
 import moment from "moment";
 import type { RunClubEvent } from "@/app/lib/types/runClubEvent";
-import * as Accordion from "@radix-ui/react-accordion";
 import { useState } from "react";
 import { deleteDoc, doc } from "firebase/firestore";
 import { db } from "@/app/lib/firebase/firebase";
 import { AlertDialog, DropdownMenu } from "radix-ui";
-import  Link  from "next/link";
-import { LucideArrowRight, LucideEllipsisVertical, LucidePencil, LucideTrash2 } from "lucide-react";
+import Link from "next/link";
+import {
+  LucideArrowRight,
+  LucideClock4,
+  LucideEllipsisVertical,
+  LucideMapPinned,
+  LucidePencil,
+  LucideTrash2,
+} from "lucide-react";
 import { RunClub } from "@/app/lib/types/runClub";
 
 interface RunClubEventProps {
@@ -24,33 +31,16 @@ interface RunClubEventProps {
   club?: RunClub;
 }
 
-function AccordionControlledPreview({ about }: { about: string;}) {
-  const [open, setOpen] = useState<string | undefined>(undefined);
-  const truncated = about.length > 150 ? `${about.slice(0, 200)}…` : about;
-  return (
-    <>
-      {open !== "desc" && (
-        <p className={styles.runClubEvent__preview} aria-hidden>
-          {truncated}
-        </p>
-      )}
-
-      <Accordion.Root type="single" collapsible value={open} onValueChange={(v) => setOpen(v)}>
-        <Accordion.Item value="desc">
-          <Accordion.Content className={styles.runClubEvent__accordionContent}>
-            <p className={styles.runClubEvent__description}>{about}</p>
-          </Accordion.Content>
-          <Accordion.Trigger className={styles.runClubEvent__showMoreTrigger}>
-            {open === "desc" ? "Show less" : "Show more"}
-          </Accordion.Trigger>
-        </Accordion.Item>
-      </Accordion.Root>
-    </>
-  );
-}
-
-export default function RunClubEventCard({ event, onDeleted, onUpdate, showActions, slug, directLink, club }: RunClubEventProps) {
-  const { id, title, about, date, startTime, endTime, locationAddress } = event;
+export default function RunClubEventCard({
+  event,
+  onDeleted,
+  onUpdate,
+  showActions,
+  slug,
+  directLink,
+  club,
+}: RunClubEventProps) {
+  const { id, title, date, startTime, endTime, locationAddress } = event;
 
   // Handle deleting actions
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
@@ -87,7 +77,7 @@ export default function RunClubEventCard({ event, onDeleted, onUpdate, showActio
 
   const eventMoment = moment(date);
   const formattedDate = eventMoment.isValid()
-    ? eventMoment.format("D MMM") // e.g., 25 Nov
+    ? eventMoment.format("D MMM, YYYY") // e.g., 25 Nov 2025
     : date;
 
   // compute day difference using moment
@@ -98,53 +88,61 @@ export default function RunClubEventCard({ event, onDeleted, onUpdate, showActio
   let displayDate = formattedDate;
   if (isToday) displayDate = "Today";
   else if (isTomorrow) displayDate = "Tomorrow";
-  else if (daysDiff < 0) displayDate = `${Math.abs(daysDiff)} days ago`;
-
 
   return (
-    <article className={styles.runClubEvent} aria-labelledby={`event-${id}-title`}>
-      {directLink && 
-        <Link href={`/runclubs/${slug}/events/${id}`} className={styles.runClubEvent__link} aria-label={`View details for ${title}`}>
-        </Link>
-      }
-      <header className={styles.runClubEvent__header}>
-        <div className={styles.runClubEvent__tags}>
-          <span className={styles.runClubEvent__tag}>{displayDate}</span>
+    <div className={styles.runClubEvent + " fp-col"} aria-labelledby={`event-${id}-title`}>
+      {directLink && (
+        <Link
+          href={`/runclubs/${slug}/events/${id}`}
+          className={styles.runClubEvent__link}
+          aria-label={`View details for ${title}`}
+        ></Link>
+      )}
+      <header className={styles.runClubEvent__header + " fp"}>
+        <div className={`${styles.runClubEvent__avatar} fp`}>
+          {club?.logo ? (
+            <Image src={club.logo} alt={`${club.name}'s logo`} className={styles.avatar} width={80} height={80} />
+          ) : (
+            <span className="h3">
+              {club?.name
+                ?.split(" ")
+                .map((n) => n[0])
+                .join("")
+                .toUpperCase()}
+            </span>
+          )}
+        </div>
+        <div className={styles.info + " fp-col"}>
+          <h4 id={`event-${id}-title`} className={styles.runClubEvent__title + " h4"}>
+            {club?.name}
+          </h4>
+          {club?.city && (
+            <div className={styles.runClubEvent__tag + " fp"}>
+              <span className={styles.runClubEvent__metaValue}>{club?.city}</span>
+            </div>
+          )}
         </div>
       </header>
 
-      <h3 id={`event-${id}-title`} className={styles.runClubEvent__title + " h2"}>
-        {title}
-      </h3>
-
-      <div className={`${styles.runClubEvent__meta} fp`}>
-        <div className={styles.runClubEvent__metaItem}>
-          <span className={styles.runClubEvent__metaLabel}>When</span>
-          <span className={styles.runClubEvent__metaValue}>
-            {formattedDate} {startTime ? `• ${startTime}` : ""} {endTime ? `- ${endTime}` : ""}
-          </span>
-        </div>
-
-        {locationAddress && (
-          <div className={styles.runClubEvent__metaItem}>
-            <span className={styles.runClubEvent__metaLabel}>Where</span>
-            <span className={styles.runClubEvent__metaValue}>{locationAddress}</span>
-          </div>
-        )}
+      <div className={styles.runClubEvent__metaItem}>
+        <LucideClock4 size={16} />
+        <span className={styles.runClubEvent__metaValue}>
+          {displayDate} {startTime ? `• ${startTime}` : ""} {endTime ? `- ${endTime}` : ""}
+        </span>
       </div>
-
-       <div className={`${styles.hint} fp-col`}>
-          <p className={styles.label + " h4"}>Organised by <br /> <span className="italic h5">{club?.name}</span></p>
-        </div>
-
-      {about && (
-        <div className={styles.runClubEvent__about}>
-          <span className={styles.label + " txt-label uppercase "}>About this event</span>
-          {/* truncated preview shown only when accordion is closed */}
-          <AccordionControlledPreview about={about} />
+      <h4 className={styles.runClubEvent__title + " h3"}>{title}</h4>
+      {locationAddress && (
+        <div className={styles.runClubEvent__metaItem + " fp"}>
+          <LucideMapPinned size={16} />
+          <span className={styles.runClubEvent__metaValue}>{locationAddress}</span>
         </div>
       )}
-      {showActions && 
+      {club && club.approvedForPublication && (
+        <Link href={`/runclubs/${slug}/events/${id}`} className={styles.runClubEvent__link + " btn_main"}>
+          More information
+        </Link>
+      )}
+      {showActions && (
         <DropdownMenu.Root>
           <DropdownMenu.Trigger asChild>
             <div className={styles.runClubEvent__actionTrigger} role="button" aria-label="Club options">
@@ -155,16 +153,16 @@ export default function RunClubEventCard({ event, onDeleted, onUpdate, showActio
             <DropdownMenu.Content className="dropdownContent" sideOffset={5} align="end">
               <DropdownMenu.Label className="dropdownLabel h5">Actions</DropdownMenu.Label>
               <DropdownMenu.Separator className="dropdownSeparator" />
-              {club?.approvedForPublication &&
+              {club?.approvedForPublication && (
                 <DropdownMenu.Item className="dropdownItem fp">
                   <Link href={`/runclubs/${slug}/events/${id}`} target="_blank" className="fp">
-                  Visit event page{" "}
-                  <div className="dropdownItem__right">
-                    <LucideArrowRight size={16} />
-                  </div>
+                    Visit event page{" "}
+                    <div className="dropdownItem__right">
+                      <LucideArrowRight size={16} />
+                    </div>
                   </Link>
                 </DropdownMenu.Item>
-              }
+              )}
               <DropdownMenu.Item className="dropdownItem fp" onSelect={handleEventUpdate}>
                 Edit event{" "}
                 <div className="dropdownItem__right">
@@ -186,30 +184,27 @@ export default function RunClubEventCard({ event, onDeleted, onUpdate, showActio
             </DropdownMenu.Content>
           </DropdownMenu.Portal>
         </DropdownMenu.Root>
-      }
+      )}
       {showDeleteDialog && (
-
         <AlertDialog.Root open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
           <AlertDialog.Trigger asChild>
-          <button
-            type="button"
-            className="btn_main accent"
-            disabled={deleting}
-            aria-disabled={deleting}
-            aria-label={deleting ? "Deleting event" : "Delete event"}
-          >
-            {deleting ? "Deleting…" : "Delete"}
-          </button>
+            <button
+              type="button"
+              className="btn_main accent"
+              disabled={deleting}
+              aria-disabled={deleting}
+              aria-label={deleting ? "Deleting event" : "Delete event"}
+            >
+              {deleting ? "Deleting…" : "Delete"}
+            </button>
           </AlertDialog.Trigger>
           <AlertDialog.Portal>
             <AlertDialog.Overlay className={styles.Overlay} />
             <AlertDialog.Content className={styles.Content}>
-              <AlertDialog.Title className={styles.Title + " h3"}>
-                Are you absolutely sure?
-              </AlertDialog.Title>
+              <AlertDialog.Title className={styles.Title + " h3"}>Are you absolutely sure?</AlertDialog.Title>
               <AlertDialog.Description className={styles.Description}>
-                This action cannot be undone. This will permanently delete your
-                event and remove your data from our servers.
+                This action cannot be undone. This will permanently delete your event and remove your data from our
+                servers.
               </AlertDialog.Description>
               <div className={styles.Buttons + " fp"}>
                 <AlertDialog.Cancel asChild>
@@ -225,6 +220,6 @@ export default function RunClubEventCard({ event, onDeleted, onUpdate, showActio
           </AlertDialog.Portal>
         </AlertDialog.Root>
       )}
-    </article>
+    </div>
   );
 }
