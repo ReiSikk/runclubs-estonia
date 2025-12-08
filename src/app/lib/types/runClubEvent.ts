@@ -9,15 +9,15 @@ export interface RunClubEvent {
   startTime: string;
   endTime?: string | null;
   locationAddress: string;
-  locationUrl?: string | null;
+  locationUrl?: string | undefined;
   // Reference to the RunClub document
   runclub: string | DocumentReference;
   runclub_slug?: string;
   runclub_id: string;
   image?: string | null;
   tags?: string[];
-  distance?: number | null;
-  pace?: string | null;
+  distance?: number | undefined;
+  pace?: string | undefined;
   createdAt?: string;
   updatedAt?: string;
 };

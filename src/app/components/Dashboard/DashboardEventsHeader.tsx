@@ -8,11 +8,12 @@ import DashboardEventsFilters from "./DashboardEventsFilters";
 type Props = {
   events: RunClubEvent[];
   clubs: RunClub[];
-  setShowCreateEvent: (show: boolean) => void;
+  setEventModalToShow: (mode: "create" | "update") => void;
   onFilterChange: (clubId: string | "all") => void;
+
 };
 
-function DashboardEventsHeader({ events, clubs, setShowCreateEvent, onFilterChange }: Props) {
+function DashboardEventsHeader({ events, clubs, setEventModalToShow, onFilterChange }: Props) {
   const [selectedClubId, setSelectedClubId] = useState<string | "all">("all");
 
   const handleChange = (clubId: string | "all") => {
@@ -31,7 +32,7 @@ function DashboardEventsHeader({ events, clubs, setShowCreateEvent, onFilterChan
                 : `You have published ${events.length} event${events.length > 1 ? "s" : ""}.`}
             </p>
         </div>
-        <button className={`${styles.dashboardEvents__btn} btn_main accent`} onClick={() => setShowCreateEvent(true)}>
+        <button className={`${styles.dashboardEvents__btn} btn_main accent`} onClick={() => setEventModalToShow("create")}>
             <LucidePlus size={16} />
             Create Event
         </button>

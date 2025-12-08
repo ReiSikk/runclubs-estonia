@@ -13,12 +13,13 @@ type ModalProps = {
   ariaLabel?: string;
   noClubsModal?: boolean;
   isClubsModal?: boolean;
+  title?: string;
   toast?: { message: string; type: 'success' | 'error'; countdown?: number | null } | null;
   toastOpen?: boolean;
   onToastOpenChange?: (open: boolean) => void;
 };
 
-export default function Modal({ open, onClose, children, ariaLabel = "Modal dialog", noClubsModal, isClubsModal, toast, toastOpen, onToastOpenChange }: ModalProps) {
+export default function Modal({ open, onClose, children, ariaLabel = "Modal dialog", noClubsModal, isClubsModal, title, toast, toastOpen, onToastOpenChange }: ModalProps) {
   // Countdown state for toast
   const [countdown, setCountdown] = useState<number | null>(null);
 
@@ -73,7 +74,7 @@ export default function Modal({ open, onClose, children, ariaLabel = "Modal dial
             <div className={styles.title + " rcForm__step h2 fp"}>
               <span className="icon">
               </span>{" "}
-              {isClubsModal ? "Edit run club" : "Create an event"}
+              {title}
             </div>
           <button className={styles.close} aria-label="Close"     onClick={onClose}>
             <LucideX  size={20} />

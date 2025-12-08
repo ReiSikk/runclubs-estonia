@@ -17,6 +17,7 @@ interface RunClubEventProps {
   event: RunClubEvent;
   onShowMore?: (id: string) => void;
   onDeleted?: (id: string) => void;
+  onUpdate?: (event: RunClubEvent) => void;
   showActions?: boolean;
   slug?: string;
   directLink?: boolean;
@@ -48,12 +49,18 @@ function AccordionControlledPreview({ about }: { about: string;}) {
   );
 }
 
-export default function RunClubEventCard({ event, onDeleted, showActions, slug, directLink, club }: RunClubEventProps) {
+export default function RunClubEventCard({ event, onDeleted, onUpdate, showActions, slug, directLink, club }: RunClubEventProps) {
   const { id, title, about, date, startTime, endTime, locationAddress } = event;
 
   // Handle deleting actions
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [deleting, setDeleting] = useState(false);
+
+  const handleEventUpdate = () => {
+    if (onUpdate) {
+      onUpdate(event);
+    }
+  };
 
   const handleDeleteClick = () => {
     setTimeout(() => {
@@ -158,7 +165,7 @@ export default function RunClubEventCard({ event, onDeleted, showActions, slug, 
                   </Link>
                 </DropdownMenu.Item>
               }
-              <DropdownMenu.Item className="dropdownItem fp" onSelect={() => console.log("Edit event handler here")}>
+              <DropdownMenu.Item className="dropdownItem fp" onSelect={handleEventUpdate}>
                 Edit event{" "}
                 <div className="dropdownItem__right">
                   <LucidePencil size={16} />

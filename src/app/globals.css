@@ -942,17 +942,25 @@ button {
   }
 
   select {
+    -webkit-appearance: none; /* Force remove native arrow */
+    -moz-appearance: none;
+    appearance: none;
     position: relative;
     border-radius: var(--bradius-8);
     padding-block: var(--pb-input);
     padding-inline: 16px 16px;
+    -webkit-padding-start: 16px;
+    -webkit-padding-end: 16px;
     border: 1px solid var(--dark);
     background: var(--cream);
     color: var(--dark);
     width: 100%;
     transition: all 0.2s ease;
     font-size: 1.6rem;
-    appearance: none;
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="%23100f0e" class="bi bi-chevron-down" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/></svg>');
+    background-size: 16px 16px;
+    background-repeat: no-repeat;
+    background-position: right 16px center;
   }
 
   .rcForm__input {
@@ -965,11 +973,19 @@ button {
     width: 100%;
     transition: all 0.2s ease;
     font-size: 1.6rem;
+
+    &[type="date"] {
+      padding-block: var(--pb-input);
+      padding-inline: 16px 8px;
+      -webkit-padding-start: 16px;
+      -webkit-padding-end: 8px;
+    }
+
+    &:not(:last-of-type) {
+      margin-bottom: 8px;
+    }
   }
 
-  &:not(:last-of-type) {
-    margin-bottom: 8px;
-  }
   .input__message {
     display: block;
     color: var(--error);
@@ -983,13 +999,19 @@ button {
 input[type="date"]::-webkit-calendar-picker-indicator {
   background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="15" viewBox="0 0 24 24"><path fill="100f0e" d="M20 3h-1V1h-2v2H7V1H5v2H4c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 18H4V8h16v13z"/></svg>');
   appearance: none;
-  padding-block: var(--pb-input);
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 16px;
+  padding: var(--pb-input) 8px;
+  -webkit-padding: var(--pb-input) 8px;
   font-size: 1.6rem;
+  cursor: pointer;
 }
 .textareaRow textarea::placeholder,
 .inputRow input::placeholder {
   font-size: 1.6rem;
   line-height: 1.4;
+
 }
 .inputRow__file {
   gap: 0.75rem;
@@ -1236,6 +1258,9 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   -webkit-user-select: none;
   -ms-user-select: none;
   -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  user-select: none;
   background-color: #131314;
   background-image: none;
   border: 1px solid #747775;

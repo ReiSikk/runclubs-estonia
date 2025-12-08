@@ -54,8 +54,10 @@ export default function DashboardClient() {
 function DashboardContent({ userId, user }: { userId: string; user: User }) {
   const [activeTab, setActiveTab] = useState("overview");
   const router = useRouter();
-  const [showCreateEvent, setShowCreateEvent] = useState(false);
   const [editingClub, setEditingClub] = useState<RunClub | null>(null);
+  // Handle create/edit event modal
+  const [eventModalToShow, setEventModalToShow] = useState<"create" | "update" | null>(null);
+  const [editingEvent, setEditingEvent] = useState<RunClubEvent | null>(null);
   // toast states for both modals
   const [eventToast, setEventToast] = useState<{ message: string; type: 'success' | 'error'; countdown?: number | null } | null>(null);
   const [eventToastOpen, setEventToastOpen] = useState(false);
@@ -77,12 +79,27 @@ function DashboardContent({ userId, user }: { userId: string; user: User }) {
     data: events = [],
     isLoading: eventsLoading,
     isError: eventsError,
+    refetch: refetchEvents,
   } = useClubEvents(clubIds);
 
   // Check for mobile
   const isMobile = useIsMobile();
-  // Check if any modal is active
-  const isAnyModalOpen = showCreateEvent || !!editingClub;
+
+
+  // Handle modal states
+  const openEditEventModal = (event: RunClubEvent) => {
+  const latestEvent = events.find(e => e.id === event.id) || event;
+  setEditingEvent(latestEvent);
+  setEventModalToShow("update");
+};
+
+  const closeModal = () => {
+    setEventModalToShow(null);
+    setEditingEvent(null);
+    setEditingClub(null);
+  };
+
+const isAnyModalOpen = eventModalToShow || !!editingClub;
 
   useEffect(() => {
     if (isAnyModalOpen) {
@@ -97,13 +114,22 @@ function DashboardContent({ userId, user }: { userId: string; user: User }) {
     router.replace("/login");
   }, [router]);
 
+  /* Events CRUD and modal states  */
+  const handleEventCreated = async () => {
+    await queryClient.invalidateQueries({ queryKey: ['events'] });
+  };
+
+  const handleEventUpdated = async () => {
+  await queryClient.invalidateQueries({ queryKey: ['events'] });
+  setEditingEvent(null);
+  setEventModalToShow(null);
+};
+
   const handleEventDeleted = async () => {
     await queryClient.invalidateQueries({ queryKey: ['events'] });
   };
 
-  const handleEventCreated = async () => {
-    await queryClient.invalidateQueries({ queryKey: ['events'] });
-  };
+  /* Clubs CRUD states  */
 
   const handleClubDeleted = async (clubId: string) => {
      try {
@@ -127,12 +153,8 @@ function DashboardContent({ userId, user }: { userId: string; user: User }) {
   }
   };
 
-  const handleClubEdit = (club: RunClub) => {
+   const handleClubEdit = (club: RunClub) => {
     setEditingClub(club);
-  };
-
-  const openEventModal = () => {
-    setShowCreateEvent(true);
   };
 
   /* Handle filter */
@@ -155,7 +177,7 @@ function DashboardContent({ userId, user }: { userId: string; user: User }) {
         id="page-top"
         data-testid="dashboard-page"
       >
-        <SideBar handleLogOut={handleLogOut} isMobile={isMobile} onEventClicked={openEventModal} />
+        <SideBar handleLogOut={handleLogOut} isMobile={isMobile} onEventClicked={() => setEventModalToShow("create")} />
         <div className={`${styles.dashboard__main}`}>
           <div className={`${styles.header}`}>
             <h1 className="h1">Welcome to your dashboard, {user.displayName?.split(" ")[0] || ""}! 👋</h1>
@@ -245,7 +267,7 @@ function DashboardContent({ userId, user }: { userId: string; user: User }) {
                     </div>
                     <button
                       className={`${styles.createEvent__btn} btn_main accent`}
-                      onClick={() => setShowCreateEvent(true)}
+                      onClick={closeModal}
                     >
                       Create Event
                     </button>
@@ -258,7 +280,7 @@ function DashboardContent({ userId, user }: { userId: string; user: User }) {
                 <DashboardEventsHeader
                   events={events}
                   clubs={clubs}
-                  setShowCreateEvent={setShowCreateEvent}
+                  setEventModalToShow={setEventModalToShow}
                   onFilterChange={handleFilterChange}
                 />
                 <div className={styles.dashboardEvents__content}>
@@ -308,6 +330,7 @@ function DashboardContent({ userId, user }: { userId: string; user: User }) {
                                         runclub: ev.runclub,
                                       }}
                                       onDeleted={handleEventDeleted}
+                                      onUpdate={openEditEventModal}
                                       showActions={true}
                                       slug={club?.slug || ''}
                                       directLink={false}
@@ -329,27 +352,32 @@ function DashboardContent({ userId, user }: { userId: string; user: User }) {
         </div>
       </main>
       <Modal
-        open={showCreateEvent}
-        onClose={() => setShowCreateEvent(false)}
-        ariaLabel="Create event"
+        open={!!eventModalToShow}
+        onClose={closeModal}
+        ariaLabel={eventModalToShow === "update" ? "Edit event" : "Create event"}
+        title={eventModalToShow === "update" ? "Edit event" : "Create an event"}
         noClubsModal={clubs.length === 0}
         toast={eventToast}
         toastOpen={eventToastOpen}
         onToastOpenChange={setEventToastOpen}
       >
-        {clubs.length > 0 ? (
+        {clubs.length > 0 && eventModalToShow ? (
           <EventCreationForm
+            mode={eventModalToShow}
+            eventId={editingEvent?.id}
+            initialValues={editingEvent}
             runclubs={clubs.map((c) => ({ id: c.id, name: c.name }))}
-            onClose={() => setShowCreateEvent(false)}
+            onClose={closeModal}
             onEventCreated={handleEventCreated}
-             onToastUpdate={setEventToast}
+            onEventUpdated={handleEventUpdated}
+            onToastUpdate={setEventToast}
             onToastOpenChange={setEventToastOpen}
           />
         ) : (
           <div className="center fp-col">
             <h2 className="h3">No clubs available</h2>
             <p className="txt-body">You need to create a run club before you can create events.</p>
-            <Link href="/submit" className="btn_main accent"  onClick={() => setShowCreateEvent(false)}>
+            <Link href="/submit" className="btn_main accent"  onClick={closeModal}>
               Register a new club
             </Link>
           </div>
@@ -358,12 +386,13 @@ function DashboardContent({ userId, user }: { userId: string; user: User }) {
       {/* Edit club modal */}
       <Modal 
         open={!!editingClub} 
-        onClose={() => setEditingClub(null)} 
+        onClose={closeModal}
         ariaLabel="Edit run club" 
         isClubsModal={true}
         toast={clubToast}
         toastOpen={clubToastOpen}
         onToastOpenChange={setClubToastOpen}
+        title="Edit run club"
         >
         {editingClub && (
           <RunClubRegistrationForm

@@ -1,8 +1,9 @@
 "use client";
 
 import React, { useEffect, useRef, useState, useTransition } from "react";
+import Image from "next/image";
 import { useAuth } from "@/app/providers/AuthProvider";
-import { createEvent } from "@/app/actions";
+import { saveEvent } from "@/app/actions";
 import styles from "../Dashboard/DashboardClient.module.css";
 import { getAuth } from "firebase/auth";
 import { RunClubEvent } from "@/app/lib/types/runClubEvent";
@@ -15,10 +16,14 @@ import ImageUploadField from "./ImageUploadField";
 type RunClubOption = { id: string; name?: string; title?: string };
 
 type Props = {
+  mode: "create" | "update";
+  eventId?: string;
+  initialValues?: Partial<RunClubEvent> | null;
   runclubId?: string;
   runclubs?: RunClubOption[];
   onClose?: () => void;
   onEventCreated?: (newEvent: RunClubEvent) => void;
+  onEventUpdated?: (updatedEvent: RunClubEvent) => void;
   onToastUpdate?: (toast: { message: string; type: 'success' | 'error'; countdown?: number | null }) => void;
   onToastOpenChange?: (open: boolean) => void;
 };
@@ -30,13 +35,15 @@ type FormState =
 
 const initialState: FormState = undefined;
 
-export default function EventCreationForm({ runclubId, runclubs = [], onClose, onEventCreated, onToastUpdate, onToastOpenChange }: Props) {
+export default function EventCreationForm({ mode, eventId, initialValues, runclubId, runclubs = [], onClose, onEventCreated, onEventUpdated, onToastUpdate, onToastOpenChange }: Props) {
   const { user } = useAuth();
   const formRef = useRef<HTMLFormElement | null>(null);
   const [state, setState] = useState<FormState>(initialState);
   const [isPending, startTransition] = useTransition();
   const [selectedRunclub, setSelectedRunclub] = useState<string>(runclubId || runclubs[0]?.id || "");
+  // Image ref and preview
   const imageUploadFieldRef = useRef<{ reset: () => void } | null>(null);
+  const [existingImageUrl, setExistingImageUrl] = useState<string | null>(null);
   // For resetting tags
   const [resetKey, setResetKey] = useState(0);
   // Handle time
@@ -57,10 +64,52 @@ export default function EventCreationForm({ runclubId, runclubs = [], onClose, o
     });
   };
 
+
+  // Pre-populate form for update mode
   useEffect(() => {
-    if (runclubId) setSelectedRunclub(runclubId);
-    else if (runclubs.length) setSelectedRunclub(runclubs[0].id);
-  }, [runclubId, runclubs]);
+    if (mode === "update" && initialValues) {
+      if (initialValues.startTime) {
+        const [hour, minute] = initialValues.startTime.split(":");
+        setStartTime({ hour, minute });
+      }
+      if (initialValues.endTime) {
+        const [hour, minute] = initialValues.endTime.split(":");
+        setEndTime({ hour, minute });
+      }
+      if (initialValues.image) {
+        setExistingImageUrl(initialValues.image);
+      }
+      setSelectedRunclub(initialValues.runclub_id || runclubId || "");
+      // Set resetKey to pre-populate tags
+      setResetKey(k => k + 1);
+    }
+  }, [mode, initialValues, runclubId]);
+
+  // Reset form when switching to create mode
+  useEffect(() => {
+    if (mode !== "create") return;
+    setStartTime({ hour: "", minute: "" });
+    setEndTime({ hour: "", minute: "" });
+    setSelectedRunclub(runclubId || runclubs[0]?.id || "");
+    setExistingImageUrl(null);
+    setResetKey((k) => k + 1);
+    imageUploadFieldRef.current?.reset?.();
+    formRef.current?.reset();
+  }, [mode]);
+
+  // Determine if we should show existing image
+  const showExistingImage = mode === "update" && existingImageUrl;
+
+
+  // Set default selected runclub
+   useEffect(() => {
+    if (mode === "update") return;
+    if (runclubId) {
+      setSelectedRunclub(runclubId);
+    } else if (runclubs.length) {
+      setSelectedRunclub(runclubs[0].id);
+    }
+  }, [mode, runclubId, runclubs]);
 
   // Open toast when we receive a message
    useEffect(() => {
@@ -118,6 +167,10 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
 
     const formData = new FormData(formRef.current);
 
+     // Add mode and eventId
+    formData.set("mode", mode);
+    if (eventId) formData.set("eventId", eventId);
+
      // Add time values directly - format on server if needed
     formData.set("startTime", `${startTime.hour}:${startTime.minute}`);
     
@@ -147,44 +200,43 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
 
     startTransition(async () => {
       try {
-        const result = await createEvent(undefined, formData);
+        if (!formRef.current) return;
+        const result = await saveEvent(undefined, formData);
         setState(result);
 
-        if (result && result.success) {
-          if (!formRef.current) return;
-
-            const eventId = result.id;
-            if (!eventId) {
-            console.error("No event ID returned from server.");
-            return;
-            }
-
-            // Fetch the newly created event document
-            const eventDoc = await getDoc(doc(db, "events", eventId));
-            if (eventDoc.exists()) {
-            const newEvent = {
-                id: eventDoc.id,
-                ...eventDoc.data(),
-            } as RunClubEvent;
-
-            // Call the callback function to update eventsState
-            if (onEventCreated) {
-                onEventCreated(newEvent);
-            }
-            } else {
-            console.error("Event document not found:", eventId);
-            }
-
-          setResetKey(k => k + 1); // Triggers reset in children
-          formRef.current.reset();
-          setStartTime({ hour: "", minute: "" });
-          setEndTime({ hour: "", minute: "" });
-          setSelectedRunclub(runclubs[0]?.id || "");
-          imageUploadFieldRef.current?.reset?.();
-          setCountdown(5);
-        } else {
+        if (!result?.success) {
           onToastOpenChange?.(true);
+          return;
         }
+
+        const savedId = result.id ?? eventId;
+        if (!savedId) {
+          console.error("No event ID returned from server.");
+          return;
+        }
+
+        const eventDoc = await getDoc(doc(db, "events", savedId));
+        if (!eventDoc.exists()) {
+          console.error("Event document not found:", savedId);
+          return;
+        }
+
+        const savedEvent = { id: eventDoc.id, ...eventDoc.data() } as RunClubEvent;
+
+        if (mode === "update") {
+          onEventUpdated?.(savedEvent);
+          onClose?.();
+          return;
+        }
+
+        onEventCreated?.(savedEvent);
+        setResetKey((k) => k + 1);
+        formRef.current.reset();
+        setStartTime({ hour: "", minute: "" });
+        setEndTime({ hour: "", minute: "" });
+        setSelectedRunclub(runclubId || runclubs[0]?.id || "");
+        imageUploadFieldRef.current?.reset?.();
+        setCountdown(3);
       } catch (err: unknown) {
         console.error("Event submit error:", err);
         setState({ success: false, message: (err as Error)?.message || "Unexpected error" });
@@ -234,14 +286,14 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
             <label htmlFor="title" className="rcForm__label">
               Event title <span className="rcForm__required">*</span>
             </label>
-            <input id="title" name="title" required className="rcForm__input" maxLength={256} />
+            <input id="title" name="title" defaultValue={initialValues?.title || ""} required className="rcForm__input" maxLength={256} />
           </div>
 
           <div className="inputRow fp">
             <label htmlFor="date" className="rcForm__label">
               Date <span className="rcForm__required">*</span>
             </label>
-            <input id="date" name="date" type="date" required className="rcForm__input" />
+            <input id="date" name="date" type="date" defaultValue={initialValues?.date || ""} required className="rcForm__input" />
               {state && !state.success && state.errors?.date && (
                 <p id="date-error" className="rcForm__hint white" role="alert">
                   {state.errors.date[0]}
@@ -261,6 +313,8 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
                 onChange={handleStartTimeChange}
                 is24Hour
                 required
+                hourPlaceholder={initialValues?.startTime ? initialValues.startTime.split(":")[0] : "HH"}
+                minutePlaceholder={initialValues?.startTime ? initialValues.startTime.split(":")[1] : "MM"}
                 classes={{
                   container: "rcForm__timePicker",
                   timePicker: "pickerInput",
@@ -287,6 +341,8 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
                 value={endTime}
                 onChange={handleEndTimeChange}
                 is24Hour
+                hourPlaceholder={initialValues?.endTime ? initialValues.endTime.split(":")[0] : "HH"}
+                minutePlaceholder={initialValues?.endTime ? initialValues.endTime.split(":")[1] : "MM"}
                 classes={{
                   container: "rcForm__timePicker",
                   timePicker: "pickerInput",
@@ -308,36 +364,57 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
             <label htmlFor="locationAddress" className="rcForm__label">
               Location <span className="rcForm__required">*</span>
             </label>
-            <input id="locationAddress" name="locationAddress" className="rcForm__input" maxLength={256} placeholder="e.g. Tallinn, Kadriorg Park" required  />
+            <input id="locationAddress" name="locationAddress" className="rcForm__input" maxLength={256} placeholder="e.g. Tallinn, Kadriorg Park" defaultValue={initialValues?.locationAddress} required  />
           </div>
 
           <div className="inputRow fp-col">
             <label htmlFor="locationUrl" className="rcForm__label">
               Google Maps URL
             </label>
-            <input id="locationUrl" name="locationUrl" type="url" className="rcForm__input" placeholder="https://maps.google.com/..." />
+            <input id="locationUrl" name="locationUrl" type="url" className="rcForm__input" placeholder="https://maps.google.com/..." defaultValue={initialValues?.locationUrl} />
           </div>
 
           <div className="inputRow fp-col">
             <label htmlFor="distance" className="rcForm__label">Distance (km) <span className="rcForm__required">*</span></label>
-            <input id="distance" name="distance" type="number" step="0.1" min="0" required className="rcForm__input" />
+            <input id="distance" name="distance" type="number" step="0.1" min="0" defaultValue={initialValues?.distance} required className="rcForm__input" />
           </div>
           <div className="inputRow fp-col">
             <label htmlFor="pace" className="rcForm__label">Pace (e.g. 6:00 min/km)</label>
-            <input id="pace" name="pace" type="text" className="rcForm__input" />
+            <input id="pace" name="pace" type="text" defaultValue={initialValues?.pace} className="rcForm__input" />
           </div>
 
           <label htmlFor="image" className={`rcForm__label h5`}>
             Event image <span className={styles.small}>(JPG, PNG, WEBP, SVG, max 5MB)</span>
           </label>
-          <ImageUploadField name="image" altStyle={true} allowedTypes={["image/jpeg", "image/jpg", "image/png", "image/webp", "image/svg+xml"]} />
-          <EventTagsField name="tags" maxTags={3} resetKey={resetKey} />
+          {showExistingImage && (
+            <div className="existingImage fp-col">
+              <label className="rcForm__label h5">Current event image</label>
+              <div style={{ position: "relative", display: "inline-block" }}>
+                <Image
+                  src={existingImageUrl}
+                  alt="Current event image"
+                  style={{ maxWidth: "250px", maxHeight: "250px", borderRadius: "0.8rem", objectFit: "cover" }}
+                  loading="lazy"
+                  width={250}
+                  height={250}
+                />
+              </div>
+            </div>
+          )}
+          <ImageUploadField 
+            name="image" 
+            altStyle={true} 
+            allowedTypes={["image/jpeg", "image/jpg", "image/png", "image/webp", "image/svg+xml"]} 
+            initialUrl={showExistingImage ? existingImageUrl! : undefined}
+            />
+          <EventTagsField name="tags" maxTags={3} resetKey={resetKey} initialTags={initialValues?.tags || []} />
 
           <div className="textareaRow fp-col">
             <label htmlFor="about" className="rcForm__label">
               About <span className="rcForm__required">*</span>
             </label>
-            <textarea id="about" name="about" placeholder="What should runners know? Describe the route, pace (easy/moderate/fast), difficulty level, what to bring, and any post-run plans like coffee or stretching together!" rows={6} className="rcForm__textarea" maxLength={5000} required />
+            <textarea id="about" name="about" placeholder="What should runners know? Describe the route, pace (easy/moderate/fast), difficulty level, what to bring, and any post-run plans like coffee or stretching together!"
+            defaultValue={initialValues?.about} rows={6} className="rcForm__textarea" maxLength={5000} required />
           </div>
         </section>
       </div>
@@ -354,7 +431,7 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
           disabled={isPending}
           style={{ opacity: isPending ? 0.6 : 1 }}
         >
-          {isPending ? "Creating..." : "Create event"}
+          {mode === "create" ? (isPending ? "Creating..." : "Create Event") : isPending ? "Updating..." : "Update Event"}
         </button>
       </div>
     </form>

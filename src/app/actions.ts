@@ -254,11 +254,14 @@ export async function saveRunClub(
    Create event server action
    ========================================================================== */
 
-export async function createEvent(
+export async function saveEvent(
   prevState: ActionResult | undefined,
   formData: FormData
 ): Promise<ActionResult> {
-  // Expect idToken in formData (client should include user.getIdToken())
+  const mode = formData.get("mode") as "create" | "update";
+  const eventId = formData.get("eventId") as string | undefined;
+
+  // Get user ID token from formData
   const idToken = formData.get("idToken") as string | undefined;
   if (!idToken) {
     return {
@@ -279,6 +282,26 @@ export async function createEvent(
     };
   }
 
+  // For update mode, verify ownership of event
+  if (mode === "update") {
+    if (!eventId) {
+      return {
+        success: false,
+        message: "Event ID is required for updates.",
+      };
+    }
+
+    const eventDoc = await adminDb.collection("events").doc(eventId).get();
+    if (!eventDoc.exists) {
+      return { success: false, message: "Event not found." };
+    }
+    
+    const eventData = eventDoc.data();
+    if (eventData?.creator_id !== creatorUid) {
+      return { success: false, message: "You don't have permission to update this event." };
+    }
+  }
+
   try {
     // Extract fields from formData
     const title = String(formData.get("title") || "").trim();
@@ -290,13 +313,14 @@ export async function createEvent(
     const about = getOptionalField(formData, "about") || "";
     const runclub_id = String(formData.get("runclub_id") || "").trim();
     const imageFile = formData.get("image") as File | null;
-    let imageUrl: string | null = null;
     const tags = formData.getAll("tags") as string[];
     const distance = formData.get("distance") ? Number(formData.get("distance")) : null;
     const pace = formData.get("pace") ? String(formData.get("pace")) : null;
 
-    if (imageFile) {
-      // Use event-images folder, fileName can be eventId or Date.now()
+    // Handle image upload if provided
+    let imageUrl: string | null = null;
+    if (imageFile && imageFile.size > 0) {
+      // Validate file size/type if needed
       imageUrl = await uploadImageToStorage(imageFile, "event-images", `${Date.now()}-${imageFile.name}`);
     }
 
@@ -328,17 +352,24 @@ export async function createEvent(
       about,
       runclub_id,
       creator_id: creatorUid,
-      image: imageUrl,
       tags,
       distance,
       pace,
-      createdAt: Timestamp.now(),
       updatedAt: Timestamp.now(),
     };
 
+    // Add image url if provided
+    if (imageUrl) {
+      submission.image = imageUrl;
+    }
+
+    // Set createdAt only for new events
+    if (mode === "create") {
+      submission.createdAt = Timestamp.now();
+    }
+
     // Validate with Zod schema
     const validatedFields = submitEventSchema.safeParse(submission);
-
     if (!validatedFields.success) {
       const errors: Record<string, string[]> = {};
       validatedFields.error.issues.forEach((issue) => {
@@ -362,21 +393,29 @@ export async function createEvent(
       }
     });
 
-    // Ensure server-controlled fields
-    cleanData.creator_id = creatorUid;
-    cleanData.runclub_id = runclub_id;
-    cleanData.runclub = runclubRef; // admin SDK DocumentReference stored in Firestore
+    // Save to Firestore
+    if (mode === "create") {
+      // Ensure server-controlled fields are set
+      cleanData.creator_id = creatorUid;
+      cleanData.runclub_id = runclub_id;
+      cleanData.runclub = runclubRef;
+      const docRef = await adminDb.collection("events").add(cleanData);
+      return {
+        success: true,
+        message: "Event successfully created!",
+        id: docRef.id,
+      };
+    } else {
+      await adminDb.collection("events").doc(eventId!).update(cleanData);
+      return {
+        success: true,
+        message: "Event successfully updated!",
+        id: eventId,
+      };
+    }
 
-    // Save to Firestore under "events"
-    const docRef = await adminDb.collection("events").add(cleanData);
-
-    return {
-      success: true,
-      message: "Event successfully created!",
-      id: docRef.id,
-    };
   } catch (error: unknown) {
-    console.error("createEvent action error:", error);
+    console.error("saveEvent action error:", error);
     const errorMessage = error instanceof Error ? error.message : "An unexpected error occurred";
     return {
       success: false,
