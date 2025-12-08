@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useEffect, useRef, useState, useTransition } from "react";
-import Image from "next/image";
 import { useAuth } from "@/app/providers/AuthProvider";
 import { saveEvent } from "@/app/actions";
 import styles from "../Dashboard/DashboardClient.module.css";
@@ -44,6 +43,7 @@ export default function EventCreationForm({ mode, eventId, initialValues, runclu
   // Image ref and preview
   const imageUploadFieldRef = useRef<{ reset: () => void } | null>(null);
   const [existingImageUrl, setExistingImageUrl] = useState<string | null>(null);
+  const [removeImage, setRemoveImage] = useState(false);
   // For resetting tags
   const [resetKey, setResetKey] = useState(0);
   // Handle time
@@ -63,6 +63,12 @@ export default function EventCreationForm({ mode, eventId, initialValues, runclu
       minute: value.minute,
     });
   };
+
+
+  const handleImgRemove = () => {
+    setExistingImageUrl(null);
+    setRemoveImage(true);
+  }
 
 
   // Pre-populate form for update mode
@@ -99,7 +105,6 @@ export default function EventCreationForm({ mode, eventId, initialValues, runclu
 
   // Determine if we should show existing image
   const showExistingImage = mode === "update" && existingImageUrl;
-
 
   // Set default selected runclub
    useEffect(() => {
@@ -177,6 +182,9 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     if (endTime.hour && endTime.minute) {
       formData.set("endTime", `${endTime.hour}:${endTime.minute}`);
     }
+
+    // Pass flag for image removal
+    formData.set("removeImage", removeImage ? "true" : "false");
 
     // Get ID token for authentication
     let idToken: string | undefined;
@@ -383,30 +391,19 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
             <input id="pace" name="pace" type="text" defaultValue={initialValues?.pace} className="rcForm__input" />
           </div>
 
+          <div className="inputRow">
           <label htmlFor="image" className={`rcForm__label h5`}>
             Event image <span className={styles.small}>(JPG, PNG, WEBP, SVG, max 5MB)</span>
           </label>
-          {showExistingImage && (
-            <div className="existingImage fp-col">
-              <label className="rcForm__label h5">Current event image</label>
-              <div style={{ position: "relative", display: "inline-block" }}>
-                <Image
-                  src={existingImageUrl}
-                  alt="Current event image"
-                  style={{ maxWidth: "250px", maxHeight: "250px", borderRadius: "0.8rem", objectFit: "cover" }}
-                  loading="lazy"
-                  width={250}
-                  height={250}
-                />
-              </div>
-            </div>
-          )}
           <ImageUploadField 
             name="image" 
             altStyle={true} 
             allowedTypes={["image/jpeg", "image/jpg", "image/png", "image/webp", "image/svg+xml"]} 
             initialUrl={showExistingImage ? existingImageUrl! : undefined}
+            onRemove={handleImgRemove}
             />
+
+          </div>
           <EventTagsField name="tags" maxTags={3} resetKey={resetKey} initialTags={initialValues?.tags || []} />
 
           <div className="textareaRow fp-col">

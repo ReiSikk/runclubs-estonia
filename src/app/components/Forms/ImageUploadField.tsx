@@ -1,7 +1,7 @@
 "use client";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
-import { LucideUpload } from "lucide-react";
+import { LucideUpload, LucideXCircle } from "lucide-react";
 
 type Props = {
   name: string;
@@ -10,6 +10,7 @@ type Props = {
   maxSizeMB?: number;
   initialUrl?: string;
   onError?: (msg: string | null) => void;
+  onRemove?: () => void;
 };
 
 export type ImageUploadFieldHandle = {
@@ -23,10 +24,15 @@ export default function ImageUploadField({
   maxSizeMB = 5,
   initialUrl,
   onError,
+  onRemove,
 }: Props) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [filePreview, setFilePreview] = useState<string | null>(initialUrl || null);
   const [fileError, setFileError] = useState<string | null>(null);
+
+  useEffect(() => {
+    setFilePreview(initialUrl || null);
+  }, [initialUrl]);
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -60,8 +66,15 @@ export default function ImageUploadField({
   };
 
   return (
+    <div className="fileWrapper fp-col">
+    {initialUrl && 
+      <div role="button" aria-label="Remove current image" className="txt-label uppercase removeBtn fp" onClick={onRemove}
+      >
+        Remove current image <LucideXCircle size={16} />
+      </div>
+    }
     <div className={`inputRow inputRow__file fp-col ${altStyle ? "alt" : ""}`}>
-      <span className={`rcForm__label h5`}>Drop your file here or...</span>
+      <span className={`rcForm__label h5`}>{`Drop your file here ${initialUrl ? "to replace the current image" : ""} or...`}</span>
       <div className={`rcForm__uploadBtn btn_main`}>
         Select file
         <div className={`icon fp`}>
@@ -82,18 +95,20 @@ export default function ImageUploadField({
           {fileError}
         </p>
       )}
-      {filePreview && (
-        <div style={{ marginTop: "0.8rem" }}>
+      {filePreview &&  (
+        <div style={{ marginTop: "0.8rem" }} className="existingImage fp-col">
           <Image
             src={filePreview}
             alt="Image preview"
-            style={{ maxWidth: "250px", maxHeight: "250px", borderRadius: "0.8rem", objectFit: "cover" }}
             loading="lazy"
-            width={250}
-            height={250}
+            width={400}
+            height={300}
+            style={{ width: "100%", height: "auto", borderRadius: "8px", objectFit: "cover" }}
           />
         </div>
       )}
     </div>
+    </div>
+
   );
 }

@@ -267,7 +267,7 @@ const isAnyModalOpen = eventModalToShow || !!editingClub;
                     </div>
                     <button
                       className={`${styles.createEvent__btn} btn_main accent`}
-                      onClick={closeModal}
+                      onClick={() => setEventModalToShow("create")}
                     >
                       Create Event
                     </button>

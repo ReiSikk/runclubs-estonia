@@ -19,11 +19,18 @@ interface Props {
   clubId?: string;
   initialValues?: RunClub;
   onEditSuccess?: () => void;
-  onToastUpdate?: (toast: { message: string; type: 'success' | 'error'; countdown?: number | null }) => void;
+  onToastUpdate?: (toast: { message: string; type: "success" | "error"; countdown?: number | null }) => void;
   onToastOpenChange?: (open: boolean) => void;
 }
 
-export default function RunClubRegistrationForm({ mode, clubId, initialValues, onEditSuccess, onToastUpdate, onToastOpenChange }: Props) {
+export default function RunClubRegistrationForm({
+  mode,
+  clubId,
+  initialValues,
+  onEditSuccess,
+  onToastUpdate,
+  onToastOpenChange,
+}: Props) {
   const router = useRouter();
   const queryClient = useQueryClient();
   const [state, setState] = useState<FormState>(initialState);
@@ -133,8 +140,8 @@ export default function RunClubRegistrationForm({ mode, clubId, initialValues, o
 
             // Invalidate queries before redirect so dashboard fetches fresh data
             if (user?.uid) {
-              queryClient.removeQueries({ queryKey: ['runclubs', user.uid] });
-              queryClient.removeQueries({ queryKey: ['events'] });
+              queryClient.removeQueries({ queryKey: ["runclubs", user.uid] });
+              queryClient.removeQueries({ queryKey: ["events"] });
             }
 
             // Start countdown and redirect
@@ -233,37 +240,18 @@ export default function RunClubRegistrationForm({ mode, clubId, initialValues, o
               )}
             </div>
 
-            {showExistingLogo && (
-              <div className={styles.existingLogo + " fp-col"}>
-                <label htmlFor="logo" className={`rcForm__label h5`}>
-                  Current logo
-                </label>
-                <div style={{ position: "relative", display: "inline-block" }}>
-                  <Image
-                    src={existingLogoUrl}
-                    alt="Current logo"
-                    style={{ maxWidth: "250px", maxHeight: "250px", borderRadius: "0.8rem", objectFit: "cover" }}
-                    loading="lazy"
-                    width={250}
-                    height={250}
-                  />
-                </div>
-                <p className="txt-small" style={{ marginTop: "0.5rem", opacity: 0.7 }}>
-                  Upload a new image below to replace the current logo
-                </p>
-              </div>
-            )}
-
-            <label htmlFor="logo" className={`rcForm__label h5`}>
-              Logo <span className={styles.small}>(JPG, PNG, WEBP, SVG, max 5MB)</span>
-            </label>
-            <ImageUploadField
-              name="logo"
-              altStyle={true}
-              initialUrl={showExistingLogo ? existingLogoUrl! : undefined}
-              allowedTypes={["image/jpeg", "image/jpg", "image/png", "image/webp", "image/svg+xml"]}
-              maxSizeMB={5}
-            />
+            <div className="inputRow fp-col">
+              <label htmlFor="logo" className={`rcForm__label h5`}>
+                Logo <span className={styles.small}>(JPG, PNG, WEBP, SVG, max 5MB)</span>
+              </label>
+              <ImageUploadField
+                name="logo"
+                altStyle={true}
+                initialUrl={showExistingLogo ? existingLogoUrl! : undefined}
+                allowedTypes={["image/jpeg", "image/jpg", "image/png", "image/webp", "image/svg+xml"]}
+                maxSizeMB={5}
+              />
+            </div>
           </section>
         </div>
 

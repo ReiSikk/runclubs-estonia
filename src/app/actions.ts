@@ -12,6 +12,7 @@ import { Timestamp } from "firebase-admin/firestore";
 import { getAuth } from "firebase-admin/auth";
 import { submitEventSchema } from './lib/types/submitEvent';
 import { uploadImageToStorage } from './lib/firebase/uploadImageToStorage';
+import { FieldValue } from "firebase-admin/firestore";
 
 type ActionResult =
   | { success: true; message: string; id?: string }
@@ -270,6 +271,9 @@ export async function saveEvent(
     };
   }
 
+  // Check if image removal is requested
+  const removeImage = formData.get("removeImage") === "true";
+
   // Verify token and get UID
   let creatorUid: string;
   try {
@@ -390,6 +394,7 @@ export async function saveEvent(
     Object.entries(validatedFields.data).forEach(([key, value]) => {
       if (value !== undefined && value !== null && value !== "") {
         cleanData[key] = value;
+
       }
     });
 
@@ -406,6 +411,12 @@ export async function saveEvent(
         id: docRef.id,
       };
     } else {
+      // For update check if we need to remove image 
+      if (removeImage) {
+        cleanData.image = FieldValue.delete();
+      } else if (imageUrl) {
+        cleanData.image = imageUrl;
+      }
       await adminDb.collection("events").doc(eventId!).update(cleanData);
       return {
         success: true,

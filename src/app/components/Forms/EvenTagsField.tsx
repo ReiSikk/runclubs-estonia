@@ -19,27 +19,28 @@ type Props = {
   resetKey?: number;
 };
 
-export default function EventTagsField({ name, maxTags = 3, initialTags = [], resetKey }: Props) {
+export default function EventTagsField(props: Props) {
+  const { initialTags = [], resetKey, maxTags = 3, name } = props;
   const [selected, setSelected] = useState<string[]>(initialTags);
+
+  // Pre-fill (or clear) when initialTags or resetKey changes
+  useEffect(() => {
+    setSelected(initialTags ?? []);
+  }, [initialTags, resetKey]);
 
   const handleChange = (tag: string) => {
     if (selected.includes(tag)) {
-      setSelected(selected.filter(t => t !== tag));
+      setSelected(selected.filter((t) => t !== tag));
     } else if (selected.length < maxTags) {
       setSelected([...selected, tag]);
     }
   };
 
-    // Reset selected tags when form is submitted successfully
-    useEffect(() => {
-    setSelected([]);
-    }, [resetKey]);
-
   return (
     <div className="inputRow fp-col">
       <label className="rcForm__label h5">Tags (select up to {maxTags})</label>
       <div className="rcForm__checkboxGroup fp-row" role="group">
-        {TAG_OPTIONS.map(tag => (
+        {TAG_OPTIONS.map((tag) => (
           <label key={tag} className="rcForm__checkboxLabel txt-body">
             <input
               type="checkbox"
