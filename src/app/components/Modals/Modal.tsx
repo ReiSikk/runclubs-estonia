@@ -83,9 +83,11 @@ export default function Modal({ open, onClose, children, ariaLabel = "Modal dial
         </div>
         }
         <div className={styles.modal__wrapper}>
-        <button className={`${styles.close} ${styles.noClubsModalClose}`} aria-label="Close"     onClick={onClose}>
-          <LucideX  size={20} />
-        </button>
+          {noClubsModal &&
+            <button className={`${styles.close} ${styles.noClubsModalClose}`} aria-label="Close"     onClick={onClose}>
+              <LucideX  size={20} />
+            </button>
+          }
         {children}
         </div>
       </div>
