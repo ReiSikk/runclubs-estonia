@@ -13,7 +13,13 @@ export const submitEventSchema = z.object({
   endTime: z.string().nullable().optional(),
   locationAddress: z.string().min(1).max(256),
   locationUrl: z.string().nullable().optional(),
-  about: z.string().min(1).max(5000), // HTML or markdown string from rich-editor
+  description: z.string()
+    .min(10, "Description must be at least 10 characters")
+    .max(5000, "Description is too long")
+    .refine((val) => {
+      const text = val.replace(/<[^>]*>/g, '').trim();
+      return text.length > 0;
+    }, "Description cannot be empty"),
   runclub_id: z.string().min(1),
   image: z.any().optional(),
   tags: z.array(z.string()).optional(),

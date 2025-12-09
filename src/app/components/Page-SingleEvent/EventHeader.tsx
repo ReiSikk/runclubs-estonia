@@ -11,7 +11,6 @@ type Props = {
 };
 
 export default function EventHeader({ club, event }: Props) {
-  console.log("Event image url:", event.image);
 
   return (
     <section className={styles.eventHeader}>
@@ -37,7 +36,7 @@ export default function EventHeader({ club, event }: Props) {
             <div className={styles.eventHeader__hostInner}>
               <div className={styles.eventHeader__hostLogo}>
                 {club.logo ? (
-                  <Image src={club.logo} alt={club.name} fill objectFit="cover" />
+                  <Image src={club.logo} alt={club.name} fill style={{ objectFit: "cover" }} />
                 ) : (
                   <div className={styles.eventHeader__hostLogoFallback}>{club.name.slice(0, 2).toUpperCase()}</div>
                 )}
@@ -68,13 +67,13 @@ export default function EventHeader({ club, event }: Props) {
             </div>
             <div className={styles.eventHeader__tags}>
               {event.tags?.map((tag) => (
-                <span key={tag} className={styles["eventHeader__tag"] + " card-label card-label--big"}>
+                <span key={tag} className="card-label card-label--big">
                   {tag}
                 </span>
               ))}
             </div>
-            <span className={styles.eventHeader__subtitle + " txt-label uppercase"}>About this event</span>
-            <div className={styles.eventHeader__desc + " txt-body"}>{event.about}</div>
+            <span className={styles.eventHeader__subtitle + " h2"}>About this event</span>
+            <div className={styles.eventHeader__desc + " txt-body"} dangerouslySetInnerHTML={{ __html: event.description }} />
           </div>
           <div className={styles.eventHeader__cards}>
             {event.distance &&

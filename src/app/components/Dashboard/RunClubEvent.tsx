@@ -26,7 +26,6 @@ interface RunClubEventProps {
   onUpdate?: (event: RunClubEvent) => void;
   showActions?: boolean;
   slug?: string;
-  directLink?: boolean;
   club?: RunClub;
 }
 
@@ -36,7 +35,6 @@ export default function RunClubEventCard({
   onUpdate,
   showActions,
   slug,
-  directLink,
   club,
 }: RunClubEventProps) {
   const { id, title, date, startTime, endTime, locationAddress } = event;

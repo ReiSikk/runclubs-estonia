@@ -11,6 +11,7 @@ import { doc, getDoc } from "firebase/firestore";
 import TimePicker, { TimePickerValue } from "react-accessible-time-picker";
 import EventTagsField from "./EvenTagsField";
 import ImageUploadField from "./ImageUploadField";
+import RichTextEditor from "./RichTextEditor";
 
 type RunClubOption = { id: string; name?: string; title?: string };
 
@@ -38,6 +39,7 @@ export default function EventCreationForm({ mode, eventId, initialValues, runclu
   const { user } = useAuth();
   const formRef = useRef<HTMLFormElement | null>(null);
   const [state, setState] = useState<FormState>(initialState);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [isPending, startTransition] = useTransition();
   const [selectedRunclub, setSelectedRunclub] = useState<string>(runclubId || runclubs[0]?.id || "");
   // Image ref and preview
@@ -147,6 +149,9 @@ export default function EventCreationForm({ mode, eventId, initialValues, runclu
 const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
+    // Guard: ignore if already submitting/pending
+    if (isSubmitting || isPending) return;
+
     // prefer the hook user, fallback to firebase client currentUser
     const clientAuth = getAuth();
     const currentUser = user ?? clientAuth.currentUser ?? undefined;
@@ -206,6 +211,18 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     }
     formData.set("idToken", idToken);
 
+    // Check description length, strip HTML tags
+    const rawDescription = formData.get('description') as string;
+    const strippedText = rawDescription.replace(/<[^>]*>/g, '').trim();
+    if (strippedText.length > 5000) {
+      setState({ success: false, message: 'Description exceeds 5000 characters. Please shorten it.' });
+      onToastOpenChange?.(true);
+      return;
+    }
+
+    // All pre check passed - set as submitting
+    setIsSubmitting(true);
+
     startTransition(async () => {
       try {
         if (!formRef.current) return;
@@ -249,6 +266,8 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         console.error("Event submit error:", err);
         setState({ success: false, message: (err as Error)?.message || "Unexpected error" });
         onToastOpenChange?.(true);
+      } finally {
+        setIsSubmitting(false);
       }
     });
   };
@@ -408,10 +427,13 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
 
           <div className="textareaRow fp-col">
             <label htmlFor="about" className="rcForm__label">
-              About <span className="rcForm__required">*</span>
+              Description <span className="rcForm__required">*</span>
             </label>
-            <textarea id="about" name="about" placeholder="What should runners know? Describe the route, pace (easy/moderate/fast), difficulty level, what to bring, and any post-run plans like coffee or stretching together!"
-            defaultValue={initialValues?.about} rows={6} className="rcForm__textarea" maxLength={5000} required />
+              <RichTextEditor
+                name="description"
+                initialValue={initialValues?.description || ''} // Pre-fill for edit mode
+                placeholder="Describe your run club. What should members know? Include details like meeting points, pace, and any rules."
+              />
           </div>
         </section>
       </div>
@@ -425,7 +447,8 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         <button
           type="submit"
           className="rcForm__submit btn_main white white--alt"
-          disabled={isPending}
+          disabled={isPending || isSubmitting}
+          aria-disabled={isPending || isSubmitting}
           style={{ opacity: isPending ? 0.6 : 1 }}
         >
           {mode === "create" ? (isPending ? "Creating..." : "Create Event") : isPending ? "Updating..." : "Update Event"}

@@ -1174,13 +1174,16 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 }
 .textareaRow {
   width: 100%;
+  background: var(--cream);
+  border-radius: var(--bradius-8);
+  padding: 1.6rem;
+  color: var(--dark);
 
   textarea {
     border-radius: var(--bradius-8);
     padding: 8px;
     border: 1px solid var(--dark);
     background: var(--cream);
-    color: var(--dark);
     width: 100%;
     max-width: 768px;
     font-family: var(--font-inter-tight);

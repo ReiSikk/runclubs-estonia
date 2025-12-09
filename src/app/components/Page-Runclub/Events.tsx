@@ -46,7 +46,6 @@ export default function EventsSection({ club }: UpcomingEventsProps) {
               showActions={false}  
               slug={club.slug}
               club={club}
-              directLink={true}
               />
           ))}
         </div>

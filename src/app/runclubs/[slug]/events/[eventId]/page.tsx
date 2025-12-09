@@ -29,7 +29,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
     return {
       title: `${event.title} | ${club.name}`,
-      description: event.about?.slice(0, 160) || `Join ${club.name} for ${event.title}`,
+      description: event.description?.slice(0, 160) || `Join ${club.name} for ${event.title}`,
     };
   } catch {
     return { title: "Event Not Found" };

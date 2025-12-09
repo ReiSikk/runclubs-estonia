@@ -2,17 +2,21 @@
 
 import 'server-only'; // Ensure these server actions don't get bundled into client
 
-import { submitRunClubSchema } from "@/app/lib/types/submitRunClub";
+// Firestore and firebase admin imports
 import { adminApp, adminDb, adminAuth } from "@/app/lib/firebase/firebaseAdmin";
+import { Timestamp } from "firebase-admin/firestore";
+import { getAuth } from "firebase-admin/auth";
+import { uploadImageToStorage } from './lib/firebase/uploadImageToStorage';
+import { FieldValue } from "firebase-admin/firestore";
 import { getStorage } from "firebase-admin/storage";
+// Schemas and types
+import { submitRunClubSchema } from "@/app/lib/types/submitRunClub";
+import { submitEventSchema } from './lib/types/submitEvent';
+// Utility functions
 import getOptionalField from "@/app/lib/utils/getOptionalField";
 import normalizeToSlug from "@/app/lib/utils/generateSlugFromName";
 import sanitizeSVGs from "@/app/lib/utils/sanitizeSvgs";
-import { Timestamp } from "firebase-admin/firestore";
-import { getAuth } from "firebase-admin/auth";
-import { submitEventSchema } from './lib/types/submitEvent';
-import { uploadImageToStorage } from './lib/firebase/uploadImageToStorage';
-import { FieldValue } from "firebase-admin/firestore";
+import DOMPurify from 'isomorphic-dompurify';
 
 type ActionResult =
   | { success: true; message: string; id?: string }
@@ -295,6 +299,12 @@ export async function saveEvent(
     };
   }
 
+    const rawDescription = formData.get('description') as string;
+    const cleanDescription = DOMPurify.sanitize(rawDescription, {
+      ALLOWED_TAGS: ['p', 'strong', 'em', 'u', 'h2', 'h3', 'ul', 'ol', 'li', 'blockquote', 'a'],
+      ALLOWED_ATTR: ['href', 'target', 'rel'],
+    });
+
   // For update mode, verify ownership of event
   if (mode === "update") {
     if (!eventId) {
@@ -362,7 +372,7 @@ export async function saveEvent(
       endTime,
       locationAddress,
       locationUrl,
-      about,
+      description: cleanDescription,
       runclub_id,
       creator_id: creatorUid,
       tags,

@@ -43,7 +43,7 @@ export async function POST(req: NextRequest) {
     const newRef = eventsCol.doc();
     const eventDoc = {
       title: data.title,
-      description: data.about ?? "",
+      description: data.description,
       date: data.date,
       startTime: data.startTime ?? null,
       endTime: data.endTime ?? null,

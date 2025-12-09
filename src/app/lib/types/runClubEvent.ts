@@ -4,7 +4,7 @@ import { DocumentReference } from "firebase-admin/firestore";
 export interface RunClubEvent {
   id: string;
   title: string;
-  about: string;
+  description: string;
   date: string;
   startTime: string;
   endTime?: string | null;

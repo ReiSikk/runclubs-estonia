@@ -174,7 +174,6 @@ const isAnyModalOpen = eventModalToShow || !!editingClub;
 
 
     useEffect(() => {
-    console.log("Dashboard mounted, adding dashboard-body class to body");
     document.body.classList.add("page-dashboard");
     return () => {
       document.body.classList.remove("page-dashboard");
@@ -331,7 +330,7 @@ const isAnyModalOpen = eventModalToShow || !!editingClub;
                                       event={{
                                         id: ev.id,
                                         title: ev.title,
-                                        about: ev.about,
+                                        description: ev.description,
                                         date: ev.date,
                                         startTime: ev.startTime,
                                         endTime: ev.endTime,
@@ -344,7 +343,6 @@ const isAnyModalOpen = eventModalToShow || !!editingClub;
                                       onUpdate={openEditEventModal}
                                       showActions={true}
                                       slug={club?.slug || ''}
-                                      directLink={false}
                                       club={club}
                                     />
                                   </div>
