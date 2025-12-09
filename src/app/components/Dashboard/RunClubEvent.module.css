@@ -87,6 +87,7 @@
     color: var(--dark);
   }
 }
+
 .runClubEvent__title {
   margin-block: 0;
 }
@@ -115,7 +116,7 @@
   display: flex;
   gap: 8px;
   align-items: center;
-  margin-block: 1.6rem 0;
+  margin-block: 1.2rem 0;
 
   &:first-of-type {
     opacity: 0.8;

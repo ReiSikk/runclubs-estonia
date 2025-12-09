@@ -325,7 +325,7 @@ export async function saveEvent(
     let imageUrl: string | null = null;
     if (imageFile && imageFile.size > 0) {
       // Validate file size/type if needed
-      imageUrl = await uploadImageToStorage(imageFile, "event-images", `${Date.now()}-${imageFile.name}`);
+      imageUrl = await uploadImageToStorage(imageFile, "event-images", `${Date.now()}`);
     }
 
     // Ensure runclub exists and that the requesting user is the creator

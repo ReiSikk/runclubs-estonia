@@ -21,6 +21,10 @@
   --bradius-16: 16px;
   --bradius-32: 32px;
   --bradius-xl: 999px;
+  /* Box shadown */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.15);
   /* Feedback color */
   --success: #4bb543;
   --error: #ff0000;
@@ -908,14 +912,15 @@ button {
   justify-content: space-between;
   flex-wrap: nowrap;
   gap: 4px 24px;
-  transition: 0.3s ease;
   position: fixed;
   top: 0;
   left: -50%;
+  transform: translateX(50%) translateY(0);
   z-index: 99;
   background: rgba(0, 0, 0, 0.6);
+  box-shadow: 0 8px 10px -5px rgb(0 0 0 / 16%), 0 16px 24px 2px rgb(0 0 0 / 11%), 0 6px 30px 5px rgb(0 0 0 / 10%);
   backdrop-filter: blur(10px);
-  transform: translateX(50%);
+  transition: transform 0.3s ease;
 }
 .siteNav__logo {
   position: relative;
@@ -930,11 +935,11 @@ button {
     left: 50%;
     transform: translateX(-50%);
   }
+
 }
 
 .siteNav--scrolled {
-  padding-block: 16px;
-  box-shadow: 0 8px 10px -5px rgb(0 0 0 / 16%), 0 16px 24px 2px rgb(0 0 0 / 11%), 0 6px 30px 5px rgb(0 0 0 / 10%);
+  transform: translateY(-200%) translateX(50%);
 }
 
 /*

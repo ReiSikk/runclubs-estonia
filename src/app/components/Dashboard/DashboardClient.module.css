@@ -191,6 +191,18 @@
     div {
       gap: 1.6rem;
     }
+
+    .main {
+      flex-direction: column;
+
+      .dashboardEvents__btn {
+        margin-inline: auto;
+      }
+      div {
+        align-items: center;
+        text-align: center;
+      }
+    }
   }
 
   @media only screen and (min-width: 768px) and (max-width: 1024px), only screen and (min-width: 1025px) {
@@ -200,6 +212,8 @@
 .dashboardEvents__content {
   margin-inline: auto;
   width: 100%;
+  max-width: 768px;
+  
   .list {
     display: block;
     gap: 3.2rem;

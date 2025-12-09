@@ -1,7 +1,7 @@
 import Image from "next/image";
 import { RunClub } from "@/app/lib/types/runClub";
 import { RunClubEvent } from "@/app/lib/types/runClubEvent";
-import { CalendarDays, Clock, MapPin, Mail } from "lucide-react";
+import { CalendarDays, Clock, MapPin, Mail, LucideTrendingUp, LucideTimer } from "lucide-react";
 import { formatEventDate } from "@/app/lib/utils/convertTime";
 import styles from "./EventHeader.module.css";
 
@@ -11,23 +11,17 @@ type Props = {
 };
 
 export default function EventHeader({ club, event }: Props) {
+  console.log("Event image url:", event.image);
+  
   return (
     <section className={styles.eventHeader}>
       <div className={styles.eventHeader__container}>
         <div className={styles.eventHeader__left}>
           <div className={styles.eventHeader__image}>
             {event.image ? (
-              <Image
-                src={event.image}
-                alt={event.title}
-                fill
-                className={styles["eventHeader__image-img"]}
-                priority
-              />
+              <Image src={event.image} alt={event.title} fill className={styles["eventHeader__image-img"]} priority />
             ) : (
-              <div className={styles["eventHeader__image-placeholder"]}>
-                No image found
-              </div>
+              <div className={styles["eventHeader__image-placeholder"]}>No image found</div>
             )}
             {/* <div className={styles.eventHeader__actions}>
               <button className={styles["eventHeader__action-btn"]} aria-label="Share">
@@ -45,16 +39,14 @@ export default function EventHeader({ club, event }: Props) {
                 {club.logo ? (
                   <Image src={club.logo} alt={club.name} width={48} height={48} />
                 ) : (
-                  <div className={styles.eventHeader__hostLogoFallback}>
-                    {club.name.slice(0, 2).toUpperCase()}
-                  </div>
+                  <div className={styles.eventHeader__hostLogoFallback}>{club.name.slice(0, 2).toUpperCase()}</div>
                 )}
               </div>
               <div>
                 <span className={styles.eventHeader__hostName + " h5"}>{club.name}</span>
               </div>
             </div>
-            <button className={styles.eventHeader__contactBtn}>
+            <button className={styles.eventHeader__contactBtn + " btn_main"}>
               <Mail size={18} />
               <a href={`mailto:${club.email}`}>Contact Organiser</a>
             </button>
@@ -64,47 +56,59 @@ export default function EventHeader({ club, event }: Props) {
         <div className={styles.eventHeader__right}>
           <div className={styles.eventHeader__main}>
             <h1 className={styles.eventHeader__title}>{event.title}</h1>
-            <div className={styles.eventHeader__datetime}>
-              <CalendarDays size={20} />
-              <span className="txt-label">{formatEventDate(event.date)}</span>
-              <Clock size={20} />
-              <span className="txt-label">{event.startTime}</span>
+            <div className={styles.eventHeader__datetime + " fp"}>
+              <div className="fp">
+                <CalendarDays size={20} />
+                <span className="txt-label">{formatEventDate(event.date)}</span>
+              </div>
+              <div className="fp">
+                <Clock size={20} />
+                <span className="txt-label">{event.startTime}</span>
+              </div>
             </div>
-              <div className={styles.eventHeader__tags}>
-              {event.tags?.map(tag => (
+            <div className={styles.eventHeader__tags}>
+              {event.tags?.map((tag) => (
                 <span key={tag} className={styles["eventHeader__tag"] + " card-label card-label--big"}>
                   {tag}
                 </span>
               ))}
             </div>
             <span className={styles.eventHeader__subtitle + " txt-label uppercase"}>About this event</span>
-            <div className={styles.eventHeader__desc + " txt-body"}>
-              {event.about}
-            </div>
+            <div className={styles.eventHeader__desc + " txt-body"}>{event.about}</div>
           </div>
           <div className={styles.eventHeader__cards}>
-            <div className={styles.eventHeader__card}>
-              <span className={styles.eventHeader__cardValue}>{event.distance} km</span>
-              <span className={styles.eventHeader__cardLabel + " h5"}>Distance</span>
-            </div>
-            <div className={styles.eventHeader__card}>
-              <span className={styles.eventHeader__cardValue}>{event.pace}</span>
-              <span className={styles.eventHeader__cardLabel + " h5"}>Pace</span>
-            </div>
+            {event.distance &&
+              <div className={styles.eventHeader__card}>
+                <div className={styles.iconLabel + " fp"}>
+                  <LucideTrendingUp size={24} color="#faf3e0" />
+                  <span className={styles.eventHeader__cardLabel + " txt-label uppercase"}>Distance</span>
+                </div>
+                <span className={styles.eventHeader__cardValue}>{event.distance} km</span>
+              </div>
+            }
+            {event.pace &&
+              <div className={styles.eventHeader__card}>
+                <div className={styles.iconLabel + " fp"}>
+                  <LucideTimer size={24} color="#faf3e0" />
+                  <span className={styles.eventHeader__cardLabel + " txt-label uppercase"}>
+                    Pace
+                  </span>
+                </div>
+                <span className={styles.eventHeader__cardValue}>{event.pace}</span>
+              </div>
+            }
           </div>
           <div className={styles.eventHeader__location}>
-            <span className={styles.eventHeader__locationLabel + " txt-label"}>LOCATION</span>
+            <span className={styles.eventHeader__locationLabel + " txt-label uppercase"}>Meeting point</span>
             <div className={styles.eventHeader__locationBox}>
               <MapPin size={20} />
               <div>
-                <div className={styles.eventHeader__locationAddress}>{event.locationAddress}</div>
                 {event.locationAddress && (
                   <div className={styles.eventHeader__locationAddress}>{event.locationAddress}</div>
                 )}
               </div>
             </div>
-            <div className={styles.eventHeader__mapPlaceholder}>
-              <MapPin size={32} />
+            <div className={styles.eventHeader__map}>
               <span>Google Maps will be displayed here</span>
             </div>
           </div>

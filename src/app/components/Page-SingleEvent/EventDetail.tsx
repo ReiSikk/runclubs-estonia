@@ -13,12 +13,6 @@ export default function EventDetail({ club, event }: Props) {
   return (
     <div className={styles.page + " container"}>
       <EventHeader club={club} event={event} />
-
-      <section className={styles.body + " container"}>
-        <h2 className="h3">About this event</h2>
-        <p className={styles.about}>{event.about}</p>
-      </section>
-
       <CtaSection variant="light-bg"/>
     </div>
   );

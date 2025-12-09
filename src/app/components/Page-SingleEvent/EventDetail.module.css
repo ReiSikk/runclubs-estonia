@@ -69,19 +69,6 @@
   text-decoration: underline;
 }
 
-.body {
-  padding-block: 3.2rem 6.4rem;
-  justify-content: space-between;
-
-  @media only screen and (min-width: 768px) and (max-width: 1024px), only screen and (min-width: 1025px) {
-    padding-block: 3.2rem clamp(2.4rem, 4vw, 4rem);
-  }
-
-  h2 {
-    margin-bottom: 1.2rem;
-  }
-}
-
 .about {
   white-space: pre-wrap;
   max-width: 65ch;

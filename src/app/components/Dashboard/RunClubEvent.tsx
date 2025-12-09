@@ -1,6 +1,5 @@
 "use client";
 
-import React from "react";
 import Image from "next/image";
 import styles from "./RunClubEvent.module.css";
 import moment from "moment";
@@ -133,17 +132,7 @@ export default function RunClubEventCard({
         </div>
       )}
       {club && club.approvedForPublication && (
-        <Link href={`/runclubs/${slug}/events/${id}`} className={styles.runClubEvent__link + " btn_main"}>
-          More information
-        </Link>
-      )}
-
-      {directLink && (
-        <Link
-          href={`/runclubs/${slug}/events/${id}`}
-          className={styles.runClubEvent__link + " btn_main"}
-          aria-label={`View details for event: ${title}`}
-        >
+        <Link href={`/runclubs/${slug}/events/${id}`} className={styles.runClubEvent__link + " btn_main"} aria-label={`More information about event: ${title}`}>
           More information
         </Link>
       )}

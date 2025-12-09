@@ -4,15 +4,14 @@ import styles from "../../runclubs/[slug]/page.module.css";
 import RunClubEventCard from "../Dashboard/RunClubEvent";
 import { CalendarPlus } from "lucide-react";
 import { useSingleClubEvents } from "@/app/lib/hooks/useSingleClubEvents";
+import { RunClub } from "@/app/lib/types/runClub";
 
 interface UpcomingEventsProps {
-  clubId: string;
-  clubName: string;
-  slug?: string;
+  club: RunClub;
 }
 
-export default function EventsSection({ clubId, clubName, slug }: UpcomingEventsProps) {
-  const { data: events = [], isLoading, isError } = useSingleClubEvents(clubId);
+export default function EventsSection({ club }: UpcomingEventsProps) {
+  const { data: events = [], isLoading, isError } = useSingleClubEvents(club.id);
 
   if (isLoading) {
     return (
@@ -45,7 +44,8 @@ export default function EventsSection({ clubId, clubName, slug }: UpcomingEvents
               key={event.id} 
               event={event} 
               showActions={false}  
-              slug={slug}
+              slug={club.slug}
+              club={club}
               directLink={true}
               />
           ))}
@@ -53,7 +53,7 @@ export default function EventsSection({ clubId, clubName, slug }: UpcomingEvents
       ) : (
         <div className={styles.upcomingEvents__empty}>
           <CalendarPlus size={32} />
-          <p>No upcoming events for {clubName}</p>
+          <p>No upcoming events for {club.name}</p>
           <span>Check back soon for new runs!</span>
         </div>
       )}
