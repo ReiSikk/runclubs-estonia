@@ -99,8 +99,9 @@
 }
 
 .eventHeader__hostLogo {
-  width: 48px;
-  height: 48px;
+  position: relative;
+  width: clamp(48px, 7vw, 64px);
+  height: clamp(48px, 7vw, 64px);
   border-radius: var(--bradius-xl);
   overflow: hidden;
   background: #eee;

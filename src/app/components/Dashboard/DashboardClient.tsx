@@ -172,6 +172,15 @@ const isAnyModalOpen = eventModalToShow || !!editingClub;
   // Memoize runclubs to prevent unnecessary re-renders of EventCreationForm
   const runclubs = useMemo(() => clubs.map((c) => ({ id: c.id, name: c.name })), [clubs]);
 
+
+    useEffect(() => {
+    console.log("Dashboard mounted, adding dashboard-body class to body");
+    document.body.classList.add("page-dashboard");
+    return () => {
+      document.body.classList.remove("page-dashboard");
+    };
+  }, []);
+
   return (
     <>
       <main
@@ -211,7 +220,7 @@ const isAnyModalOpen = eventModalToShow || !!editingClub;
                   <h6 className="h2">Overview</h6>
                   <p className="txt-body">All your run clubs and events at a glance.</p>
                 </div>
-                <ul className={`${styles.dashboardStats__list} list-grid list-grid--3`}>
+                <ul className={`${styles.dashboardStats__list} list-grid`}>
                   <li className={`${styles.dashboardStats__item} ${styles.card_dashboard} fp-col`}>
                     <div className={`${styles.dashboardStats__initials} fp`}>
                       <span className="h3">

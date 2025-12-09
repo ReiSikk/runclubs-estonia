@@ -35,6 +35,9 @@ export async function saveRunClub(
     };
   }
 
+  // Check if logo removal is requested
+  const removeLogo = formData.get("removeLogo") === "true";
+
     // Verify the token and get the UID
   let creatorUid: string;
   try {
@@ -232,6 +235,12 @@ export async function saveRunClub(
         message: "Success! Your club has been registered and is pending approval.",
       };
     } else {
+        // When updating check if we should remove logo
+        if (removeLogo) {
+        cleanData.logo = FieldValue.delete(); // Remove current logo
+        } else if (logoUrl) {
+          cleanData.logo = logoUrl; // New logo
+        }
       await adminDb.collection("runclubs").doc(clubId!).update(cleanData);
       return {
         success: true,

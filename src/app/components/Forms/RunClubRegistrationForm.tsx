@@ -45,6 +45,7 @@ export default function RunClubRegistrationForm({
   const [filePreview, setFilePreview] = useState<string | null>(null);
   const [fileError, setFileError] = useState<string | null>(null);
   const [existingLogoUrl, setExistingLogoUrl] = useState<string | null>(null);
+  const [removeLogo, setRemoveLogo] = useState<boolean>(false);
   // TimePicker state
   const [time, setTime] = useState({ hour: "", minute: "" });
 
@@ -72,6 +73,12 @@ export default function RunClubRegistrationForm({
     });
   };
 
+  // Handle image removal in update mode
+  const handleLogoRemove = () => {
+    setExistingLogoUrl(null);
+    setRemoveLogo(true);
+  }
+
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
@@ -86,6 +93,8 @@ export default function RunClubRegistrationForm({
       });
       return;
     }
+
+    formData.set("removeLogo", removeLogo ? "true" : "false");
 
     let idToken: string | null = null;
     try {
@@ -131,6 +140,7 @@ export default function RunClubRegistrationForm({
               setFilePreview(null);
               setExistingLogoUrl(null);
               setFileError(null);
+              setRemoveLogo(false);
               handleTimeChange({ hour: "", minute: "" });
               if (fileInputRef.current) {
                 fileInputRef.current.value = "";
@@ -248,6 +258,7 @@ export default function RunClubRegistrationForm({
                 altStyle={true}
                 initialUrl={showExistingLogo ? existingLogoUrl! : undefined}
                 allowedTypes={["image/jpeg", "image/jpg", "image/png", "image/webp", "image/svg+xml"]}
+                onRemove={handleLogoRemove}
                 maxSizeMB={5}
               />
             </div>

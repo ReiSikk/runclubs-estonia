@@ -126,7 +126,7 @@
   width: 90vw;
   max-width: 500px;
   max-height: 85vh;
-  padding: 25px;
+  padding: clamp(1.6rem, 3vw, 2.4rem);
   z-index: 1000;
   animation: contentShow 150ms cubic-bezier(0.16, 1, 0.3, 1);
   &:focus {
@@ -135,6 +135,7 @@
 }
 
 .Title {
+  background: var(--dark-gray);
   margin: 0;
   color: var(--cream);
   font-weight: 500;
@@ -148,14 +149,23 @@
 }
 
 .Buttons {
+  flex-direction: column;
   justify-content: flex-end;
   gap: 1.6rem;
+  padding-top: 2rem;
+
+  @media only screen and (min-width: 468px) {
+      flex-direction: row;
+      .Button {
+        width: fit-content;
+      }
+  }
 }
 .Button {
-  height: 35px;
   user-select: none;
   cursor: pointer;
-  padding-block: 4px;
+  padding-block: 6px;
+  width: 100%;
 
   &:last-of-type {
     background: var(--accent);

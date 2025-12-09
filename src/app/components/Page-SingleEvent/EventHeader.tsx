@@ -12,7 +12,7 @@ type Props = {
 
 export default function EventHeader({ club, event }: Props) {
   console.log("Event image url:", event.image);
-  
+
   return (
     <section className={styles.eventHeader}>
       <div className={styles.eventHeader__container}>
@@ -37,7 +37,7 @@ export default function EventHeader({ club, event }: Props) {
             <div className={styles.eventHeader__hostInner}>
               <div className={styles.eventHeader__hostLogo}>
                 {club.logo ? (
-                  <Image src={club.logo} alt={club.name} width={48} height={48} />
+                  <Image src={club.logo} alt={club.name} fill objectFit="cover" />
                 ) : (
                   <div className={styles.eventHeader__hostLogoFallback}>{club.name.slice(0, 2).toUpperCase()}</div>
                 )}

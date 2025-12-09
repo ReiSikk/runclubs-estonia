@@ -53,8 +53,8 @@ export default function EventsSection({ club }: UpcomingEventsProps) {
       ) : (
         <div className={styles.upcomingEvents__empty}>
           <CalendarPlus size={32} />
-          <p>No upcoming events for {club.name}</p>
-          <span>Check back soon for new runs!</span>
+          <p className="h2">No upcoming events for {club.name}</p>
+          <span className="txt-body">Check back soon for new runs!</span>
         </div>
       )}
     </section>

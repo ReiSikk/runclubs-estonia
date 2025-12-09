@@ -54,10 +54,14 @@
 .dashboardStats__list {
   gap: 1.6rem;
   align-items: stretch;
-  grid-template-columns: repeat(auto-fit, minmax(175px, 1fr));
+  grid-template-columns: 1fr;
+
+  @media only screen and (min-width: 467px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
 
   @media only screen and (min-width: 768px) and (max-width: 1024px), only screen and (min-width: 1025px) {
-    grid-template-columns: repeat(auto-fit, minmax(225px, 1fr));
+    grid-template-columns: repeat(3, 1fr);
   }
 }
 .dashboardStats__item {
