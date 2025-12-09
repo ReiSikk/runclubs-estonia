@@ -62,8 +62,9 @@ export default function Modal({ open, onClose, children, ariaLabel = "Modal dial
           aria-live="polite"
         />
       )}
+
       <div
-        className={`${styles.modal} ${open ? styles.visible : ""} ${noClubsModal ? styles.noClubsModal : ""}`}
+        className={`${styles.modal} ${open ? styles.visible : ""} ${noClubsModal ? `${styles.noClubsModal} fp-col` : ""}`}
         role="dialog"
         aria-modal="true"
         aria-label={ariaLabel}
@@ -82,6 +83,9 @@ export default function Modal({ open, onClose, children, ariaLabel = "Modal dial
         </div>
         }
         <div className={styles.modal__wrapper}>
+        <button className={`${styles.close} ${styles.noClubsModalClose}`} aria-label="Close"     onClick={onClose}>
+          <LucideX  size={20} />
+        </button>
         {children}
         </div>
       </div>

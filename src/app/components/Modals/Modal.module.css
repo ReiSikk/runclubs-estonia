@@ -10,15 +10,14 @@
   visibility: hidden;
   pointer-events: none;
   transition: background 0.3s ease, backdrop-filter 0.3s ease, visibility 0.3s;
-  
+
   &.visible {
     visibility: visible;
     pointer-events: auto;
     background: rgba(0, 0, 0, 0.6);
     backdrop-filter: blur(2px);
   }
-  
-  
+
   @media only screen and (min-width: 768px) and (max-width: 1024px), only screen and (min-width: 1025px) {
     padding: 3.2rem;
     align-items: center;
@@ -34,13 +33,13 @@
   color: var(--text, #fff);
   width: 100%;
   max-width: 800px;
-  box-shadow: 0 10px 40px rgba(0,0,0,0.6);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
   max-height: 90dvh;
   padding-bottom: 4rem;
   opacity: 0;
   transform: translateY(100%);
   transition: height 0.3s cubic-bezier(0.25, 0.1, 0.25, 1), opacity 0.3s cubic-bezier(0.25, 0.1, 0.25, 1),
-  transform 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
+    transform 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
   border-top-left-radius: var(--bradius-16);
   border-top-right-radius: var(--bradius-16);
 
@@ -48,8 +47,7 @@
     opacity: 1;
     transform: translateY(0);
   }
-  
-  
+
   @media only screen and (min-width: 768px) and (max-width: 1024px), only screen and (min-width: 1025px) {
     transform: none;
     transition: opacity 0.3s ease;
@@ -62,14 +60,14 @@
   }
 
   &.noClubsModal {
-    padding-block: 4rem;
-
-    div {
+    .modal__wrapper {
+      div {
         gap: 1.6rem;
         text-align: center;
+        padding-block: clamp(4rem, 8vw, 8rem);
+      }
     }
   }
-
 }
 
 .modal__header {
@@ -93,8 +91,8 @@
   }
 }
 .modal__wrapper {
-  padding-inline: clamp(1.6rem, 3vw, 2.4rem);
-  padding-top: 3.2rem;
+  padding-inline: 1.6rem;
+  padding-top: 1.6rem;
 }
 
 /* close button top-right */
@@ -120,11 +118,12 @@
     background: var(--dark);
   }
 }
-
+.noClubsModalClose {
+  margin-left: auto;
+}
 /* small responsive padding tweak */
 @media (max-width: 520px) {
   .content {
     padding: 16px;
-    border-radius: 10px;
   }
 }
