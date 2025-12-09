@@ -3,7 +3,9 @@ import Image from 'next/image'
 import { LucideArrowUp, LucideSend } from 'lucide-react'
 import styles from './SiteFooter.module.css'
 
+
 function SiteFooter() {
+
   return (
     <footer className={`${styles.siteFooter} container`}>
       <div className={`${styles.siteFooter__main} grid`}>

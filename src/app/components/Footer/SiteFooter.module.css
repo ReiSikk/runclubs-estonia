@@ -1,15 +1,16 @@
 .siteFooter {
   background: var(--dark);
-  padding-block: 16px;
   color: var(--dark);
   gap: 1.6rem;
   flex-wrap: wrap-reverse;
   border-radius: clamp(12px, 2vw, 16px);
-  padding-inline: 16px 12px;
+  padding-inline: 1.6rem 1.2rem;
+  padding-block: 1.6rem 9.2rem;
 
   @media only screen and (min-width: 768px) and (max-width: 1024px), only screen and (min-width: 1025px) {
     flex-wrap: nowrap;
     height: 664px;
+    padding-block: 1.6rem;
   }
 }
 .siteFooter__main,

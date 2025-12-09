@@ -91,13 +91,7 @@ export default function RunClubEventCard({
 
   return (
     <div className={styles.runClubEvent + " fp-col"} aria-labelledby={`event-${id}-title`}>
-      {directLink && (
-        <Link
-          href={`/runclubs/${slug}/events/${id}`}
-          className={styles.runClubEvent__link}
-          aria-label={`View details for ${title}`}
-        ></Link>
-      )}
+      {club && club.city && club.logo && 
       <header className={styles.runClubEvent__header + " fp"}>
         <div className={`${styles.runClubEvent__avatar} fp`}>
           {club?.logo ? (
@@ -123,6 +117,7 @@ export default function RunClubEventCard({
           )}
         </div>
       </header>
+        }
 
       <div className={styles.runClubEvent__metaItem}>
         <LucideClock4 size={16} />
@@ -142,6 +137,17 @@ export default function RunClubEventCard({
           More information
         </Link>
       )}
+
+      {directLink && (
+        <Link
+          href={`/runclubs/${slug}/events/${id}`}
+          className={styles.runClubEvent__link + " btn_main"}
+          aria-label={`View details for event: ${title}`}
+        >
+          More information
+        </Link>
+      )}
+
       {showActions && (
         <DropdownMenu.Root>
           <DropdownMenu.Trigger asChild>

@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import Link from "next/link";
 import styles from "./DashboardClient.module.css";
 import { LucidePlus } from "lucide-react";
 import { RunClubEvent } from "@/app/lib/types/runClubEvent";
@@ -23,6 +24,7 @@ function DashboardEventsHeader({ events, clubs, setEventModalToShow, onFilterCha
 
   return (
     <header className={`${styles.dashboardEvents__header} ${events.length < 1 ? styles.noEvents : ""} fp-col`}>
+      {clubs.length > 0 && 
       <div className={`${styles.main} fp`}>
         <div className=" fp-col">
             <h2 className="">My events</h2>
@@ -37,10 +39,22 @@ function DashboardEventsHeader({ events, clubs, setEventModalToShow, onFilterCha
             Create Event
         </button>
       </div>
-      <div className={styles.dashboardEvents__filters + " fp-col"}>
-        <h3 className="txt-body">Showing events for:</h3>
-        <DashboardEventsFilters clubs={clubs} selectedClubId={selectedClubId} onChange={handleChange} />
-      </div>
+      }
+      {clubs.length < 1 && 
+        <div className="center fp-col">
+            <h2 className="h3">No clubs available</h2>
+            <p className="txt-body">You need to create a run club before you can create events.</p>
+            <Link href="/submit" className="btn_main accent">
+              Register a new club
+            </Link>
+          </div>
+      }
+      {events.length > 0 && clubs.length > 0 && 
+        <div className={styles.dashboardEvents__filters + " fp-col"}>
+          <h3 className="txt-body">Showing events for:</h3>
+          <DashboardEventsFilters clubs={clubs} selectedClubId={selectedClubId} onChange={handleChange} />
+        </div>
+      }
     </header>
   );
 }

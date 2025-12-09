@@ -1,8 +1,7 @@
 .dashboard {
   position: relative;
   display: grid;
-  /* grid where left side is max 300px and always max width */
-  grid-template-columns: minmax(auto, 300px) 1fr;
+  grid-template-columns: minmax(auto, 225px) 1fr;
   width: 100%;
   margin-bottom: clamp(64px, 8vw, 80px);
   padding-inline: 12px;
@@ -46,7 +45,6 @@
 .dashboardStats {
   margin-inline: auto;
   max-width: 1440px;
-  padding-inline: clamp(1.2rem, 2vw, 2.4rem);
 }
 .dashboardStats__header {
   margin-bottom: max(3.2rem, min(4vw, 4rem));
@@ -56,7 +54,11 @@
 .dashboardStats__list {
   gap: 1.6rem;
   align-items: stretch;
-  grid-template-columns: repeat(auto-fit, minmax(225px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(175px, 1fr));
+
+  @media only screen and (min-width: 768px) and (max-width: 1024px), only screen and (min-width: 1025px) {
+    grid-template-columns: repeat(auto-fit, minmax(225px, 1fr));
+  }
 }
 .dashboardStats__item {
   aspect-ratio: 3 / 2;
@@ -164,8 +166,6 @@
    Dashboard Events Tab View
    ========================================================================== */
 .dashboardEvents {
-  padding-inline: clamp(1.2rem, 2vw, 2.4rem);
-
   .main {
     width: 100%;
     gap: 1.2rem;
@@ -182,8 +182,15 @@
 
   /* In case user has no events */
   &.noEvents {
-    align-items: end;
-    margin-bottom: 0px;
+    align-items: center;
+    background: var(--dark-gray);
+    padding-block: clamp(4rem, 7vw, 6.4rem);
+    padding-inline: 1.6rem;
+    border-radius: var(--bradius-12);
+
+    div {
+      gap: 1.6rem;
+    }
   }
 
   @media only screen and (min-width: 768px) and (max-width: 1024px), only screen and (min-width: 1025px) {
