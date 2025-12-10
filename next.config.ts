@@ -12,9 +12,10 @@ const nextConfig: NextConfig = {
     },
      env: {
     NEXT_PUBLIC_SITE_URL:
-      process.env.DEPLOY_PRIME_URL || // deploy preview URL
-      process.env.URL || // production URL
-      'https://runclubs.ee', // fallback
+      process.env.NEXT_PUBLIC_SITE_URL ||  // explicit override
+      (process.env.NETLIFY === "true"
+        ? process.env.DEPLOY_PRIME_URL || process.env.URL // Netlify (preview/prod)
+        : "http://localhost:3000"), // CI / local default
   },
     images: {
       remotePatterns: [
