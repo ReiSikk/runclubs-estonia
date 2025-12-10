@@ -68,7 +68,7 @@ export default function ImageUploadField({
   return (
     <div className="fileWrapper fp-col">
     {initialUrl && 
-      <div role="button" aria-label="Remove current image" className="txt-label uppercase removeBtn fp" onClick={onRemove}
+      <div role="button" aria-label="Remove current image" className={`txt-label uppercase removeBtn ${colorScheme === "dark" ? "dark" : ""} fp`} onClick={onRemove}
       >
         Remove current image <LucideXCircle size={16} />
       </div>

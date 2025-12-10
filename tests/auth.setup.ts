@@ -14,18 +14,21 @@ setup("authenticate", async ({ page }) => {
   console.log("🔐 [Auth Setup] Starting authentication...");
 
   // Navigate to login page
-  await page.goto("/login", { waitUntil: "networkidle", timeout: 60000 });
+  await page.goto("/login", { waitUntil: "networkidle", timeout: 30000 });
+
+  await page.screenshot({ path: 'login-debug.png' });
+  console.log(await page.content());
 
   // Wait for form to be ready
-  const emailInput = page.locator('input[type="email"]');
+  const emailInput = page.getByTestId("legacy-email-input");
   await expect(emailInput).toBeVisible({ timeout: 15000 });
 
-  // Fill credentials
   await emailInput.fill(process.env.TEST_USER_EMAIL!);
-  await page.locator('input[type="password"]').fill(process.env.TEST_USER_PASSWORD!);
+  await page.getByTestId('legacy-password-input').fill(process.env.TEST_USER_PASSWORD!);
 
-  // Click login button
-  await page.locator('button[type="submit"]').click();
+  const submitButton = page.getByTestId("legacy-login-submit-button");
+  await expect(submitButton).toBeEnabled({ timeout: 5000 });
+  await submitButton.click();
 
   // Wait for redirect to dashboard
   await page.waitForURL((url) => url.pathname.includes("/dashboard"), {

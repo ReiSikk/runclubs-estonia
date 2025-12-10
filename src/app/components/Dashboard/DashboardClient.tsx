@@ -65,6 +65,8 @@ function DashboardContent({ userId, user }: { userId: string; user: User }) {
   const [clubToastOpen, setClubToastOpen] = useState(false);
   const queryClient = useQueryClient();
 
+  console.log("DashboardContent render with user:", user);
+
   // Now these hooks only run once with stable userId
   const { data: clubs = [], isLoading, isError, refetch: refetchClubs } = useMyRunClubs(userId);
 
@@ -190,7 +192,7 @@ const isAnyModalOpen = eventModalToShow || !!editingClub;
         <SideBar handleLogOut={handleLogOut} isMobile={isMobile} onEventClicked={() => setEventModalToShow("create")} />
         <div className={`${styles.dashboard__main}`}>
           <div className={`${styles.header}`}>
-            <h1 className="h1">Welcome to your dashboard, {user.displayName?.split(" ")[0] || ""}! 👋</h1>
+            <h1 className="h1">{`Welcome to your dashboard ${user.displayName ? ", " + user.displayName.split(" ")[0] : ""} 👋`}</h1>
             <p>
               Here you can manage your clubs and activities.
               Delete or edit existing clubs & events, or create new events and clubs to keep your community active.

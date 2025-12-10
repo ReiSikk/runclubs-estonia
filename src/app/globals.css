@@ -985,10 +985,6 @@ button {
     background-position: right 16px center;
   }
 
-  textarea { 
-    color: var(--dark);
-  }
-
   .rcForm__input {
     border-radius: var(--bradius-8);
     padding-block: var(--pb-input);
@@ -1039,7 +1035,8 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 .inputRow input::placeholder {
   font-size: 1.6rem;
   line-height: 1.4;
-  color: var(--dark);
+  color: var(--dark-gray);
+  opacity: 0.7;
 
 }
 .fileWrapper {
@@ -1059,6 +1056,11 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     transition: all 0.2s ease;
     gap: 1rem;
     cursor: pointer;
+
+    &.dark {
+      border: 1px solid var(--cream);
+      color: var(--cream);
+    }
 
 
     svg {
@@ -1330,8 +1332,9 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   user-select: none;
   background: var(--dark);
   background-image: none;
-  -webkit-border-radius: 20px;
-  border-radius: 20px;
+  -webkit-border-radius: var(--bradius-xl);
+  border-radius: var(--bradius-xl);
+  border: 1px solid var(--white);
   -webkit-box-sizing: border-box;
   box-sizing: border-box;
   color: #e3e3e3;
@@ -1352,6 +1355,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   width: auto;
   max-width: 400px;
   min-width: min-content;
+  margin-inline: auto;
 }
 
 .gsi-material-button .gsi-material-button-icon {

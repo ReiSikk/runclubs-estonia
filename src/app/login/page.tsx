@@ -1,135 +1,314 @@
 "use client";
 
-import { useState, useEffect, useRef, Suspense, use } from "react";
-import * as Tabs from "@radix-ui/react-tabs";
-import LoginWithUsername from "@/app/components/Forms/LoginForm";
-import SignUpForm from "@/app/components/Forms/SignUpForm";
+import { useState, useEffect, useRef, useCallback } from "react";
+import { useRouter } from "next/navigation";
+import {
+  GoogleAuthProvider,
+  sendSignInLinkToEmail,
+  signInWithPopup,
+  signInWithEmailLink,
+  isSignInWithEmailLink,
+  signInWithEmailAndPassword,
+} from "firebase/auth";
 import styles from "./page.module.css";
 import FormToast from "../components/Toast/Toast";
+import mapAuthError from "../lib/firebase/mapAuthError";
+import { auth } from "../lib/firebase/firebase";
+import { useAuth } from "../providers/AuthProvider";
 
-function mapAuthError(error: unknown): string {
-  if (!error) return "An unknown error occurred.";
-  if (
-    typeof error === "object" &&
-    error !== null &&
-    "code" in error &&
-    typeof error.code === "string"
-  ) {
-    if (error.code === "auth/email-already-in-use") {
-      return "This email is already registered.";
-    } else if (error.code === "auth/invalid-email") {
-      return "Invalid email address.";
-    } else if (error.code === "auth/weak-password") {
-      return "Password is too weak.";
-    } else if (error.code === "auth/invalid-credential") {
-      return "Invalid email or password provided. Please try again.";
-    }
-  }
-  if (typeof error === "object" && error !== null && "message" in error && typeof error.message === "string") {
-    return error.message;
-  }
-  return "Sign up failed";
-}
+const APP_BASE_URL = process.env.NODE_ENV === 'development' ? 'http://localhost:3000' : process.env.NEXT_PUBLIC_SITE_URL || 'https://runclubs.ee';
 
-export default function LoginPage({searchParams}: {searchParams: Promise<{ q?: string }>}) {
-  const params = use(searchParams)
-  // Form tabs state
-  const [activeTab, setActiveTab] = useState("tab1");
+const ACTION_CODE_SETTINGS = {
+  url: `${APP_BASE_URL}/login`,
+  handleCodeInApp: true,
+};
 
-  // Toast feedback handlers
+export default function LoginPage() {
+  const router = useRouter();
+  const { user, loading } = useAuth();
+  const [hydrated, setHydrated] = useState(false);
+  const [showLegacyLogin, setShowLegacyLogin] = useState(false);
+
+  const [email, setEmail] = useState("");
+  const [linkSending, setLinkSending] = useState(false);
+  const [linkSent, setLinkSent] = useState(false);
+  const [verifyingLink, setVerifyingLink] = useState(false);
+
+  const [legacyCredentials, setLegacyCredentials] = useState({ email: "", password: "" });
+  const [legacySubmitting, setLegacySubmitting] = useState(false);
+  const [legacyError, setLegacyError] = useState<string | null>(null);
+
   const [toastOpen, setToastOpen] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
   const [toastType, setToastType] = useState<"success" | "error">("success");
   const [countdown, setCountdown] = useState<number | null>(null);
   const countdownInterval = useRef<NodeJS.Timeout | null>(null);
 
-  // Update activeTab based on searchParams
   useEffect(() => {
-    const id = params.q;
-    if (id === "signup") {
-      setActiveTab("tab2");
-    } else {
-      setActiveTab("tab1");
-    }
-  }, [params.q]);
+    const shouldShowLegacy = (typeof navigator !== "undefined" && navigator.webdriver);
+    setShowLegacyLogin(shouldShowLegacy);
+    setHydrated(true);
+  }, []);
 
-  // Call this for a regular toast
-  const showToast = (message: string, type: "success" | "error" = "success") => {
+  const showToast = useCallback((message: string, type: "success" | "error" = "success") => {
     setToastMessage(message);
     setToastType(type);
     setCountdown(null);
     setToastOpen(true);
-  };
+  }, []);
 
-  // Call this for a success toast with countdown
-  const showCountdownToast = (message: string, seconds: number, onComplete?: () => void) => {
-    setToastType("success");
-    setCountdown(seconds);
-    setToastOpen(true);
+  const showCountdownToast = useCallback(
+    (message: string, seconds: number, onComplete?: () => void) => {
+      setToastType("success");
+      setCountdown(seconds);
+      setToastOpen(true);
+      if (countdownInterval.current) clearInterval(countdownInterval.current);
 
-    if (countdownInterval.current) clearInterval(countdownInterval.current);
-
-    countdownInterval.current = setInterval(() => {
-      setCountdown((prev) => {
-        if (prev && prev > 1) {
-          return prev - 1;
-        } else {
+      countdownInterval.current = setInterval(() => {
+        setCountdown((prev) => {
+          if (prev && prev > 1) return prev - 1;
           clearInterval(countdownInterval.current!);
           setToastOpen(false);
-          if (onComplete) onComplete();
+          onComplete?.();
           return null;
-        }
-      });
-    }, 1000);
+        });
+      }, 1000);
 
-    setToastMessage(message);
-  };
+      setToastMessage(message);
+    },
+    []
+  );
 
-  // Compose the toast message
   const composedMessage =
     toastType === "success" && countdown !== null && countdown > 0
       ? `${toastMessage} Redirecting in (${countdown})...`
       : toastMessage;
 
+  useEffect(() => {
+    if (!loading && user) router.push("/dashboard");
+  }, [loading, user, router]);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    if (!isSignInWithEmailLink(auth, window.location.href)) return;
+
+    const finishSignIn = async () => {
+      try {
+        setVerifyingLink(true);
+        let storedEmail = window.localStorage.getItem("emailForSignIn");
+        if (!storedEmail) {
+          storedEmail = window.prompt("Confirm your email to finish signing in") || "";
+        }
+        if (!storedEmail) {
+          showToast("Email confirmation is required", "error");
+          return;
+        }
+        await signInWithEmailLink(auth, storedEmail, window.location.href);
+        window.localStorage.removeItem("emailForSignIn");
+        showCountdownToast("Sign in successful!", 3, () => router.push("/dashboard"));
+      } catch (error) {
+        showToast(mapAuthError(error), "error");
+      } finally {
+        setVerifyingLink(false);
+      }
+    };
+
+    void finishSignIn();
+  }, [router, showToast, showCountdownToast]);
+
+  const handleSendLink = async (e: React.FormEvent<HTMLFormElement>) => {
+    console.log("handleSendLink called with email:", email);
+
+    e.preventDefault();
+    if (!email) {
+      showToast("Enter an email address first", "error");
+      return;
+    }
+
+    try {
+      setLinkSending(true);
+      await sendSignInLinkToEmail(auth, email, ACTION_CODE_SETTINGS);
+      window.localStorage.setItem("emailForSignIn", email);
+      setLinkSent(true);
+      showToast("Magic link sent! Check your inbox.", "success");
+    } catch (error) {
+      showToast(mapAuthError(error), "error");
+    } finally {
+      setLinkSending(false);
+    }
+  };
+
+  const handleGoogleSignIn = async () => {
+    try {
+      const provider = new GoogleAuthProvider();
+      await signInWithPopup(auth, provider);
+      showCountdownToast("Sign in successful!", 3, () => router.push("/dashboard"));
+    } catch (error) {
+      showToast(mapAuthError(error), "error");
+    }
+  };
+
+  const handleLegacySubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    console.log("handleLegacySubmit called with credentials:", legacyCredentials);
+    e.preventDefault();
+    setLegacyError(null);
+    try {
+      setLegacySubmitting(true);
+      await signInWithEmailAndPassword(auth, legacyCredentials.email, legacyCredentials.password);
+      showCountdownToast("Login successful!", 3, () => router.push("/dashboard"));
+    } catch (error) {
+      const msg = mapAuthError(error);
+      setLegacyError(msg);
+      showToast(msg, "error");
+    } finally {
+      setLegacySubmitting(false);
+    }
+  };
+
+  if (!hydrated) {
+    return (
+      <main className={`${styles.loginPage__main} container`}>
+        <div className={styles.loginPage__loader}>Preparing sign-in options…</div>
+      </main>
+    );
+  }
+
   return (
-    <Suspense fallback={<main className={`${styles.loginPage__main} container`}>
-      <div className="loading">Loading...</div>
-    </main>}>
     <main className={`${styles.loginPage__main} container`}>
-        <FormToast
-          open={toastOpen}
-          onOpenChange={setToastOpen}
-          message={composedMessage}
-          type={toastType}
-          aria-live="polite"
-        />
+      <FormToast
+        open={toastOpen}
+        onOpenChange={setToastOpen}
+        message={composedMessage}
+        type={toastType}
+        aria-live="polite"
+      />
+
+      {showLegacyLogin && (
+        <div className={`${styles.loginPage__wrapper} bradius-m`} data-testid="legacy-login">
+          <div className={styles.loginForm__header}>
+            <p className="txt-label">Automated test login</p>
+            <h2 className={`${styles.loginForm__title} h3`}>Email & password</h2>
+          </div>
+          <form onSubmit={handleLegacySubmit} className={`${styles.loginForm} bradius-m`}>
+            <div className="inputRow">
+              <input
+                className="rcForm__input"
+                type="email"
+                placeholder="your@test.com"
+                autoComplete="email"
+                value={legacyCredentials.email}
+                onChange={(e) => setLegacyCredentials((prev) => ({ ...prev, email: e.target.value }))}
+                data-testid="legacy-email-input"
+              />
+            </div>
+            <div className="inputRow">
+              <input
+                className="rcForm__input"
+                type="password"
+                placeholder="password"
+                autoComplete="current-password"
+                value={legacyCredentials.password}
+                onChange={(e) =>
+                  setLegacyCredentials((prev) => ({ ...prev, password: e.target.value }))
+                }
+                data-testid="legacy-password-input"
+              />
+            </div>
+            <button
+              type="submit"
+              className="btn_main"
+              data-testid="legacy-login-submit-button"
+              disabled={legacySubmitting || !legacyCredentials.email || !legacyCredentials.password}
+            >
+              {legacySubmitting ? "Signing in…" : "Sign in"}
+            </button>
+          </form>
+        </div>
+      )}
+
       <div className={`${styles.loginPage__wrapper} bradius-m`}>
-        <Tabs.Root className="tabs__root" defaultValue="tab1" value={activeTab} onValueChange={setActiveTab}>
-          <Tabs.List
-            className={`tabs__list ${activeTab === "tab1" ? "slide-left" : "slide-right"}`}
-            aria-label="Manage your account"
-          >
-            <Tabs.Trigger className="tabs__trigger" value="tab1">
-              Sign In
-            </Tabs.Trigger>
-            <Tabs.Trigger className="tabs__trigger" value="tab2">
-              Sign Up
-            </Tabs.Trigger>
-          </Tabs.List>
-          <Tabs.Content className="tabs__content" value="tab1">
-            <LoginWithUsername showToast={showToast} showCountdownToast={showCountdownToast} mapAuthError={mapAuthError} setActiveTab={setActiveTab}/>
-          </Tabs.Content>
-          <Tabs.Content className="tabs__content" value="tab2">
-            <SignUpForm 
-              showToast={showToast}
-              showCountdownToast={showCountdownToast}
-              setActiveTab={setActiveTab}
-              mapAuthError={mapAuthError}
+        <div className={styles.loginForm__wrap}>
+          <p className="txt-label">Log in or sign up to</p>
+          <h1 className={`${styles.loginForm__title} h2`}>Run Clubs Estonia</h1>
+          <p className="txt-body">
+            Enter your email to get a one-time sign-in link. New members join instantly, existing members log in.
+          </p>
+        </div>
+
+        <form onSubmit={handleSendLink} className={`${styles.loginForm} bradius-m`}>
+          <div className="inputRow">
+            <label className="rcForm__label h5" htmlFor="login-email">Email</label>
+            <input
+              className="rcForm__input email-input"
+              id="login-email"
+              type="email"
+              value={email}
+              placeholder="you@example.com"
+              autoComplete="email"
+              required
+              disabled={linkSending || verifyingLink}
+              onChange={(e) => setEmail(e.target.value)}
+              data-testid="email-input"
             />
-          </Tabs.Content>
-        </Tabs.Root>
+          </div>
+          <button
+            type="submit"
+            className="btn_main white"
+            disabled={linkSending || verifyingLink}
+          >
+            {linkSending ? "Sending link..." : "Send link"}
+          </button>
+          {linkSent && (
+            <p className={styles.login__text}>Link sent to {email}. Check your inbox or resend above.</p>
+          )}
+        </form>
+
+        <div className={styles.login__divider}>
+          <span>or</span>
+        </div>
+
+        <button
+          type="button"
+          className={`${styles.loginForm__google} gsi-material-button`}
+          onClick={handleGoogleSignIn}
+          disabled={verifyingLink}
+        >
+            <div className="gsi-material-button-state"></div>
+            <div className="gsi-material-button-content-wrapper">
+              <div className="gsi-material-button-icon">
+                <svg
+                  version="1.1"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 48 48"
+                  style={{ display: "block" }}
+                >
+                  <path
+                    fill="#EA4335"
+                    d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"
+                  ></path>
+                  <path
+                    fill="#4285F4"
+                    d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"
+                  ></path>
+                  <path
+                    fill="#FBBC05"
+                    d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"
+                  ></path>
+                  <path
+                    fill="#34A853"
+                    d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"
+                  ></path>
+                  <path fill="none" d="M0 0h48v48H0z"></path>
+                </svg>
+              </div>
+              <span className="gsi-material-button-contents">Continue with Google</span>
+            </div>
+        </button>
+
+        {verifyingLink && (
+          <p className={styles.login__text}>Verifying your sign-in link, please wait…</p>
+        )}
       </div>
     </main>
-    </Suspense>
   );
 }
