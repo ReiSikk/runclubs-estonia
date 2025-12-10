@@ -58,8 +58,11 @@
   margin-top: 1.4rem;
 
   button {
+    display: inline-flex;
     width: 100%;
-    max-width: 400px;
-    max-height: 40px;
+    padding-block: 8px;
+    max-width: 325px;
+    border-radius: var(--bradius-xl);
+    border: none;
   }
 }

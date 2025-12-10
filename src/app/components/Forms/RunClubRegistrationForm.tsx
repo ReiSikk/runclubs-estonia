@@ -255,11 +255,11 @@ export default function RunClubRegistrationForm({
               </label>
               <ImageUploadField
                 name="logo"
-                altStyle={true}
                 initialUrl={showExistingLogo ? existingLogoUrl! : undefined}
                 allowedTypes={["image/jpeg", "image/jpg", "image/png", "image/webp", "image/svg+xml"]}
                 onRemove={handleLogoRemove}
                 maxSizeMB={5}
+                colorScheme="light"
               />
             </div>
           </section>

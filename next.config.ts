@@ -10,6 +10,8 @@ const nextConfig: NextConfig = {
       bodySizeLimit: "7mb"
       },
     },
+    // TODO: Remove
+    allowedDevOrigins: ['http://192.168.18.78:3000', '192.168.18.78'],
     images: {
       remotePatterns: [
         new URL('https://placehold.co/**'),

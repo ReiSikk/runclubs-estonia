@@ -416,16 +416,16 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
           </label>
           <ImageUploadField 
             name="image" 
-            altStyle={true} 
             allowedTypes={["image/jpeg", "image/jpg", "image/png", "image/webp", "image/svg+xml"]} 
             initialUrl={showExistingImage ? existingImageUrl! : undefined}
             onRemove={handleImgRemove}
+            colorScheme="dark"
             />
 
           </div>
           <EventTagsField name="tags" maxTags={3} resetKey={resetKey} initialTags={initialValues?.tags || []} />
 
-          <div className="textareaRow fp-col">
+          <div className="textareaRow rte fp-col">
             <label htmlFor="about" className="rcForm__label">
               Description <span className="rcForm__required">*</span>
             </label>

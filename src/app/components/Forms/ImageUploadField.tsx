@@ -5,12 +5,12 @@ import { LucideUpload, LucideXCircle } from "lucide-react";
 
 type Props = {
   name: string;
-  altStyle?: boolean;
   allowedTypes?: string[];
   maxSizeMB?: number;
   initialUrl?: string;
   onError?: (msg: string | null) => void;
   onRemove?: () => void;
+  colorScheme?: "light" | "dark";
 };
 
 export type ImageUploadFieldHandle = {
@@ -19,12 +19,12 @@ export type ImageUploadFieldHandle = {
 
 export default function ImageUploadField({
   name,
-  altStyle = false,
   allowedTypes = ["image/jpeg", "image/jpg", "image/png", "image/webp", "image/svg+xml"],
   maxSizeMB = 5,
   initialUrl,
   onError,
   onRemove,
+  colorScheme = "dark",
 }: Props) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [filePreview, setFilePreview] = useState<string | null>(initialUrl || null);
@@ -73,7 +73,7 @@ export default function ImageUploadField({
         Remove current image <LucideXCircle size={16} />
       </div>
     }
-    <div className={`inputRow inputRow__file fp-col ${altStyle ? "alt" : ""}`}>
+    <div className={`inputRow inputRow__file fp-col ${colorScheme === "dark" ? "dark" : ""}`}>
       <span className={`rcForm__label h5`}>{`Drop your file here ${initialUrl ? "to replace the current image" : ""} or...`}</span>
       <div className={`rcForm__uploadBtn btn_main`}>
         Select file

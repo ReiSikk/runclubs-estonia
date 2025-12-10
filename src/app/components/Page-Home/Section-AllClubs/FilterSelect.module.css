@@ -16,8 +16,8 @@
   align-items: center;
   justify-content: space-between;
   border-radius: var(--bradius-xl);
+  background: var(--dark);
   border: 1px solid var(--accent);
-  background: none;
   color: var(--white);
   padding: 8px 16px;
   transition: all 0.2s ease;

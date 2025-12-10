@@ -219,7 +219,7 @@ const isAnyModalOpen = eventModalToShow || !!editingClub;
                   <h6 className="h2">Overview</h6>
                   <p className="txt-body">All your run clubs and events at a glance.</p>
                 </div>
-                <ul className={`${styles.dashboardStats__list} list-grid`}>
+                <ul className={`${styles.dashboardStats__list} fp-col`}>
                   <li className={`${styles.dashboardStats__item} ${styles.card_dashboard} fp-col`}>
                     <div className={`${styles.dashboardStats__initials} fp`}>
                       <span className="h3">

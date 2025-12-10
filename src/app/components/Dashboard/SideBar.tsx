@@ -40,9 +40,9 @@ function SideBar({ handleLogOut, isMobile, onEventClicked }: SideBarProps) {
         <LucidePlus size={20} className={styles.item__icon} />
             Create new event
         </div>
-        <div className={`${styles.item} fp`}>
+        <div className={`${styles.item} fp`} onClick={handleLogOut}>
         <LucideLogOut size={20} className={styles.item__icon} />
-        <div onClick={handleLogOut} className="h4">
+        <div className="h4">
             Log out
         </div>
         </div>

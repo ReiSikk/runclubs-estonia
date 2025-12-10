@@ -31,7 +31,7 @@ if (typeof window !== "undefined") {
   const isHeadless = /HeadlessChrome|Headless/i.test(navigator.userAgent);
   const isTestEnv = isCI || isHeadless;
 
-  console.log("🔍 [Firebase] Environment:", { isDev, isCI, isHeadless, isTestEnv });
+  // console.log("🔍 [Firebase] Environment:", { isDev, isCI, isHeadless, isTestEnv });
 
   if (isTestEnv) {
     // CI/Testing: Skip App Check entirely (enforcement disabled for Auth)
