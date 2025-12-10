@@ -10,13 +10,13 @@ const nextConfig: NextConfig = {
       bodySizeLimit: "7mb"
       },
     },
-     env: {
-    NEXT_PUBLIC_SITE_URL:
-      process.env.NEXT_PUBLIC_SITE_URL ||  // explicit override
-      (process.env.NETLIFY === "true"
-        ? process.env.DEPLOY_PRIME_URL || process.env.URL // Netlify (preview/prod)
-        : "http://localhost:3000"), // CI / local default
-  },
+    env: {
+      // Value is baked into the bundle at build time
+      NEXT_PUBLIC_SITE_URL:
+        process.env.DEPLOY_PRIME_URL || // deploy preview / branch deploy
+        process.env.URL ||              // production URL
+        'https://runclubs.ee',          // fallback
+    },
     images: {
       remotePatterns: [
         new URL('https://placehold.co/**'),
