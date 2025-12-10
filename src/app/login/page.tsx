@@ -16,7 +16,9 @@ import mapAuthError from "../lib/firebase/mapAuthError";
 import { auth } from "../lib/firebase/firebase";
 import { useAuth } from "../providers/AuthProvider";
 
-const APP_BASE_URL = process.env.NODE_ENV === 'development' ? 'http://localhost:3000' : process.env.NEXT_PUBLIC_SITE_URL || 'https://runclubs.ee';
+const APP_BASE_URL = process.env.NODE_ENV === 'development'
+ ? 'http://localhost:3000' 
+ : process.env.NEXT_PUBLIC_SITE_URL || 'https://runclubs.ee';
 
 const ACTION_CODE_SETTINGS = {
   url: `${APP_BASE_URL}/login`,
@@ -117,7 +119,6 @@ export default function LoginPage() {
   }, [router, showToast, showCountdownToast]);
 
   const handleSendLink = async (e: React.FormEvent<HTMLFormElement>) => {
-    console.log("handleSendLink called with email:", email);
 
     e.preventDefault();
     if (!email) {
@@ -149,7 +150,6 @@ export default function LoginPage() {
   };
 
   const handleLegacySubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    console.log("handleLegacySubmit called with credentials:", legacyCredentials);
     e.preventDefault();
     setLegacyError(null);
     try {

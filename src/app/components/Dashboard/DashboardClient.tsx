@@ -65,8 +65,6 @@ function DashboardContent({ userId, user }: { userId: string; user: User }) {
   const [clubToastOpen, setClubToastOpen] = useState(false);
   const queryClient = useQueryClient();
 
-  console.log("DashboardContent render with user:", user);
-
   // Now these hooks only run once with stable userId
   const { data: clubs = [], isLoading, isError, refetch: refetchClubs } = useMyRunClubs(userId);
 

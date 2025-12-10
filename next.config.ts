@@ -10,8 +10,12 @@ const nextConfig: NextConfig = {
       bodySizeLimit: "7mb"
       },
     },
-    // TODO: Remove
-    allowedDevOrigins: ['http://192.168.18.78:3000', '192.168.18.78'],
+     env: {
+    NEXT_PUBLIC_SITE_URL:
+      process.env.DEPLOY_PRIME_URL || // deploy preview URL
+      process.env.URL || // production URL
+      'https://runclubs.ee', // fallback
+  },
     images: {
       remotePatterns: [
         new URL('https://placehold.co/**'),

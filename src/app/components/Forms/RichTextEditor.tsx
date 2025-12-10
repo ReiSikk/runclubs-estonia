@@ -85,7 +85,6 @@ function MenuBar({ editor }: { editor: any }) {
   const editorState = useEditorState({
     editor,
     selector: (ctx) => {
-        console.log("Editor state changed", ctx.editor.getJSON()); // Debug log
       return {
         isBold: ctx.editor.isActive("bold") ?? false,
         canBold: ctx.editor.can().chain().toggleBold().run() ?? false,
