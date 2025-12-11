@@ -10,13 +10,6 @@ const nextConfig: NextConfig = {
       bodySizeLimit: "7mb"
       },
     },
-   env: {
-        NEXT_PUBLIC_SITE_URL:
-          process.env.NEXT_PUBLIC_SITE_URL ||
-          (process.env.NETLIFY === "true"
-            ? process.env.DEPLOY_PRIME_URL || process.env.URL
-            : "http://localhost:3000"),
-      },
     images: {
       remotePatterns: [
         new URL('https://placehold.co/**'),
