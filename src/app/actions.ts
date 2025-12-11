@@ -445,12 +445,19 @@ export async function saveEvent(
     }
 
   } catch (error: unknown) {
-    console.error("saveEvent action error:", error);
-    const errorMessage = error instanceof Error ? error.message : "An unexpected error occurred";
-    return {
-      success: false,
-      message: errorMessage,
-    };
+      console.error("saveEvent action error:", error);
+      let errorMessage = "An unexpected error occurred";
+      if (error instanceof Error) {
+        errorMessage = error.message;
+      } else if (typeof error === "string") {
+        errorMessage = error;
+      } else if (typeof error === "object" && error !== null && "message" in error) {
+        errorMessage = String((error as any).message);
+      }
+      return {
+        success: false,
+        message: errorMessage,
+      };
   }
 }
 
