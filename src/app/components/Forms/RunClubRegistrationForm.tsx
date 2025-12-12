@@ -17,8 +17,11 @@ interface Props {
   mode: "create" | "update";
   clubId?: string;
   initialValues?: RunClub;
-  onEditSuccess?: () => void;
-  onToastUpdate?: (toast: { message: string; type: "success" | "error"; countdown?: number | null }) => void;
+  // Edit callbacks
+  onSuccess?: (msg: string, duration: number) => void;
+  onError?: (msg: string) => void;
+  // CREATE toast handlers
+  onToastUpdate?: (toast: { message: string; type: 'success' | 'error'; countdown?: number | null }) => void;
   onToastOpenChange?: (open: boolean) => void;
 }
 
@@ -26,15 +29,14 @@ export default function RunClubRegistrationForm({
   mode,
   clubId,
   initialValues,
-  onEditSuccess,
+  onSuccess,
+  onError,
   onToastUpdate,
   onToastOpenChange,
 }: Props) {
-  const router = useRouter();
   const queryClient = useQueryClient();
   const [state, setState] = useState<FormState>(initialState);
   const [isPending, startTransition] = useTransition();
-  const [countdown, setCountdown] = useState<number | null>(null);
   // Get current user from auth context
   const { user } = useAuth();
 
@@ -44,6 +46,7 @@ export default function RunClubRegistrationForm({
   // File preview and error states
   const [filePreview, setFilePreview] = useState<string | null>(null);
   const [fileError, setFileError] = useState<string | null>(null);
+  console.log("File error:", fileError);
   const [existingLogoUrl, setExistingLogoUrl] = useState<string | null>(null);
   const [removeLogo, setRemoveLogo] = useState<boolean>(false);
   // TimePicker state
@@ -134,6 +137,7 @@ export default function RunClubRegistrationForm({
 
         if (result.success) {
           if (mode === "create") {
+            onSuccess?.(result.message, 5);
             // Clear form only on create
             if (formRef.current) {
               formRef.current.reset();
@@ -152,52 +156,32 @@ export default function RunClubRegistrationForm({
               queryClient.removeQueries({ queryKey: ["runclubs", user.uid] });
               queryClient.removeQueries({ queryKey: ["events"] });
             }
-
-            // Start countdown and redirect
-            setCountdown(5);
-            setTimeout(() => {
-              router.push("/");
-            }, 5000);
           } else {
             // Update mode: call onEditSuccess callback (close modal)
-            setTimeout(() => {
-              onEditSuccess?.();
-            }, 2000);
+              onSuccess?.(result.message, 5);
           }
+        } else {
+          onError?.(result.message);
+          onToastUpdate?.({ message: result.message, type: "error" });
+          onToastOpenChange?.(true);
         }
       } catch (error) {
-        console.error("Form submission error:", error);
-        setState({
-          success: false,
-          message: "An unexpected error occurred. Please try again.",
-          errors: {},
-        });
+        onError?.("An unexpected error occurred. Please try again.");
       }
     });
   };
 
-  // Countdown timer effect
-  useEffect(() => {
-    if (countdown === null || countdown <= 0) return;
-
-    const timer = setTimeout(() => {
-      setCountdown(countdown - 1);
-    }, 1000);
-
-    return () => clearTimeout(timer);
-  }, [countdown]);
-
-  // Notify parent about toast updates
-  useEffect(() => {
-    if (state?.message && onToastUpdate) {
-      onToastUpdate({
-        message: state.message,
-        type: state.success ? "success" : "error",
-        countdown: state.success && mode === "create" ? countdown : undefined,
-      });
-      onToastOpenChange?.(true);
-    }
-  }, [state, countdown, onToastUpdate, onToastOpenChange, mode]);
+  // // Notify parent about toast updates
+  // useEffect(() => {
+  //   if (state?.message && onToastUpdate) {
+  //     onToastUpdate({
+  //       message: state.message,
+  //       type: state.success ? "success" : "error",
+  //       countdown: state.success && mode === "create" ? countdown : undefined,
+  //     });
+  //     onToastOpenChange?.(true);
+  //   }
+  // }, [state, countdown, onToastUpdate, onToastOpenChange, mode]);
 
   // Determine which logo to show
   const showExistingLogo = mode === "update" && existingLogoUrl && !filePreview;
@@ -260,6 +244,7 @@ export default function RunClubRegistrationForm({
                 onRemove={handleLogoRemove}
                 maxSizeMB={5}
                 colorScheme="light"
+                onError={setFileError}
               />
             </div>
           </section>
@@ -563,6 +548,11 @@ export default function RunClubRegistrationForm({
           ? "Submit form"
           : "Update club"}
       </button>
+      {fileError && (
+        <p className="rcForm__hint" role="alert" style={{ marginTop: "0.8rem" }}>
+          Please fix the file upload error before submitting the form.
+        </p>
+      )}
     </form>
   );
 }

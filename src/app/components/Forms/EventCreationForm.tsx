@@ -21,11 +21,9 @@ type Props = {
   initialValues?: Partial<RunClubEvent> | null;
   runclubId?: string;
   runclubs?: RunClubOption[];
+  onSuccess?: (msg: string) => void;
+  onError?: (msg: string) => void;
   onClose?: () => void;
-  onEventCreated?: (newEvent: RunClubEvent) => void;
-  onEventUpdated?: (updatedEvent: RunClubEvent) => void;
-  onToastUpdate?: (toast: { message: string; type: 'success' | 'error'; countdown?: number | null }) => void;
-  onToastOpenChange?: (open: boolean) => void;
 };
 
 type FormState =
@@ -34,11 +32,10 @@ type FormState =
   | undefined;
 
 const initialState: FormState = undefined;
-
-export default function EventCreationForm({ mode, eventId, initialValues, runclubId, runclubs = [], onClose, onEventCreated, onEventUpdated, onToastUpdate, onToastOpenChange }: Props) {
+export default function EventCreationForm({ mode, eventId, initialValues, runclubId, runclubs = [], onSuccess, onError, onClose }: Props) {
   const { user } = useAuth();
   const formRef = useRef<HTMLFormElement | null>(null);
-  const [state, setState] = useState<FormState>(initialState);
+  const [formState, setFormState] = useState<FormState>(initialState);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isPending, startTransition] = useTransition();
   const [selectedRunclub, setSelectedRunclub] = useState<string>(runclubId || runclubs[0]?.id || "");
@@ -49,7 +46,6 @@ export default function EventCreationForm({ mode, eventId, initialValues, runclu
   // For resetting tags
   const [resetKey, setResetKey] = useState(0);
   // Handle time
-  const [countdown, setCountdown] = useState<number | null>(null);
   const [startTime, setStartTime] = useState({ hour: "", minute: "" });
   const [endTime, setEndTime] = useState({ hour: "", minute: "" });
   // Handle time picker values
@@ -118,33 +114,6 @@ export default function EventCreationForm({ mode, eventId, initialValues, runclu
     }
   }, [mode, runclubId, runclubs]);
 
-  // Open toast when we receive a message
-   useEffect(() => {
-    if (state?.message && onToastUpdate) {
-      onToastUpdate({
-        message: state.message,
-        type: state.success ? 'success' : 'error',
-        countdown: state.success ? countdown : undefined
-      });
-      onToastOpenChange?.(true);
-    }
-  }, [state, countdown, onToastUpdate, onToastOpenChange]);
-
-  // Countdown timer
-  useEffect(() => {
-    if (countdown === null || countdown <= 0) return;
-    const t = setTimeout(() => setCountdown((c) => (c ? c - 1 : null)), 1000);
-    return () => clearTimeout(t);
-  }, [countdown]);
-
-  // When countdown finishes: close form (no redirect) — per request
-  useEffect(() => {
-    if (countdown === 0) {
-      onToastOpenChange?.(false);
-      setCountdown(null);
-      if (onClose) onClose();
-    }
-  }, [countdown, onClose, onToastOpenChange]);
 
 const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -157,21 +126,18 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     const currentUser = user ?? clientAuth.currentUser ?? undefined;
 
     if (!formRef.current) {
-      setState({ success: false, message: "Form is not available." });
-      onToastOpenChange?.(true);
+      onError?.("Form is not available.");
       return;
     }
 
     if (!currentUser) {
-      setState({ success: false, message: "You must be signed in to create an event." });
-      onToastOpenChange?.(true);
+      onError?.("You must be signed in to create an event.");
       return;
     }
 
     const finalRunclubId = runclubId || selectedRunclub;
     if (!finalRunclubId) {
-      setState({ success: false, message: "Please select a run club to create the event for." });
-      onToastOpenChange?.(true);
+      onError?.("Please select a run club to create the event for.");
       return;
     }
 
@@ -196,7 +162,7 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     try {
         idToken = await currentUser.getIdToken(true); // Force refresh to get latest token
         } catch {
-        setState({
+        setFormState({
             success: false,
             message: "Failed to get authentication token.",
             errors: {},
@@ -205,8 +171,7 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         }
         
     if (!idToken) {
-      setState({ success: false, message: "Authentication expired. Please log in again." });
-      onToastOpenChange?.(true);
+      onError?.("Authentication expired. Please log in again.");
       return;
     }
     formData.set("idToken", idToken);
@@ -215,8 +180,7 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     const rawDescription = formData.get('description') as string;
     const strippedText = rawDescription.replace(/<[^>]*>/g, '').trim();
     if (strippedText.length > 5000) {
-      setState({ success: false, message: 'Description exceeds 5000 characters. Please shorten it.' });
-      onToastOpenChange?.(true);
+      onError?.('Description exceeds 5000 characters. Please shorten it.');
       return;
     }
 
@@ -227,10 +191,10 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
       try {
         if (!formRef.current) return;
         const result = await saveEvent(undefined, formData);
-        setState(result);
+        setFormState(result);
 
         if (!result?.success) {
-          onToastOpenChange?.(true);
+          onError?.(result.message);
           return;
         }
 
@@ -249,23 +213,14 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         const savedEvent = { id: eventDoc.id, ...eventDoc.data() } as RunClubEvent;
 
         if (mode === "update") {
-          onEventUpdated?.(savedEvent);
-          onClose?.();
-          return;
+          onSuccess?.(result.message);
         }
 
-        onEventCreated?.(savedEvent);
-        setResetKey((k) => k + 1);
-        formRef.current.reset();
-        setStartTime({ hour: "", minute: "" });
-        setEndTime({ hour: "", minute: "" });
-        setSelectedRunclub(runclubId || runclubs[0]?.id || "");
+        onSuccess?.(result.message);
         imageUploadFieldRef.current?.reset?.();
-        setCountdown(3);
       } catch (err: unknown) {
         console.error("Event submit error:", err);
-        setState({ success: false, message: (err as Error)?.message || "Unexpected error" });
-        onToastOpenChange?.(true);
+        onError?.("An unexpected error occurred. Please try again.");
       } finally {
         setIsSubmitting(false);
       }
@@ -288,7 +243,7 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
                 className={styles.rcForm__input}
                 value={selectedRunclub}
                 onChange={(e) => setSelectedRunclub(e.target.value)}
-                aria-invalid={!!(state && !state.success && state.errors?.runclub_id)}
+                aria-invalid={!!(formState && !formState.success && formState.errors?.runclub_id)}
               >
                 <option value="" disabled>
                   Select a run club
@@ -299,9 +254,9 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
                   </option>
                 ))}
               </select>
-              {state && !state.success && state.errors?.runclub_id && (
+              {formState && !formState.success && formState.errors?.runclub_id && (
                 <p className="rcForm__hint" role="alert">
-                  {state.errors.runclub_id[0]}
+                  {formState.errors.runclub_id[0]}
                 </p>
               )}
             </div>
@@ -321,9 +276,9 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
               Date <span className="rcForm__required">*</span>
             </label>
             <input id="date" name="date" type="date" defaultValue={initialValues?.date || ""} required className="rcForm__input" />
-              {state && !state.success && state.errors?.date && (
+              {formState && !formState.success && formState.errors?.date && (
                 <p id="date-error" className="rcForm__hint white" role="alert">
-                  {state.errors.date[0]}
+                  {formState.errors.date[0]}
                 </p>
               )}
           </div>

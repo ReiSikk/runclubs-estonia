@@ -333,7 +333,6 @@ export async function saveEvent(
     const endTime = String(formData.get("endTime") || "").trim() || null;
     const locationAddress = getOptionalField(formData, "locationAddress") || null;
     const locationUrl = getOptionalField(formData, "locationUrl") || null;
-    const about = getOptionalField(formData, "about") || "";
     const runclub_id = String(formData.get("runclub_id") || "").trim();
     const imageFile = formData.get("image") as File | null;
     const tags = formData.getAll("tags") as string[];
@@ -408,6 +407,8 @@ export async function saveEvent(
       };
     }
 
+    console.log("Validated fields:", validatedFields.data);
+
     // Clean data
     const cleanData: Record<string, unknown> = {};
     Object.entries(validatedFields.data).forEach(([key, value]) => {
@@ -416,6 +417,8 @@ export async function saveEvent(
 
       }
     });
+
+    console.log("Clean data to save:", cleanData);
 
     // Save to Firestore
     if (mode === "create") {

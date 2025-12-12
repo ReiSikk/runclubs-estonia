@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useCallback, useEffect, useMemo } from "react";
+import { useState, useCallback, useEffect, useMemo } from "react";
 import Link from "next/link";
 // Hooks and utils
 import useMyRunClubs from "../../lib/hooks/useMyRunClubs";
@@ -79,6 +79,7 @@ function DashboardContent({ userId, user }: { userId: string; user: User }) {
     data: events = [],
     isLoading: eventsLoading,
     isError: eventsError,
+    refetch: refetchEvents
   } = useClubEvents(clubIds);
 
   // Check for mobile
@@ -94,8 +95,19 @@ function DashboardContent({ userId, user }: { userId: string; user: User }) {
   const closeModal = () => {
     setEventModalToShow(null);
     setEditingEvent(null);
+    setEventToast(null);
+    setEventToastOpen(false);
+    setClubToast(null);
+    setClubToastOpen(false);
     setEditingClub(null);
   };
+
+    useEffect(() => {
+    if (!eventModalToShow) {
+      setEventToast(null);
+      setEventToastOpen(false);
+    }
+  }, [eventModalToShow]);
 
 const isAnyModalOpen = eventModalToShow || !!editingClub;
 
@@ -113,22 +125,11 @@ const isAnyModalOpen = eventModalToShow || !!editingClub;
   }, [router]);
 
   /* Events CRUD and modal states  */
-  const handleEventCreated = async () => {
-    await queryClient.invalidateQueries({ queryKey: ['events'] });
-  };
-
-  const handleEventUpdated = async () => {
-  await queryClient.invalidateQueries({ queryKey: ['events'] });
-  setEditingEvent(null);
-  setEventModalToShow(null);
-};
-
   const handleEventDeleted = async () => {
     await queryClient.invalidateQueries({ queryKey: ['events'] });
   };
 
   /* Clubs CRUD states  */
-
   const handleClubDeleted = async (clubId: string) => {
      try {
     // 1. Immediately remove the club from the cache (no refetch needed yet)
@@ -370,17 +371,24 @@ const isAnyModalOpen = eventModalToShow || !!editingClub;
         toastOpen={eventToastOpen}
         onToastOpenChange={setEventToastOpen}
       >
-        {clubs.length > 0 && eventModalToShow ? (
+        {eventModalToShow ? (
           <EventCreationForm
             mode={eventModalToShow}
             eventId={editingEvent?.id}
             initialValues={editingEvent}
             runclubs={runclubs}
-            onClose={closeModal}
-            onEventCreated={handleEventCreated}
-            onEventUpdated={handleEventUpdated}
-            onToastUpdate={setEventToast}
-            onToastOpenChange={setEventToastOpen}
+            onSuccess={(msg) => {
+              setEventToast({ message: msg, type: "success", countdown: 3 });
+              setEventToastOpen(true);
+              setTimeout(() => {
+                closeModal();
+                refetchEvents();
+              }, 3000);
+            }}
+            onError={(msg) => {
+              setEventToast({ message: msg, type: "error", countdown: null });
+              setEventToastOpen(true);
+            }}
           />
         ) : (
           <div className="center fp-col">
@@ -408,12 +416,18 @@ const isAnyModalOpen = eventModalToShow || !!editingClub;
             mode="update"
             clubId={editingClub.id}
             initialValues={editingClub}
-            onEditSuccess={async () => {
-              setEditingClub(null); // Close modal
-              await refetchClubs(); // get fresh data
+            onSuccess={(msg) => {
+              setClubToast({ message: msg, type: "success", countdown: 3 });
+              setClubToastOpen(true);
+              setTimeout(() => {
+                closeModal();
+                refetchClubs();
+              }, 3000);
             }}
-            onToastUpdate={setClubToast}
-            onToastOpenChange={setClubToastOpen}
+            onError={(msg) => {
+              setClubToast({ message: msg, type: "error", countdown: null });
+              setClubToastOpen(true);
+            }}
           />
         )}
       </Modal>
