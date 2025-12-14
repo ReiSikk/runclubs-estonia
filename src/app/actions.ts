@@ -26,12 +26,20 @@ export async function saveRunClub(
   prevState: ActionResult | undefined,
   formData: FormData
 ): Promise<ActionResult> {
+  // Helper to get field with or without 1_ prefix
+  const getField = (name: string) =>
+    formData.get(name) ?? formData.get(`1_${name}`);
 
-  const mode = formData.get("mode") as "create" | "update";
-  const clubId = formData.get("clubId") as string | null;
+  const getAllFields = (name: string) =>
+    formData.getAll(name).length > 0
+      ? formData.getAll(name)
+      : formData.getAll(`1_${name}`);
+
+  const mode = getField("mode") as "create" | "update";
+  const clubId = getField("clubId") as string | null;
 
   // Get ID token from formData
-  const idToken = formData.get("idToken") as string | undefined;
+  const idToken = getField("idToken") as string | undefined;
   if (!idToken) {
     return {
       success: false,
@@ -40,9 +48,9 @@ export async function saveRunClub(
   }
 
   // Check if logo removal is requested
-  const removeLogo = formData.get("removeLogo") === "true";
+  const removeLogo = getField("removeLogo") === "true";
 
-    // Verify the token and get the UID
+  // Verify the token and get the UID
   let creatorUid: string;
   try {
     const decodedToken = await getAuth(adminApp).verifyIdToken(idToken);
@@ -67,7 +75,7 @@ export async function saveRunClub(
     if (!clubDoc.exists) {
       return { success: false, message: "Club not found." };
     }
-    
+
     const clubData = clubDoc.data();
     if (clubData?.creator_id !== creatorUid) {
       return { success: false, message: "You don't have permission to update this club." };
@@ -76,7 +84,7 @@ export async function saveRunClub(
 
   try {
     let logoUrl: string | null = null;
-    const logoFile = formData.get("logo") as File | null;
+    const logoFile = getField("logo") as File | null;
 
     // File upload with Admin SDK
     if (logoFile && logoFile.size > 0) {
@@ -161,14 +169,14 @@ export async function saveRunClub(
 
     // Build submission object
     const submission: Record<string, unknown> = {
-      name: formData.get("name") as string,
-      slug: normalizeToSlug(formData.get("name") as string),
-      runDays: formData.getAll("runDays") as string[],
-      distance: formData.get("distance") as string,
-      city: formData.get("city") as string,
-      area: formData.get("area") as string,
-      description: formData.get("description") as string,
-      email: formData.get("email") as string,
+      name: getField("name") as string,
+      slug: normalizeToSlug(getField("name") as string),
+      runDays: getAllFields("runDays") as string[],
+      distance: getField("distance") as string,
+      city: getField("city") as string,
+      area: getField("area") as string,
+      description: getField("description") as string,
+      email: getField("email") as string,
       updatedAt: Timestamp.now(),
     };
 
@@ -184,25 +192,25 @@ export async function saveRunClub(
     }
 
     // Add optional fields
-    const startTime = getOptionalField(formData, "startTime");
+    const startTime = getField("startTime");
     if (startTime) submission.startTime = startTime;
 
-    const distanceDescription = getOptionalField(formData, "distanceDescription");
+    const distanceDescription = getField("distanceDescription");
     if (distanceDescription) submission.distanceDescription = distanceDescription;
 
-    const address = getOptionalField(formData, "address");
+    const address = getField("address");
     if (address) submission.address = address;
 
-    const instagram = getOptionalField(formData, "instagram");
+    const instagram = getField("instagram");
     if (instagram) submission.instagram = instagram;
 
-    const facebook = getOptionalField(formData, "facebook");
+    const facebook = getField("facebook");
     if (facebook) submission.facebook = facebook;
 
-    const strava = getOptionalField(formData, "strava");
+    const strava = getField("strava");
     if (strava) submission.strava = strava;
 
-    const website = getOptionalField(formData, "website");
+    const website = getField("website");
     if (website) submission.website = website;
 
     // Validate with Zod
@@ -239,12 +247,12 @@ export async function saveRunClub(
         message: "Success! Your club has been registered and is pending approval.",
       };
     } else {
-        // When updating check if we should remove logo
-        if (removeLogo) {
+      // When updating check if we should remove logo
+      if (removeLogo) {
         cleanData.logo = FieldValue.delete(); // Remove current logo
-        } else if (logoUrl) {
-          cleanData.logo = logoUrl; // New logo
-        }
+      } else if (logoUrl) {
+        cleanData.logo = logoUrl; // New logo
+      }
       await adminDb.collection("runclubs").doc(clubId!).update(cleanData);
       return {
         success: true,
