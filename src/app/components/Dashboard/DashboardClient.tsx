@@ -180,6 +180,14 @@ const isAnyModalOpen = eventModalToShow || !!editingClub;
     };
   }, []);
 
+
+  /* //TODO: REMOVE */
+  const handleDebug = async () => {
+  const res = await fetch('/api/debug-server-action');
+  const data = await res.json();
+  console.log("DEBUG DATA:", data);
+};
+
   return (
     <>
       <main
