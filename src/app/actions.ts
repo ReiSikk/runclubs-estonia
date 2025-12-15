@@ -16,7 +16,7 @@ import { submitEventSchema } from './lib/types/submitEvent';
 import getOptionalField from "@/app/lib/utils/getOptionalField";
 import normalizeToSlug from "@/app/lib/utils/generateSlugFromName";
 import sanitizeSVGs from "@/app/lib/utils/sanitizeSvgs";
-import DOMPurify from 'isomorphic-dompurify';
+import sanitizeHtml from "sanitize-html";
 
 type ActionResult =
   | { success: true; message: string; id?: string }
@@ -300,9 +300,9 @@ export async function saveEvent(
   }
 
     const rawDescription = formData.get('description') as string;
-    const cleanDescription = DOMPurify.sanitize(rawDescription, {
-      ALLOWED_TAGS: ['p', 'strong', 'em', 'u', 'h2', 'h3', 'ul', 'ol', 'li', 'blockquote', 'a'],
-      ALLOWED_ATTR: ['href', 'target', 'rel'],
+    const cleanDescription = sanitizeHtml(rawDescription, {
+      allowedTags: ['p', 'strong', 'em', 'u', 'h1', 'h2', 'h3', 'ul', 'ol', 'li', 'blockquote', 'a'],
+      allowedAttributes: { a: ['href', 'target', 'rel'] },
     });
 
   // For update mode, verify ownership of event
@@ -407,8 +407,6 @@ export async function saveEvent(
       };
     }
 
-    console.log("Validated fields:", validatedFields.data);
-
     // Clean data
     const cleanData: Record<string, unknown> = {};
     Object.entries(validatedFields.data).forEach(([key, value]) => {
@@ -417,8 +415,6 @@ export async function saveEvent(
 
       }
     });
-
-    console.log("Clean data to save:", cleanData);
 
     // Save to Firestore
     if (mode === "create") {

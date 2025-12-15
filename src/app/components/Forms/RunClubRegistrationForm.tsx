@@ -46,7 +46,6 @@ export default function RunClubRegistrationForm({
   // File preview and error states
   const [filePreview, setFilePreview] = useState<string | null>(null);
   const [fileError, setFileError] = useState<string | null>(null);
-  console.log("File error:", fileError);
   const [existingLogoUrl, setExistingLogoUrl] = useState<string | null>(null);
   const [removeLogo, setRemoveLogo] = useState<boolean>(false);
   // TimePicker state
