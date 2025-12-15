@@ -156,6 +156,8 @@
 }
 
 .Content {
+  background-color: var(--dark-gray);
+  border-radius: 6px;
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
   position: fixed;
   top: 50%;
@@ -164,7 +166,7 @@
   width: 90vw;
   max-width: 500px;
   max-height: 85vh;
-  padding: 25px;
+  padding: clamp(1.6rem, 3vw, 2.4rem);
   z-index: 1000;
   animation: contentShow 150ms cubic-bezier(0.16, 1, 0.3, 1);
   &:focus {

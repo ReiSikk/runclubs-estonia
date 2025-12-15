@@ -28,6 +28,7 @@ import { RunClub } from "../../lib/types/runClub";
 import { User } from "firebase/auth";
 import { RunClubEvent } from "@/app/lib/types/runClubEvent";
 import DashboardEventsHeader from "./DashboardEventsHeader";
+import FormToast from "../Toast/Toast";
 
 export default function DashboardClient() {
   const { user, loading } = useAuth();
@@ -64,6 +65,8 @@ function DashboardContent({ userId, user }: { userId: string; user: User }) {
   const [eventToastOpen, setEventToastOpen] = useState(false);
   const [clubToast, setClubToast] = useState<{ message: string; type: 'success' | 'error'; countdown?: number | null } | null>(null);
   const [clubToastOpen, setClubToastOpen] = useState(false);
+
+  // TanStack Query client
   const queryClient = useQueryClient();
 
   // Now these hooks only run once with stable userId
@@ -134,20 +137,17 @@ const isAnyModalOpen = eventModalToShow || !!editingClub;
   /* Clubs CRUD states  */
   const handleClubDeleted = async (clubId: string) => {
      try {
-    // 1. Immediately remove the club from the cache (no refetch needed yet)
-    queryClient.setQueryData(['runclubs', userId], (oldClubs: RunClub[] | undefined) => {
-      if (!oldClubs) return [];
-      return oldClubs.filter(club => club.id !== clubId);
-    });
+      // 1. Immediately remove the club from the cache (no refetch needed yet)
+      queryClient.setQueryData(['runclubs', userId], (oldClubs: RunClub[] | undefined) => {
+        if (!oldClubs) return [];
+        return oldClubs.filter(club => club.id !== clubId);
+      });
 
-    // 2. Immediately remove events for this club from the cache
-    queryClient.setQueryData(['events', clubIds], (oldEvents: RunClubEvent[] | undefined) => {
-      if (!oldEvents) return [];
-      return oldEvents.filter(event => event.runclub_id !== clubId);
-    });
-
-    // 3. Optionally refetch in background to sync with server (no await needed)
-    refetchClubs();
+      // 2. Immediately remove events for this club from the cache
+      queryClient.setQueryData(['events', clubIds], (oldEvents: RunClubEvent[] | undefined) => {
+        if (!oldEvents) return [];
+        return oldEvents.filter(event => event.runclub_id !== clubId);
+      });
     
   } catch (error) {
     console.error("Failed to update cache after club deletion:", error);
@@ -175,16 +175,8 @@ const isAnyModalOpen = eventModalToShow || !!editingClub;
   // Memoize runclubs to prevent unnecessary re-renders of EventCreationForm
   const runclubs = useMemo(() => clubs.map((c) => ({ id: c.id, name: c.name })), [clubs]);
 
-  // Sort by approvedForPublication
-  const sortedClubs = useMemo(() => {
-    return [...clubs].sort((a, b) => {
-      if (a.approvedForPublication === b.approvedForPublication) return 0;
-      return a.approvedForPublication ? -1 : 1;
-    });
-  }, [clubs]);
 
-
-    useEffect(() => {
+  useEffect(() => {
     document.body.classList.add("page-dashboard");
     return () => {
       document.body.classList.remove("page-dashboard");
@@ -261,7 +253,7 @@ const isAnyModalOpen = eventModalToShow || !!editingClub;
                   </li>
                   <li className={`${styles.dashboardStats__item} ${styles.card_dashboard} ${styles.simple}`}>
                     <div className={`${styles.inner} fp-col`}>
-                      <span className={`${styles.dashboardStats__label} txt-label`}>Clubs I manage</span>
+                      <span className={`${styles.dashboardStats__label} txt-label`}>My clubs</span>
                       <h4 className="h1">{clubs.length}</h4>
                     </div>
                   </li>
