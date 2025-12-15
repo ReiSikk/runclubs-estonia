@@ -54,6 +54,14 @@ export async function saveRunClub(
     };
   }
 
+  // Sanitize description HTML
+    const rawDescription = formData.get('description') as string;
+    const cleanDescription = sanitizeHtml(rawDescription, {
+      allowedTags: ['p', 'strong', 'b', 'em', 'i', 'ul', 'ol', 'li'],
+      allowedAttributes: {},
+    });
+
+
   // For update mode, verify ownership
   if (mode === "update") {
     if (!clubId) {
@@ -167,7 +175,7 @@ export async function saveRunClub(
       distance: formData.get("distance") as string,
       city: formData.get("city") as string,
       area: formData.get("area") as string,
-      description: formData.get("description") as string,
+      description: cleanDescription,
       email: formData.get("email") as string,
       updatedAt: Timestamp.now(),
     };
@@ -302,7 +310,7 @@ export async function saveEvent(
     const rawDescription = formData.get('description') as string;
     const cleanDescription = sanitizeHtml(rawDescription, {
       allowedTags: ['p', 'strong', 'em', 'u', 'h1', 'h2', 'h3', 'ul', 'ol', 'li', 'blockquote', 'a'],
-      allowedAttributes: { a: ['href', 'target', 'rel'] },
+      allowedAttributes: {},
     });
 
   // For update mode, verify ownership of event

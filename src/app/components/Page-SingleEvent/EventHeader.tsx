@@ -73,7 +73,7 @@ export default function EventHeader({ club, event }: Props) {
               ))}
             </div>
             <span className={styles.eventHeader__subtitle + " h2"}>About this event</span>
-            <div className={styles.eventHeader__desc + " txt-body"} dangerouslySetInnerHTML={{ __html: event.description }} />
+            <div className="rteText txt-body" dangerouslySetInnerHTML={{ __html: event.description }} />
           </div>
           <div className={styles.eventHeader__cards}>
             {event.distance &&

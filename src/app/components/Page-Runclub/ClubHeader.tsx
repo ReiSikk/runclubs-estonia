@@ -68,9 +68,7 @@ const infoCards = [
         <h1 className={styles.pageHeader__title}>
           {club.name}
         </h1>
-        <p className={styles.pageHeader__description}>
-          {club.description}
-        </p>
+        <div className={styles.pageHeader__description + " rteText txt-body"} dangerouslySetInnerHTML={{ __html: club.description || "" }} />
       </div>
       {infoCards.length > 0 && (
         <ul className={`${styles.pageHeader__cards}`}>

@@ -30,12 +30,11 @@
   margin-inline: auto;
 }
 .pageHeader__title {
-  margin-bottom: clamp(12px, 2vw, 24px);
+  margin-bottom: clamp(1.6rem, 3vw, 3.2rem);
   margin-inline: auto;
   text-align: center;
 }
 .pageHeader__description {
-  text-align: center;
   max-width: 636px;
 }
 .pageHeader__cards {

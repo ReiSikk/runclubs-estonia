@@ -3,13 +3,13 @@
 import { useState, useEffect, useRef, useTransition } from "react";
 import styles from "./RunClubRegistrationForm.module.css";
 import { saveRunClub } from "@/app/actions";
-import { useRouter } from "next/navigation";
 import TimePicker, { TimePickerValue } from "react-accessible-time-picker";
 import { useAuth } from "@/app/providers/AuthProvider";
 import { FormState } from "@/app/lib/types/serverActionReturn";
 import { RunClub } from "@/app/lib/types/runClub";
 import { useQueryClient } from "@tanstack/react-query";
 import ImageUploadField from "./ImageUploadField";
+import RichTextEditor from "./RichTextEditor";
 
 const initialState: FormState = undefined;
 
@@ -169,18 +169,6 @@ export default function RunClubRegistrationForm({
       }
     });
   };
-
-  // // Notify parent about toast updates
-  // useEffect(() => {
-  //   if (state?.message && onToastUpdate) {
-  //     onToastUpdate({
-  //       message: state.message,
-  //       type: state.success ? "success" : "error",
-  //       countdown: state.success && mode === "create" ? countdown : undefined,
-  //     });
-  //     onToastOpenChange?.(true);
-  //   }
-  // }, [state, countdown, onToastUpdate, onToastOpenChange, mode]);
 
   // Determine which logo to show
   const showExistingLogo = mode === "update" && existingLogoUrl && !filePreview;
@@ -419,7 +407,12 @@ export default function RunClubRegistrationForm({
               <label htmlFor="description" className={`rcForm__label h5`}>
                 Introduction <span className="rcForm__required">*</span>
               </label>
-              <textarea
+              <RichTextEditor
+                name="description"
+                initialValue={initialValues?.description || ""}
+                placeholder="Introductory text describing your run club. Think of it as a first impression for potential new members. Please also point out the social channel where you post the most up-to-date information about runs & events."
+              />
+              {/* <textarea
                 id="description"
                 name="description"
                 placeholder="Introductory text describing your run club. Think of it as a first impression for potential new members. Please also point out the social channel where you post the most up-to-date information about runs & events."
@@ -429,7 +422,7 @@ export default function RunClubRegistrationForm({
                 maxLength={5000}
                 defaultValue={initialValues?.description || ""}
                 aria-invalid={!!(state && !state.success && state.errors?.description)}
-              />
+              /> */}
               {state && !state.success && state.errors?.description && (
                 <p id="description-error" className="rcForm__hint" role="alert">
                   {state.errors.description[0]}
