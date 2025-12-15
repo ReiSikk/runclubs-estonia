@@ -121,6 +121,7 @@
     }
     &:last-of-type {
       background: var(--dark-gray);
+      height: fit-content;
     }
   }
 }

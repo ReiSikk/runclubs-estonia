@@ -593,6 +593,9 @@ button {
     color: var(--dark);
     border: 1px solid var(--cream);
   }
+  .btn_main.cream:hover {
+    filter: brightness(0.9);
+  }
   .btn-txt-anim:hover {
     filter: brightness(1.2);
   }

@@ -45,7 +45,7 @@ function DashboardEventsHeader({ events, clubs, setEventModalToShow, onFilterCha
                 : `You have published ${events.length} event${events.length > 1 ? "s" : ""}.`}
             </p>
         </div>
-        <button className={`${styles.dashboardEvents__btn} btn_main accent`} onClick={() => setEventModalToShow("create")}>
+        <button className={`${styles.dashboardEvents__btn} btn_main cream`} onClick={() => setEventModalToShow("create")}>
             <LucidePlus size={16} />
             Create Event
         </button>
