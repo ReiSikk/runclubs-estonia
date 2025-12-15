@@ -13,6 +13,8 @@ export async function getUserRunClubs(userId?: string): Promise<RunClub[]> {
       const snapshot = await adminDb
         .collection('runclubs')
         .where("creator_id", "==", userId)
+        .orderBy('approvedForPublication', 'desc')
+        .orderBy('createdAt', 'desc')
         .get();
 
       const clubs = snapshot.docs.map(doc => {
@@ -40,7 +42,8 @@ export async function getUserRunClubs(userId?: string): Promise<RunClub[]> {
       const q = query(
         collection(db, 'runclubs'),
         where("creator_id", "==", userId),
-        orderBy('name', 'asc')
+        orderBy('approvedForPublication', 'desc'),
+        orderBy('createdAt', 'desc')
       );
       
       const snapshot = await getDocs(q);

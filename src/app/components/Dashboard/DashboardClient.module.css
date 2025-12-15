@@ -255,9 +255,14 @@
 }
 
 .dashboardEvents__filters {
-  display: flex;
-  flex-wrap: wrap;
   gap: 1.2rem;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  
+  @media only screen and (min-width: 768px) and (max-width: 1024px), only screen and (min-width: 1025px) {
+    flex-wrap: nowrap;
+  }
 }
 
 .pill {

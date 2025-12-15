@@ -58,6 +58,7 @@ function DashboardContent({ userId, user }: { userId: string; user: User }) {
   // Handle create/edit event modal
   const [eventModalToShow, setEventModalToShow] = useState<"create" | "update" | null>(null);
   const [editingEvent, setEditingEvent] = useState<RunClubEvent | null>(null);
+  const [preselectedClubId, setPreselectedClubId] = useState<string | null>(null);
   // toast states for both modals
   const [eventToast, setEventToast] = useState<{ message: string; type: 'success' | 'error'; countdown?: number | null } | null>(null);
   const [eventToastOpen, setEventToastOpen] = useState(false);
@@ -100,6 +101,7 @@ function DashboardContent({ userId, user }: { userId: string; user: User }) {
     setClubToast(null);
     setClubToastOpen(false);
     setEditingClub(null);
+    setPreselectedClubId(null);
   };
 
     useEffect(() => {
@@ -172,6 +174,14 @@ const isAnyModalOpen = eventModalToShow || !!editingClub;
 
   // Memoize runclubs to prevent unnecessary re-renders of EventCreationForm
   const runclubs = useMemo(() => clubs.map((c) => ({ id: c.id, name: c.name })), [clubs]);
+
+  // Sort by approvedForPublication
+  const sortedClubs = useMemo(() => {
+    return [...clubs].sort((a, b) => {
+      if (a.approvedForPublication === b.approvedForPublication) return 0;
+      return a.approvedForPublication ? -1 : 1;
+    });
+  }, [clubs]);
 
 
     useEffect(() => {
@@ -251,7 +261,7 @@ const isAnyModalOpen = eventModalToShow || !!editingClub;
                   </li>
                   <li className={`${styles.dashboardStats__item} ${styles.card_dashboard} ${styles.simple}`}>
                     <div className={`${styles.inner} fp-col`}>
-                      <span className={`${styles.dashboardStats__label} txt-label`}>Active clubs</span>
+                      <span className={`${styles.dashboardStats__label} txt-label`}>Clubs I manage</span>
                       <h4 className="h1">{clubs.length}</h4>
                     </div>
                   </li>
@@ -353,6 +363,21 @@ const isAnyModalOpen = eventModalToShow || !!editingClub;
                           </li>
                         ));
                       })()}
+                      {filteredEvents.length === 0 && (
+                        <div className="empty_result_item fp-col bradius-m">
+                           <h2 className="h3 center">No events found for the selected club</h2>
+                            <p className="txt-body center bradius-m">Create an event to get started.</p>
+                            <div 
+                              className="btn_main accent"   
+                              onClick={() => {
+                                setPreselectedClubId(selectedClubId !== "all" ? selectedClubId : null);
+                                setEventModalToShow("create");
+                              }}
+                            >
+                              Create event for this club
+                            </div>
+                        </div>
+                      )}
                     </ul>
                   )}
                 </div>
@@ -377,6 +402,7 @@ const isAnyModalOpen = eventModalToShow || !!editingClub;
             eventId={editingEvent?.id}
             initialValues={editingEvent}
             runclubs={runclubs}
+            preselectedClubId={preselectedClubId}
             onSuccess={(msg) => {
               setEventToast({ message: msg, type: "success", countdown: 3 });
               setEventToastOpen(true);

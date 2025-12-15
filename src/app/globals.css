@@ -734,6 +734,15 @@ button {
   &:empty {
     display: none;
   }
+
+  .empty_result_item {
+    background: var(--dark-gray);
+    box-shadow: var(--shadow-md);
+    align-items: center;
+    justify-content: center;
+    min-height: 50vh;
+    gap: 1.2rem;
+  }
 }
 
 .tabs__content[data-state="active"] {

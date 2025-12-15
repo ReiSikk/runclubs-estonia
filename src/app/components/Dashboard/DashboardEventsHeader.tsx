@@ -1,10 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import Link from "next/link";
 import styles from "./DashboardClient.module.css";
 import { LucidePlus } from "lucide-react";
 import { RunClubEvent } from "@/app/lib/types/runClubEvent";
 import { RunClub } from "@/app/lib/types/runClub";
-import DashboardEventsFilters from "./DashboardEventsFilters";
+import { FilterSelect } from "../Page-Home/Section-AllClubs/FilterSelect";
 
 type Props = {
   events: RunClubEvent[];
@@ -21,6 +21,17 @@ function DashboardEventsHeader({ events, clubs, setEventModalToShow, onFilterCha
     setSelectedClubId(clubId);
     onFilterChange?.(clubId);
   };
+
+
+  // Define options for FilterSelect
+  const options = useMemo(() => [
+  { value: "all", label: "All my clubs", count: events.length },
+  ...clubs.map(c => ({
+    value: c.id,
+    label: c.name,
+    count: events.filter(e => e.runclub_id === c.id).length,
+  })),
+], [clubs, events]);
 
   return (
     <header className={`${styles.dashboardEvents__header} ${events.length < 1 ? styles.noEvents : ""} fp-col`}>
@@ -50,9 +61,14 @@ function DashboardEventsHeader({ events, clubs, setEventModalToShow, onFilterCha
           </div>
       }
       {events.length > 0 && clubs.length > 0 && 
-        <div className={styles.dashboardEvents__filters + " fp-col"}>
+        <div className={styles.dashboardEvents__filters + " fp"}>
           <h3 className="txt-body">Showing events for:</h3>
-          <DashboardEventsFilters clubs={clubs} selectedClubId={selectedClubId} onChange={handleChange} />
+            <FilterSelect
+                value={selectedClubId}
+                onValueChange={handleChange}
+                options={options}
+                placeholder="Filter by club"
+              />
         </div>
       }
     </header>

@@ -21,6 +21,7 @@ type Props = {
   initialValues?: Partial<RunClubEvent> | null;
   runclubId?: string;
   runclubs?: RunClubOption[];
+  preselectedClubId?: string | null;
   onSuccess?: (msg: string) => void;
   onError?: (msg: string) => void;
   onClose?: () => void;
@@ -32,13 +33,17 @@ type FormState =
   | undefined;
 
 const initialState: FormState = undefined;
-export default function EventCreationForm({ mode, eventId, initialValues, runclubId, runclubs = [], onSuccess, onError, onClose }: Props) {
+export default function EventCreationForm({ mode, eventId, initialValues, runclubId, runclubs = [], preselectedClubId, onSuccess, onError, onClose }: Props) {
   const { user } = useAuth();
   const formRef = useRef<HTMLFormElement | null>(null);
   const [formState, setFormState] = useState<FormState>(initialState);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isPending, startTransition] = useTransition();
-  const [selectedRunclub, setSelectedRunclub] = useState<string>(runclubId || runclubs[0]?.id || "");
+  const [selectedRunclub, setSelectedRunclub] = useState<string>(
+    preselectedClubId || initialValues?.runclub_id || ""
+  );
+  console.log("Preselected club ID:", preselectedClubId);
+  console.log("Initial selected runclub:", selectedRunclub);
   // Image ref and preview
   const imageUploadFieldRef = useRef<{ reset: () => void } | null>(null);
   const [existingImageUrl, setExistingImageUrl] = useState<string | null>(null);
@@ -94,12 +99,12 @@ export default function EventCreationForm({ mode, eventId, initialValues, runclu
     if (mode !== "create") return;
     setStartTime({ hour: "", minute: "" });
     setEndTime({ hour: "", minute: "" });
-    setSelectedRunclub(runclubId || runclubs[0]?.id || "");
+    setSelectedRunclub(preselectedClubId || runclubId || runclubs[0]?.id || "");
     setExistingImageUrl(null);
     setResetKey((k) => k + 1);
     imageUploadFieldRef.current?.reset?.();
     formRef.current?.reset();
-  }, [mode, runclubId, runclubs]);
+  }, [mode, preselectedClubId, runclubId, runclubs]);
 
   // Determine if we should show existing image
   const showExistingImage = mode === "update" && existingImageUrl;
@@ -241,7 +246,7 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
                 name="runclub_id"
                 required
                 className={styles.rcForm__input}
-                value={selectedRunclub}
+                value={preselectedClubId || selectedRunclub}
                 onChange={(e) => setSelectedRunclub(e.target.value)}
                 aria-invalid={!!(formState && !formState.success && formState.errors?.runclub_id)}
               >
