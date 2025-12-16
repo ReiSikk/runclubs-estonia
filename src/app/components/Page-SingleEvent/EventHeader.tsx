@@ -4,6 +4,8 @@ import { RunClubEvent } from "@/app/lib/types/runClubEvent";
 import { CalendarDays, Clock, MapPin, Mail, LucideTrendingUp, LucideTimer } from "lucide-react";
 import { formatEventDate } from "@/app/lib/utils/convertTime";
 import styles from "./EventHeader.module.css";
+import Link from "next/link";
+import EventLocationMap from "./EventLocationMap";
 
 type Props = {
   club: RunClub;
@@ -33,7 +35,7 @@ export default function EventHeader({ club, event }: Props) {
           </div>
           <div className={styles.eventHeader__host}>
             <span className={styles.eventHeader__hostLabel + " txt-label"}>HOSTED BY</span>
-            <div className={styles.eventHeader__hostInner}>
+            <Link href={`/runclubs/${club.slug}`} className={styles.eventHeader__hostInner}>
               <div className={styles.eventHeader__hostLogo}>
                 {club.logo ? (
                   <Image src={club.logo} alt={club.name} fill style={{ objectFit: "cover" }} />
@@ -44,7 +46,7 @@ export default function EventHeader({ club, event }: Props) {
               <div>
                 <span className={styles.eventHeader__hostName + " h5"}>{club.name}</span>
               </div>
-            </div>
+            </Link>
             <button className={styles.eventHeader__contactBtn + " btn_main"}>
               <Mail size={18} />
               <a href={`mailto:${club.email}`}>Contact Organiser</a>
@@ -99,7 +101,7 @@ export default function EventHeader({ club, event }: Props) {
           </div>
           <div className={styles.eventHeader__location}>
             <span className={styles.eventHeader__locationLabel + " txt-label uppercase"}>Meeting point</span>
-            <div className={styles.eventHeader__locationBox}>
+            <div className={styles.eventHeader__locationBox + " txt-body fp"}>
               <MapPin size={20} />
               <div>
                 {event.locationAddress && (
@@ -107,8 +109,8 @@ export default function EventHeader({ club, event }: Props) {
                 )}
               </div>
             </div>
-            <div className={styles.eventHeader__map}>
-              <span>Google Maps will be displayed here</span>
+            <div className={styles.eventHeader__map + " fp-col"}>
+                <EventLocationMap address={event.locationAddress} />
             </div>
           </div>
         </div>

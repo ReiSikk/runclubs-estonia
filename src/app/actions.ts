@@ -340,7 +340,7 @@ export async function saveEvent(
     const startTime = String(formData.get("startTime") || "").trim();
     const endTime = String(formData.get("endTime") || "").trim() || null;
     const locationAddress = getOptionalField(formData, "locationAddress") || null;
-    const locationUrl = getOptionalField(formData, "locationUrl") || null;
+    const locationString = getOptionalField(formData, "locationString") || null;
     const runclub_id = String(formData.get("runclub_id") || "").trim();
     const imageFile = formData.get("image") as File | null;
     const tags = formData.getAll("tags") as string[];
@@ -378,7 +378,7 @@ export async function saveEvent(
       startTime,
       endTime,
       locationAddress,
-      locationUrl,
+      locationString,
       description: cleanDescription,
       runclub_id,
       creator_id: creatorUid,

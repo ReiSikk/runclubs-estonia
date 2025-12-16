@@ -12,6 +12,7 @@ import TimePicker, { TimePickerValue } from "react-accessible-time-picker";
 import EventTagsField from "./EvenTagsField";
 import ImageUploadField from "./ImageUploadField";
 import RichTextEditor from "./RichTextEditor";
+import EventLocationPicker from "./EventLocationPicker";
 
 type RunClubOption = { id: string; name?: string; title?: string };
 
@@ -42,8 +43,6 @@ export default function EventCreationForm({ mode, eventId, initialValues, runclu
   const [selectedRunclub, setSelectedRunclub] = useState<string>(
     preselectedClubId || initialValues?.runclub_id || ""
   );
-  console.log("Preselected club ID:", preselectedClubId);
-  console.log("Initial selected runclub:", selectedRunclub);
   // Image ref and preview
   const imageUploadFieldRef = useRef<{ reset: () => void } | null>(null);
   const [existingImageUrl, setExistingImageUrl] = useState<string | null>(null);
@@ -347,7 +346,7 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
             </div>
           </div>
 
-          <div className="inputRow fp-col">
+          {/* <div className="inputRow fp-col">
             <label htmlFor="locationAddress" className="rcForm__label">
               Location <span className="rcForm__required">*</span>
             </label>
@@ -359,6 +358,10 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
               Google Maps URL
             </label>
             <input id="locationUrl" name="locationUrl" type="url" className="rcForm__input" placeholder="https://maps.google.com/..." defaultValue={initialValues?.locationUrl} />
+          </div> */}
+
+          <div className="inputRow inputRow__gmaps fp-col">
+            <EventLocationPicker />
           </div>
 
           <div className="inputRow fp-col">

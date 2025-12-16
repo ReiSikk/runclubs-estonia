@@ -338,7 +338,7 @@ const isAnyModalOpen = eventModalToShow || !!editingClub;
                                         startTime: ev.startTime,
                                         endTime: ev.endTime,
                                         locationAddress: ev.locationAddress,
-                                        locationUrl: ev.locationUrl,
+                                        locationString: ev.locationString,
                                         runclub_id: ev.runclub_id,
                                         runclub: ev.runclub,
                                       }}
