@@ -192,7 +192,7 @@ const isAnyModalOpen = eventModalToShow || !!editingClub;
       >
         <SideBar handleLogOut={handleLogOut} isMobile={isMobile} onEventClicked={() => setEventModalToShow("create")} />
         <div className={`${styles.dashboard__main}`}>
-          <div className={`${styles.header}`}>
+          <div className={`${styles.header} fp-col`}>
             <h1 className="h1">{`Welcome to your dashboard ${user.displayName ? ", " + user.displayName.split(" ")[0] : ""} 👋`}</h1>
             <p>
               Here you can manage your clubs and activities.

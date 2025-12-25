@@ -76,6 +76,8 @@
   justify-content: space-between;
   gap: 1.2rem;
   overflow: hidden;
+  width: 100%;
+  justify-content: center;
 
   @media only screen and (min-width: 768px) and (max-width: 1024px), only screen and (min-width: 1025px) {
       width: fit-content;  

@@ -20,6 +20,8 @@
 
   .header {
     margin-block: clamp(3.2rem, 4vw, 4rem) clamp(32px, 5vw, 48px);
+    align-items: center;
+    text-align: center;
 
     h1 {
       margin-bottom: 1.2rem;
@@ -162,6 +164,9 @@
    Dashboard Events Tab View
    ========================================================================== */
 .dashboardEvents {
+  max-width: 1024px;
+  margin-inline: auto;
+
   .main {
     width: 100%;
     gap: 1.2rem;
@@ -173,7 +178,6 @@
 }
 .dashboardEvents__header {
   margin-bottom: clamp(3.2rem, 4vw, 4rem);
-  justify-content: space-between;
   gap: 4rem;
 
   /* In case user has no events */
@@ -189,7 +193,6 @@
     }
 
     .main {
-      flex-direction: column;
 
       .dashboardEvents__btn {
         margin-inline: auto;
@@ -206,9 +209,7 @@
   }
 }
 .dashboardEvents__content {
-  margin-inline: auto;
   width: 100%;
-  max-width: 768px;
   
   .list {
     display: block;

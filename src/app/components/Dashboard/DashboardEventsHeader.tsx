@@ -37,7 +37,7 @@ function DashboardEventsHeader({ events, clubs, setEventModalToShow, onFilterCha
     <header className={`${styles.dashboardEvents__header} ${events.length < 1 ? styles.noEvents : ""} fp-col`}>
       {clubs.length > 0 && 
       <div className={`${styles.main} fp`}>
-        <div className=" fp-col">
+        <div className={styles.main__top + " fp-col"}>
             <h2 className="">My events</h2>
             <p className="txt-body">
             {events.length < 1
