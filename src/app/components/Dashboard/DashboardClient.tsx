@@ -338,7 +338,6 @@ const isAnyModalOpen = eventModalToShow || !!editingClub;
                                         startTime: ev.startTime,
                                         endTime: ev.endTime,
                                         locationAddress: ev.locationAddress,
-                                        locationString: ev.locationString,
                                         runclub_id: ev.runclub_id,
                                         runclub: ev.runclub,
                                       }}

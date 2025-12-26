@@ -1094,6 +1094,11 @@ button {
   }
 }
 .inputRow.inputRow__gmaps {
+  .gmp-place-autocomplete {
+    input {
+      color: var(--dark) !important;
+    }
+  }
   div:first-child {
     width: 100%;
   }

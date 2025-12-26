@@ -3,13 +3,11 @@ import { useState, useEffect } from "react";
 
 const TAG_OPTIONS = [
   "Trail Run",
-  "Road Run",
   "Social",
-  "Outdoor",
   "Beginner",
   "Intermediate",
   "Advanced",
-  "Competition",
+  "Race",
 ];
 
 type Props = {

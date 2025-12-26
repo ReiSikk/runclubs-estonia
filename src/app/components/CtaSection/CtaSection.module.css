@@ -62,6 +62,7 @@
     text-wrap: nowrap;
     gap: 8px;
     width: 100%;
+    justify-content: center;
 
     div {
       padding: 7px;

@@ -255,6 +255,7 @@ export default function LoginPage() {
             type="submit"
             className="btn_main white"
             disabled={linkSending || verifyingLink}
+            style={{cursor: (linkSending || verifyingLink ) ? 'wait' : 'pointer' }}
           >
             {linkSending ? "Sending link..." : "Send link"}
           </button>

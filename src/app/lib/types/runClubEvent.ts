@@ -9,7 +9,6 @@ export interface RunClubEvent {
   startTime: string;
   endTime?: string | null;
   locationAddress: string;
-  locationString: string;
   // Reference to the RunClub document
   runclub: string | DocumentReference;
   runclub_slug?: string;

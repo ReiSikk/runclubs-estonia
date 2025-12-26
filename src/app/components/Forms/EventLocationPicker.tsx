@@ -96,6 +96,10 @@ function PlaceAutocompleteElementField({
 
       el.placeholder = "Search a location in Estonia…";
       el.style.width = "100%";
+      el.style.background = "#faf3e0";
+      el.style.borderRadius = "8px";
+      el.style.setProperty("color-scheme", "light");
+      el.colorScheme = "light";
 
       mountRef.current.appendChild(el);
 
@@ -159,9 +163,6 @@ function PlaceAutocompleteElementField({
       )}
 
       {/* Hidden fields for saveEvent(formData) */}
-      <input type="hidden" name="locationLat" value={latLng?.lat ?? ""} />
-      <input type="hidden" name="locationLng" value={latLng?.lng ?? ""} />
-      <input type="hidden" name="locationPlaceId" value={placeId ?? ""} />
       <input type="hidden" name="locationAddress" value={address ?? ""} />
     </>
   );
@@ -180,7 +181,7 @@ export default function EventLocationPicker({
   if (!key) {
     return (
       <div className={className} role="alert" style={{ color: "#b42318" }}>
-        Missing <code>NEXT_PUBLIC_GOOGLE_MAPS_API_KEY</code>
+        Missing <code>API Key</code>
       </div>
     );
   }

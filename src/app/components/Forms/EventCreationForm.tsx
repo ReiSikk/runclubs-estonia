@@ -346,20 +346,6 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
             </div>
           </div>
 
-          {/* <div className="inputRow fp-col">
-            <label htmlFor="locationAddress" className="rcForm__label">
-              Location <span className="rcForm__required">*</span>
-            </label>
-            <input id="locationAddress" name="locationAddress" className="rcForm__input" maxLength={256} placeholder="e.g. Tallinn, Kadriorg Park" defaultValue={initialValues?.locationAddress} required  />
-          </div>
-
-          <div className="inputRow fp-col">
-            <label htmlFor="locationUrl" className="rcForm__label">
-              Google Maps URL
-            </label>
-            <input id="locationUrl" name="locationUrl" type="url" className="rcForm__input" placeholder="https://maps.google.com/..." defaultValue={initialValues?.locationUrl} />
-          </div> */}
-
           <div className="inputRow inputRow__gmaps fp-col">
             <EventLocationPicker />
           </div>
@@ -412,7 +398,7 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
           className="rcForm__submit btn_main white white--alt"
           disabled={isPending || isSubmitting}
           aria-disabled={isPending || isSubmitting}
-          style={{ opacity: isPending ? 0.6 : 1 }}
+          style={{ opacity: isPending ? 0.6 : 1, cursor: isPending ? "wait" : "pointer" }}
         >
           {mode === "create" ? (isPending ? "Creating..." : "Create Event") : isPending ? "Updating..." : "Update Event"}
         </button>
