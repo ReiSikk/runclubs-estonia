@@ -529,7 +529,7 @@ export default function RunClubRegistrationForm({
         disabled={isPending || !!fileError}
         style={{
           opacity: isPending || fileError ? 0.6 : 1,
-          cursor: isPending || fileError ? "not-allowed" : "pointer",
+          cursor: fileError ? "not-allowed" : isPending ? "wait" : "pointer",
         }}
       >
         {isPending

@@ -163,6 +163,9 @@ function PlaceAutocompleteElementField({
       )}
 
       {/* Hidden fields for saveEvent(formData) */}
+      <input type="hidden" name="locationLat" value={latLng?.lat ?? ""} />
+      <input type="hidden" name="locationLng" value={latLng?.lng ?? ""} />
+      <input type="hidden" name="locationPlaceId" value={placeId ?? ""} />
       <input type="hidden" name="locationAddress" value={address ?? ""} />
     </>
   );

@@ -340,6 +340,9 @@ export async function saveEvent(
     const startTime = String(formData.get("startTime") || "").trim();
     const endTime = String(formData.get("endTime") || "").trim() || null;
     const locationAddress =  formData.get("locationAddress");
+    const lat = formData.get("locationLat") ? Number(formData.get("locationLat")) : null;
+    const lng = formData.get("locationLng") ? Number(formData.get("locationLng")) : null;
+    const placeId = formData.get("locationPlaceId") ? String(formData.get("locationPlaceId")) : null;
     const runclub_id = String(formData.get("runclub_id") || "").trim();
     const imageFile = formData.get("image") as File | null;
     const tags = formData.getAll("tags") as string[];
@@ -377,6 +380,9 @@ export async function saveEvent(
       startTime,
       endTime,
       locationAddress,
+      lat,
+      lng,
+      placeId,
       description: cleanDescription,
       runclub_id,
       creator_id: creatorUid,
@@ -399,7 +405,6 @@ export async function saveEvent(
     // Validate with Zod schema
     const validatedFields = submitEventSchema.safeParse(submission);
     if (!validatedFields.success) {
-      console.log("Zod validation error:", validatedFields.error);
       const errors: Record<string, string[]> = {};
       validatedFields.error.issues.forEach((issue) => {
         const path = issue.path.join(".");

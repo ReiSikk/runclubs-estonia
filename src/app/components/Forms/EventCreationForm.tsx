@@ -347,7 +347,15 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
           </div>
 
           <div className="inputRow inputRow__gmaps fp-col">
-            <EventLocationPicker />
+          <EventLocationPicker
+            initialLatLng={
+              initialValues?.lat && initialValues?.lng
+                ? { lat: initialValues.lat, lng: initialValues.lng }
+                : null
+            }
+            initialAddress={initialValues?.locationAddress ?? null}
+            initialPlaceId={initialValues?.placeId ?? null}
+          />
           </div>
 
           <div className="inputRow fp-col">

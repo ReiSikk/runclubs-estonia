@@ -24,7 +24,6 @@ export default function EventLocationMap({ address, className, zoom = 15 }: Prop
   const [error, setError] = useState<string | null>(null);
 
   const [infoWindowOpen, setInfoWindowOpen] = useState(true);
-  console.log("Rendering EventLocationMap with address:", address);
   const [markerRef, marker] = useAdvancedMarkerRef();
 
   useEffect(() => {
@@ -44,7 +43,6 @@ export default function EventLocationMap({ address, className, zoom = 15 }: Prop
       try {
         const result = await geocodeAddress(trimmed);
         if (cancelled) return;
-        console.log("Geocoded result for address", trimmed, ":", result);
 
         if (!result) {
           setCoords(undefined);

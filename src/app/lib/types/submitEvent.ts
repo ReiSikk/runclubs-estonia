@@ -12,6 +12,9 @@ export const submitEventSchema = z.object({
   startTime: z.string().min(1), // "HH:mm"
   endTime: z.string().nullable().optional(),
   locationAddress: z.string().min(1).max(256),
+  lat: z.number().nullable().optional(),
+  lng: z.number().nullable().optional(),
+  placeId: z.string().nullable().optional(),
   description: z.string()
     .min(10, "Description must be at least 10 characters")
     .max(5000, "Description is too long")
