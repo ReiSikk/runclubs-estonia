@@ -388,8 +388,8 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
             </label>
               <RichTextEditor
                 name="description"
-                initialValue={initialValues?.description || ''} // Pre-fill for edit mode
-                placeholder="Describe your run club. What should members know? Include details like meeting points, pace, and any rules."
+                initialValue={initialValues?.description || ''}
+                placeholder="Describe your event. What should members know about the event? Include details like meeting points, pace, and any rules. Bag drop availability, refreshments, etc."
               />
           </div>
         </section>

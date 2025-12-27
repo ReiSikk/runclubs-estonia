@@ -27,12 +27,11 @@ test.describe('Run Club Registration Form', () => {
     await expect(page.locator('input[name="city"]')).toBeVisible();
     await expect(page.locator('input[name="area"]')).toBeVisible();
     await expect(page.locator('input[name="address"]')).toBeVisible();
-    await expect(page.locator('textarea[name="description"]')).toBeVisible();
+    await expect(page.locator('.tiptap[contenteditable="true"]')).toBeVisible();
     await expect(page.locator('input[name="instagram"]')).toBeVisible();
     await expect(page.locator('input[name="facebook"]')).toBeVisible();
     await expect(page.locator('input[name="strava"]')).toBeVisible();
     await expect(page.locator('input[name="website"]')).toBeVisible();
-    await expect(page.locator('textarea[name="description"]')).toBeVisible();
     await expect(page.locator('input[name="email"]')).toBeVisible();
 
     // Check submit button
@@ -54,7 +53,7 @@ test.describe('Run Club Registration Form', () => {
     await expect(page.locator('input[name="distance"]')).toHaveAttribute('required', '');
     await expect(page.locator('input[name="city"]')).toHaveAttribute('required', '');
     await expect(page.locator('input[name="area"]')).toHaveAttribute('required', '');
-    await expect(page.locator('textarea[name="description"]')).toHaveAttribute('required', '');
+    await expect(page.locator('.tiptap[contenteditable="true"]')).toHaveAttribute('aria-required', 'true');
     await expect(page.locator('input[name="email"]')).toHaveAttribute('required', '');
   });
 
@@ -111,10 +110,18 @@ test.describe('Run Club Registration Form', () => {
     }
 
     // Fill description
-    await page.fill(
-      'textarea[name="description"]',
-      'Test Running Club is a friendly community of runners in Tallinn. We meet twice a week for social runs of varying paces. Everyone is welcome, from beginners to experienced runners. Follow our Instagram for the latest updates on runs and events!'
-    );
+    // await page.fill(
+    //   'textarea[name="description"]',
+    //   'Test Running Club is a friendly community of runners in Tallinn. We meet twice a week for social runs of varying paces. Everyone is welcome, from beginners to experienced runners. Follow our Instagram for the latest updates on runs and events!'
+    // );
+
+    // fill the tiptap editor if present
+    const richTextEditor = page.locator('.tiptap[contenteditable="true"]');
+    if (await richTextEditor.isVisible()) {
+      await richTextEditor.fill(
+        'Test Running Club is a friendly community of runners in Tallinn. We meet twice a week for social runs of varying paces. Everyone is welcome, from beginners to experienced runners. Follow our Instagram for the latest updates on runs and events!'
+      );
+    }
 
     // Fill social media links if fields exist
     const instagramField = page.locator('input[name="instagram"]');
@@ -175,7 +182,7 @@ test.describe('Run Club Registration Form', () => {
     expect(files).toBeGreaterThan(0);
   });
 
-  test('should validate email format', async ({ page }) => {
+  test('should prevent submission with invalid email and all other required fields filled', async ({ page }) => {
     // Fill all required fields except email with valid data
     await page.fill('input[name="name"]', 'Email Validation Test Club');
     
@@ -185,7 +192,12 @@ test.describe('Run Club Registration Form', () => {
     await page.fill('input[name="distance"]', '5 km');
     await page.fill('input[name="city"]', 'Tallinn');
     await page.fill('input[name="area"]', 'Center');
-    await page.fill('textarea[name="description"]', 'Test description that is long enough to pass validation');
+
+    const richTextEditor = page.locator('.tiptap[contenteditable="true"]');
+    if (await richTextEditor.isVisible()) {
+      await richTextEditor.fill('This is a test description for email validation.');
+    }
+
     
     // Fill invalid email
     await page.fill('input[name="email"]', 'invalid-email');
@@ -315,7 +327,12 @@ test.describe('Run Club Registration - Error Handling', () => {
     await page.fill('input[name="distance"]', '5 km');
     await page.fill('input[name="city"]', 'Tallinn');
     await page.fill('input[name="area"]', 'Center');
-    await page.fill('textarea[name="description"]', 'Testing server error handling');
+
+    const richTextEditor = page.locator('.tiptap[contenteditable="true"]');
+    if (await richTextEditor.isVisible()) {
+      await richTextEditor.fill('This is a test description for server error handling.');
+    }
+    
     await page.fill('input[name="email"]', 'error@test.com');
 
     // Intercept the form submission and return error

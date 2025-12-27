@@ -410,19 +410,9 @@ export default function RunClubRegistrationForm({
               <RichTextEditor
                 name="description"
                 initialValue={initialValues?.description || ""}
-                placeholder="Introductory text describing your run club. Think of it as a first impression for potential new members. Please also point out the social channel where you post the most up-to-date information about runs & events."
-              />
-              {/* <textarea
-                id="description"
-                name="description"
-                placeholder="Introductory text describing your run club. Think of it as a first impression for potential new members. Please also point out the social channel where you post the most up-to-date information about runs & events."
-                required
-                rows={8}
-                className="h5"
-                maxLength={5000}
-                defaultValue={initialValues?.description || ""}
+                placeholder="Describe your club. What should members know about the club? Please also point out the social channel where you post the most up-to-date information about runs & events."
                 aria-invalid={!!(state && !state.success && state.errors?.description)}
-              /> */}
+              />
               {state && !state.success && state.errors?.description && (
                 <p id="description-error" className="rcForm__hint" role="alert">
                   {state.errors.description[0]}

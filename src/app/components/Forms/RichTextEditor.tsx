@@ -1,7 +1,7 @@
 "use client";
 
 import { useEditor, EditorContent, useEditorState } from "@tiptap/react";
-import { CharacterCount } from '@tiptap/extensions'
+import { CharacterCount, Placeholder } from '@tiptap/extensions'
 import StarterKit from "@tiptap/starter-kit";
 import { useEffect, useRef, useState } from "react";
 import styles from "./RichTextEditor.module.css";
@@ -16,7 +16,7 @@ type Props = {
 export default function RichTextEditor({
   name,
   initialValue = "",
-  placeholder = "Describe your event. What should members know about the event?",
+  placeholder = "",
   onChange,
 }: Props) {
   const hiddenInputRef = useRef<HTMLInputElement>(null);
@@ -31,11 +31,14 @@ export default function RichTextEditor({
         horizontalRule: false, // Disable horizontal rule
         hardBreak: false, // Disable hard break
     }),
+    Placeholder.configure({
+        placeholder
+    }),
     CharacterCount.configure({
         limit: 5000, // Set character limit
     }),
-    ], // Limit headings to H2/H3
-    content: initialValue || `<p>${placeholder}</p>`, // Use initialValue if provided, else placeholder as HTML
+    ],
+    content: initialValue, // Use initialValue if provided
     onUpdate: ({ editor }) => {
       const html = editor.getHTML();
      setCharCount(editor.storage.characterCount.characters()); // Update count
@@ -47,13 +50,13 @@ export default function RichTextEditor({
     editorProps: {
       attributes: {
         class: styles.tiptap, // Use module class for editor
-        placeholder,
+        "aria-required": "true",
       },
     },
   });
 
   // Update content when initialValue changes (for edit mode)
-  useEffect(() => {
+  useEffect(() => {    
     if (editor && initialValue && initialValue !== editor.getHTML()) {
       editor.commands.setContent(initialValue);
       setCharCount(editor.storage.characterCount.characters()); 
@@ -70,7 +73,7 @@ export default function RichTextEditor({
           if (e.key === "Enter") e.stopPropagation();
         }}
       >
-        <EditorContent editor={editor} />
+        <EditorContent editor={editor}/>
         <p className={`${styles.charCount} ${charCount > 5000 ? styles.error : ''}`}>
             Characters: {charCount} / 5000
         </p>

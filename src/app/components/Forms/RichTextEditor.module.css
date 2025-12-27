@@ -31,14 +31,20 @@
 }
 
 /* Existing editor styles */
+:global(.ProseMirror p.is-editor-empty:first-child::before) {
+  content: attr(data-placeholder);
+  float: left;
+  color: var(--gray);
+  pointer-events: none;
+  height: 0;
+}
+
 .tiptap {
   border: 1px solid var(--dark);
   border-radius: var(--bradius-8);
   padding: 1.2rem;
-
-  :first-child {
-    margin-top: 0;
-  }
+  overflow: hidden;
+  min-height: 125px;
 
     /* Heading styles */
   h1,
