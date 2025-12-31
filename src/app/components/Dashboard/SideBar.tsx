@@ -3,7 +3,6 @@ import FloatingMenu from "./FloatingMenu"; // Import the new FloatingMenu compon
 import styles from "./SideBar.module.css";
 import Link from "next/link";
 import {
-  LucideLayoutDashboard,
   LucideHome,
   LucideSend,
   LucideLogOut,
@@ -24,10 +23,6 @@ function SideBar({ handleLogOut, isMobile, onEventClicked }: SideBarProps) {
 
   return (
     <nav className={styles.sideBar +" fp-col"}>
-        <Link href="/dashboard" className={`${styles.item}  h4 fp`}>
-        <LucideLayoutDashboard size={20} className={styles.item__icon} />
-            Dashboard
-        </Link>
         <Link href="/" className={`${styles.item}  h4 fp`}>
         <LucideHome size={20} className={styles.item__icon} />
             Home

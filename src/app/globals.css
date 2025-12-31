@@ -356,9 +356,6 @@ button {
     outline: 2px solid var(--accent);
     outline-offset: 2px;
   }
-  &:active {
-    transform: scale(0.95);
-  }
 
   &.socials {
     width: 100%;
@@ -598,11 +595,6 @@ button {
   }
   .btn-txt-anim:hover {
     filter: brightness(1.2);
-  }
-
-  .btn-txt-anim:active,
-  .back-link:active {
-    transform: scale(0.95);
   }
 
   .back-link:hover,
