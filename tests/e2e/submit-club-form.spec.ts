@@ -1,8 +1,4 @@
 import { test, expect } from '@playwright/test';
-import fs from "fs";
-import path from "path";
-
-const indexedDBFile = path.join(__dirname, "../../playwright/.auth/indexedDB.json");
 
 test.describe('Run Club Registration Form', () => {
   test.beforeEach(async ({ page }) => {
@@ -109,11 +105,6 @@ test.describe('Run Club Registration Form', () => {
       await addressField.fill('Rotermanni 2, 10111 Tallinn');
     }
 
-    // Fill description
-    // await page.fill(
-    //   'textarea[name="description"]',
-    //   'Test Running Club is a friendly community of runners in Tallinn. We meet twice a week for social runs of varying paces. Everyone is welcome, from beginners to experienced runners. Follow our Instagram for the latest updates on runs and events!'
-    // );
 
     // fill the tiptap editor if present
     const richTextEditor = page.locator('.tiptap[contenteditable="true"]');
