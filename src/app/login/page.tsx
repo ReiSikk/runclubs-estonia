@@ -8,6 +8,7 @@ import {
   signInWithPopup,
   signInWithEmailLink,
   isSignInWithEmailLink,
+  signInWithEmailAndPassword,
 } from "firebase/auth";
 import styles from "./page.module.css";
 import FormToast from "../components/Toast/Toast";
@@ -19,9 +20,6 @@ const APP_BASE_URL = process.env.NODE_ENV === 'development'
  ? 'http://localhost:3000' 
  : process.env.NEXT_PUBLIC_SITE_URL || 'https://runclubs.ee';
 
-//TODO REMOVE LOGGING
-console.log("App base URL:", APP_BASE_URL);
-
 const ACTION_CODE_SETTINGS = {
   url: `${APP_BASE_URL}/login`,
   handleCodeInApp: true,
@@ -30,19 +28,29 @@ const ACTION_CODE_SETTINGS = {
 export default function LoginPage() {
   const router = useRouter();
   const { user, loading } = useAuth();
+  const [hydrated, setHydrated] = useState(false);
+  const [showLegacyLogin, setShowLegacyLogin] = useState(false);
 
-  // State for email link sign-in
   const [email, setEmail] = useState("");
   const [linkSending, setLinkSending] = useState(false);
   const [linkSent, setLinkSent] = useState(false);
   const [verifyingLink, setVerifyingLink] = useState(false);
 
-  // UI feedback state
+  const [legacyCredentials, setLegacyCredentials] = useState({ email: "", password: "" });
+  const [legacySubmitting, setLegacySubmitting] = useState(false);
+  const [legacyError, setLegacyError] = useState<string | null>(null);
+
   const [toastOpen, setToastOpen] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
   const [toastType, setToastType] = useState<"success" | "error">("success");
   const [countdown, setCountdown] = useState<number | null>(null);
   const countdownInterval = useRef<NodeJS.Timeout | null>(null);
+
+  useEffect(() => {
+    const shouldShowLegacy = (typeof navigator !== "undefined" && navigator.webdriver);
+    setShowLegacyLogin(shouldShowLegacy);
+    setHydrated(true);
+  }, []);
 
   const showToast = useCallback((message: string, type: "success" | "error" = "success") => {
     setToastMessage(message);
@@ -141,6 +149,30 @@ export default function LoginPage() {
     }
   };
 
+  const handleLegacySubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setLegacyError(null);
+    try {
+      setLegacySubmitting(true);
+      await signInWithEmailAndPassword(auth, legacyCredentials.email, legacyCredentials.password);
+      showCountdownToast("Login successful!", 3, () => router.push("/dashboard"));
+    } catch (error) {
+      const msg = mapAuthError(error);
+      setLegacyError(msg);
+      showToast(msg, "error");
+    } finally {
+      setLegacySubmitting(false);
+    }
+  };
+
+  if (!hydrated) {
+    return (
+      <main className={`${styles.loginPage__main} container`}>
+        <div className={styles.loginPage__loader}>Preparing sign-in options…</div>
+      </main>
+    );
+  }
+
   return (
     <main className={`${styles.loginPage__main} container`}>
       <FormToast
@@ -150,6 +182,49 @@ export default function LoginPage() {
         type={toastType}
         aria-live="polite"
       />
+
+      {showLegacyLogin && (
+        <div className={`${styles.loginPage__wrapper} bradius-m`} data-testid="legacy-login">
+          <div className={styles.loginForm__header}>
+            <p className="txt-label">Automated test login</p>
+            <h2 className={`${styles.loginForm__title} h3`}>Email & password</h2>
+          </div>
+          <form onSubmit={handleLegacySubmit} className={`${styles.loginForm} bradius-m`}>
+            <div className="inputRow">
+              <input
+                className="rcForm__input"
+                type="email"
+                placeholder="your@test.com"
+                autoComplete="email"
+                value={legacyCredentials.email}
+                onChange={(e) => setLegacyCredentials((prev) => ({ ...prev, email: e.target.value }))}
+                data-testid="legacy-email-input"
+              />
+            </div>
+            <div className="inputRow">
+              <input
+                className="rcForm__input"
+                type="password"
+                placeholder="password"
+                autoComplete="current-password"
+                value={legacyCredentials.password}
+                onChange={(e) =>
+                  setLegacyCredentials((prev) => ({ ...prev, password: e.target.value }))
+                }
+                data-testid="legacy-password-input"
+              />
+            </div>
+            <button
+              type="submit"
+              className="btn_main"
+              data-testid="legacy-login-submit-button"
+              disabled={legacySubmitting || !legacyCredentials.email || !legacyCredentials.password}
+            >
+              {legacySubmitting ? "Signing in…" : "Sign in"}
+            </button>
+          </form>
+        </div>
+      )}
 
       <div className={`${styles.loginPage__wrapper} bradius-m`}>
         <div className={styles.loginForm__wrap}>
