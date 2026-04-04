@@ -1,11 +1,27 @@
 .sideBar {
-  padding-block: 4rem;
+  align-self: stretch;
   border-right: 1px solid var(--gray);
   padding-right: 1.2rem;
   max-width: 325px;
   width: 100%;
-  height: 100dvh;
+  min-height: 100%;
 }
+
+.sideBar__inner {
+  position: sticky;
+  top: 0;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100dvh;
+  padding-top: 4rem;
+  padding-bottom: calc(2.4rem + env(safe-area-inset-bottom, 0px));
+}
+
+.links {
+  gap: 0.4rem;
+}
+
 .item {
   position: relative;
   width: 100%;
@@ -27,16 +43,9 @@
   a {
     text-wrap: nowrap;
   }
-
-  &:last-child {
-    margin-top: auto;
-  }
 }
 
 @media (hover: hover) and (pointer: fine) {
-
-
-
   .sideBar .item:hover {
     background: var(--dark-gray);
   }

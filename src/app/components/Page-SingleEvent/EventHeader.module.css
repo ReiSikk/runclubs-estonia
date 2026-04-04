@@ -128,8 +128,7 @@
   margin-top: 1.6rem;
   outline: none;
   gap: 0.8rem;
-  align-items: center;
-  cursor: pointer;
+  max-width: fit-content;
 
   a {
     &::before {

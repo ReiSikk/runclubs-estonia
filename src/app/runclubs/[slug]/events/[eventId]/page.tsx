@@ -54,10 +54,10 @@ export default async function EventPage({ params }: Props) {
     }
 
     return (
-      <>
-        <NavBar backTo={`/runclubs/${club.slug}`} isBackToClubPage={true} />
+      <div className="page-single-event" id="page-top">
+        <NavBar backTo={`/runclubs/${club.slug}`} isBackToClubPage={true}/>
         <EventDetail club={club} event={event} />
-      </>
+      </div>
     )
   } catch (error) {
     console.error("❌ EventPage error:", error);

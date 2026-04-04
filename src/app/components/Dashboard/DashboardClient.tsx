@@ -28,7 +28,6 @@ import { RunClub } from "../../lib/types/runClub";
 import { User } from "firebase/auth";
 import { RunClubEvent } from "@/app/lib/types/runClubEvent";
 import DashboardEventsHeader from "./DashboardEventsHeader";
-import FormToast from "../Toast/Toast";
 
 export default function DashboardClient() {
   const { user, loading } = useAuth();

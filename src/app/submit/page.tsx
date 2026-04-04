@@ -64,7 +64,7 @@ function SubmitRunClubPage() {
         <div className="loader fp-col">
           <h1 className="h4">Please sign in or create an account to submit a run club.</h1>
           <Link href="/login" className="btn_main accent">
-            Go to Login
+            Sign in
           </Link>
         </div>
       </div>

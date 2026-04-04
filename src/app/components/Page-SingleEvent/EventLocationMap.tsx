@@ -1,13 +1,16 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { AdvancedMarker, APIProvider, Map, useAdvancedMarkerRef, Pin, InfoWindow } from "@vis.gl/react-google-maps";
+import { AdvancedMarker, APIProvider, Map, useAdvancedMarkerRef, InfoWindow } from "@vis.gl/react-google-maps";
 import geocodeAddress from "../../lib/utils/geocodeService";
 
 type LatLng = { lat: number; lng: number };
 
 type Props = {
-  address: string;
+  address?: string | null;
+  lat?: number | null;
+  lng?: number | null;
+  placeId?: string | null;
   className?: string;
   height?: number;
   zoom?: number;
@@ -15,7 +18,7 @@ type Props = {
 
 const ESTONIA_CENTER: LatLng = { lat: 58.5953, lng: 25.0136 };
 
-export default function EventLocationMap({ address, className, zoom = 15 }: Props) {
+export default function EventLocationMap({ address, lat, lng, placeId, className, zoom = 15 }: Props) {
   const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
   const mapId = process.env.NEXT_PUBLIC_GOOGLE_MAPS_MAP_ID;
 
@@ -30,6 +33,14 @@ export default function EventLocationMap({ address, className, zoom = 15 }: Prop
     let cancelled = false;
 
     async function run() {
+      // Use persisted event coordinates first; this avoids ambiguity from text geocoding.
+      if (typeof lat === "number" && typeof lng === "number") {
+        setCoords({ lat, lng });
+        setError(null);
+        setLoading(false);
+        return;
+      }
+
       const trimmed = address?.trim();
       if (!trimmed) {
         setCoords(undefined);
@@ -41,7 +52,7 @@ export default function EventLocationMap({ address, className, zoom = 15 }: Prop
       setError(null);
 
       try {
-        const result = await geocodeAddress(trimmed);
+        const result = await geocodeAddress(trimmed, placeId ?? null);
         if (cancelled) return;
 
         if (!result) {
@@ -65,7 +76,7 @@ export default function EventLocationMap({ address, className, zoom = 15 }: Prop
     return () => {
       cancelled = true;
     };
-  }, [address]);
+  }, [address, lat, lng, placeId]);
 
   // Ensure InfoWindow is open once we actually have coordinates (and after the marker mounts)
   useEffect(() => {
@@ -88,11 +99,21 @@ export default function EventLocationMap({ address, className, zoom = 15 }: Prop
   return (
     <div className="eventMap">
       <APIProvider apiKey={apiKey}>
-        <Map mapId={mapId} defaultZoom={12} center={center} gestureHandling={"greedy"} disableDefaultUI>
+        <Map mapId={mapId} defaultZoom={zoom} center={center} gestureHandling={"greedy"} disableDefaultUI>
           {coords && (
             <>
               <AdvancedMarker ref={markerRef} position={coords} onClick={handleMarkerClick}>
-                <Pin background={"#e2572c"} glyphColor={"#100f0e"} borderColor={"#100f0e"} />
+                <div
+                  aria-hidden="true"
+                  style={{
+                    width: 18,
+                    height: 18,
+                    borderRadius: "50%",
+                    background: "#e2572c",
+                    border: "2px solid #100f0e",
+                    boxShadow: "0 2px 8px rgba(0, 0, 0, 0.28)",
+                  }}
+                />
               </AdvancedMarker>
                 {infoWindowOpen && (
                 <InfoWindow

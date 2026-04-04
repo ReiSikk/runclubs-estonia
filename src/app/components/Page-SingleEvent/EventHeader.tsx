@@ -49,7 +49,7 @@ export default function EventHeader({ club, event }: Props) {
             </Link>
             <button className={styles.eventHeader__contactBtn + " btn_main"}>
               <Mail size={18} />
-              <a href={`mailto:${club.email}`}>Contact Organiser</a>
+              <a href={`mailto:${club.email}`}>Contact organiser</a>
             </button>
           </div>
         </div>
@@ -110,7 +110,12 @@ export default function EventHeader({ club, event }: Props) {
               </div>
             </div>
             <div className={styles.eventHeader__map + " fp-col"}>
-                <EventLocationMap address={event.locationAddress} />
+                <EventLocationMap
+                  address={event.locationAddress}
+                  lat={event.lat}
+                  lng={event.lng}
+                  placeId={event.placeId}
+                />
             </div>
           </div>
         </div>
