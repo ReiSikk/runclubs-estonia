@@ -28,6 +28,7 @@ import { RunClub } from "../../lib/types/runClub";
 import { User } from "firebase/auth";
 import { RunClubEvent } from "@/app/lib/types/runClubEvent";
 import DashboardEventsHeader from "./DashboardEventsHeader";
+import { LucidePlus } from "lucide-react";
 
 export default function DashboardClient() {
   const { user, loading } = useAuth();
@@ -85,7 +86,6 @@ function DashboardContent({ userId, user }: { userId: string; user: User }) {
     refetch: refetchEvents
   } = useClubEvents(clubIds);
 
-  // Check for mobile
   const isMobile = useIsMobile();
 
   // Handle modal states
@@ -357,15 +357,17 @@ const isAnyModalOpen = eventModalToShow || !!editingClub;
                         <div className="empty_result_item fp-col bradius-m">
                            <h2 className="h3 center">No events found for the selected club</h2>
                             <p className="txt-body center bradius-m">Create an event to get started.</p>
-                            <div 
+                            <button 
+                              type="button"
                               className="btn_main accent"   
                               onClick={() => {
                                 setPreselectedClubId(selectedClubId !== "all" ? selectedClubId : null);
                                 setEventModalToShow("create");
                               }}
                             >
-                              Create event for this club
-                            </div>
+                              <LucidePlus size={16} />
+                              Create event
+                            </button>
                         </div>
                       )}
                     </ul>

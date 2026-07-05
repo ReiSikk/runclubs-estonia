@@ -337,8 +337,9 @@ button {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: clamp(10px, 2vw, 13.5px) clamp(16px, 3vw, 24px);
+  padding: clamp(10px, 1vw, 4px) clamp(16px, 3vw, 24px);
   font-size: 1.6rem;
+  gap: 0.5rem;
   font-weight: 600;
   letter-spacing: 0.4px;
   line-height: 1.5;
@@ -699,6 +700,7 @@ button {
   border-radius: 200px;
   border: 1px solid var(--dark);
   flex-wrap: nowrap;
+  gap: 12px;
   justify-content: space-between;
   padding-inline: 3px;
   padding-block: 3px;
@@ -771,7 +773,7 @@ button {
   padding-block: 14px 12px;
   padding-inline: 0 3px;
   cursor: pointer;
-  transition: color 0.2s ease, background 0.3s ease;
+  transition: all 0.3s ease;
 
   &[data-state="active"] {
     transition-delay: 100ms;
@@ -798,7 +800,11 @@ button {
     align-items: center;
     justify-content: center;
     min-height: 50vh;
-    gap: 1.2rem;
+    gap: 0.75rem;
+    p {
+      margin-bottom: 1.75rem;
+      opacity: 0.8;
+    }
   }
 }
 
@@ -810,8 +816,8 @@ button {
 @media (hover: hover) and (pointer: fine) {
   .tabs__trigger {
     &[data-state="inactive"]:hover {
-      text-decoration: underline;
-      text-underline-offset: 2px;
+      background: rgba(0, 0, 0, 0.1);
+      color: var(--dark);
     }
   }
 }

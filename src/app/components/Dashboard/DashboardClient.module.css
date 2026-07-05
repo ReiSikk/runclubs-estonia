@@ -171,16 +171,17 @@
     width: 100%;
     gap: 1.2rem;
     justify-content: center;
+    flex-direction: row;
     align-items: center;
-    flex-direction: column;
+    flex-wrap: nowrap;
 
-    h6 {
-      margin-bottom: 0.4rem;
+    h2 {
+      width: 100%;
     }
   }
 }
 .dashboardEvents__header {
-  margin-bottom: clamp(3.2rem, 4vw, 4rem);
+  margin-bottom: clamp(2.4rem, 2.22vw, 3.2rem);
   gap: 4rem;
 
   /* In case user has no events */
@@ -197,9 +198,6 @@
 
     .main {
 
-      .dashboardEvents__btn {
-        margin-inline: auto;
-      }
       div {
         align-items: center;
         text-align: center;
@@ -252,17 +250,14 @@
   height: fit-content;
   text-wrap: nowrap;
   margin-left: auto;
-  width: 100%;
+  width: fit-content;
 
-  @media only screen and (min-width: 768px) and (max-width: 1024px), only screen and (min-width: 1025px) {
-    width: fit-content;
-  }
 }
 
 .dashboardEvents__filters {
   gap: 1.2rem;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-end;
   width: 100%;
   
   @media only screen and (min-width: 768px) and (max-width: 1024px), only screen and (min-width: 1025px) {

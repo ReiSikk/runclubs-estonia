@@ -37,17 +37,15 @@ function DashboardEventsHeader({ events, clubs, setEventModalToShow, onFilterCha
     <header className={`${styles.dashboardEvents__header} ${events.length < 1 ? styles.noEvents : ""} fp-col`}>
       {clubs.length > 0 && 
       <div className={`${styles.main} fp`}>
-        <div className={styles.main__top + " fp-col"}>
             <h2 className="">My events</h2>
-            <p className="txt-body">
+           {/*  <p className="txt-body">
             {events.length < 1
                 ? "You have no upcoming events. Create one to get started!"
                 : `You have published ${events.length} event${events.length > 1 ? "s" : ""}.`}
-            </p>
-        </div>
+            </p> */}
         <button className={`${styles.dashboardEvents__btn} btn_main cream`} onClick={() => setEventModalToShow("create")}>
             <LucidePlus size={16} />
-            Create Event
+            Create event
         </button>
       </div>
       }
