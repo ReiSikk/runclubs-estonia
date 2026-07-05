@@ -11,10 +11,8 @@ const nextConfig: NextConfig = {
       },
     },
       env: {
-      NEXT_PUBLIC_SITE_URL:
-        process.env.DEPLOY_PRIME_URL || // deploy preview URL
-        process.env.URL || // production URL
-        'https://runclubs.ee', // fallback
+        NEXT_PUBLIC_SITE_URL:
+        process.env.NEXT_PUBLIC_SITE_URL || 'https://runclubs.ee',
     },
     images: {
       remotePatterns: [
