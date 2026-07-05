@@ -38,6 +38,10 @@ export function FilterSelect({
 
   const selectedOption = options.find((opt) => opt.value === value);
 
+  // Sort options by count descending ( high to low )
+  const sortedOptions = [...options].sort((a, b) => (b.count ?? 0) - (a.count ?? 0));
+
+
   return (
     <div ref={selectRef} className={`${styles.select} ${className || ""}`}>
       <button
@@ -65,7 +69,7 @@ export function FilterSelect({
           aria-label="Filter options"
           aria-activedescendant={value ? `option-${value}` : undefined} // Indicates which option is active
           >
-          {options.map((option) => (
+          {sortedOptions.map((option) => (
             <li
               key={option.value}
               data-testid="city-filter-select"

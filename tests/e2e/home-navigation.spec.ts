@@ -17,7 +17,7 @@ test('navigate to first available run club page - alternative', async ({ page })
   
   // Wait for at least one club to appear
   const clubLinks = page.getByTestId('club-link');
-  await expect(clubLinks.first()).toBeVisible({ timeout: 15000 }); // Increased timeout
+  await expect(clubLinks.first()).toBeVisible();
 
   const clubCount = await clubLinks.count();
   console.log(`Found ${clubCount} run clubs on the page`);
@@ -27,7 +27,7 @@ test('navigate to first available run club page - alternative', async ({ page })
 
   // Click the first club link
   await Promise.all([
-    page.waitForURL('**/runclubs/**', { timeout: 10000 }), // Wait for URL to change
+    page.waitForURL('**/runclubs/**', { timeout: 15000 }), // Wait for URL to change
     clubLinks.first().click(),
   ]);
 

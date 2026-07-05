@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useRef } from "react"
+import { useRef } from "react"
 // Styles
 import styles from "./HomeMainAside.module.css"
 // Components
@@ -34,21 +34,17 @@ export default function HomeMainAside({
 
   // Scroll to top of list when city changes
   const clubsListRef = useRef<HTMLDivElement>(null)
-  const isFirstRender = useRef(true) // prevent scroll to allClubsList top on initial mount
-  
-  useEffect(() => {
-     // Skip scroll on initial mount
-    if (isFirstRender.current) {
-      isFirstRender.current = false
-      return
-    }
+
+  // Handle city change with scroll to top of clubs listš
+  const handleCityChange = (city: string) => {
+    onCityChange(city);
     if (clubsListRef.current) {
       clubsListRef.current.scrollIntoView({ 
         behavior: 'smooth', 
         block: 'start' 
-      })
+      });
     }
-  }, [selectedCity])
+  };
 
   // Handle search input
  const inputHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -69,7 +65,7 @@ export default function HomeMainAside({
           <SearchBar inputHandler={inputHandler} clearInput={clearInput} searchTerm={searchTerm} />
           <FilterSelect 
             value={selectedCity} 
-            onValueChange={onCityChange} 
+            onValueChange={handleCityChange} 
             options={filterOptions} 
             placeholder='Select a filter' 
           />

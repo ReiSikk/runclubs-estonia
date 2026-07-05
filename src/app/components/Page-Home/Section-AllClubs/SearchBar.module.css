@@ -9,8 +9,7 @@
   flex-wrap: nowrap;
   gap: 8px;
   border: 1px solid var(--cream);
-  border-radius: 999px;
-  padding-inline: 16px 8px;
+  border-radius: var(--bradius-xl);  padding-inline: 16px 8px;
   min-width: none;
 }
 .searchField__icon {

@@ -1,15 +1,16 @@
 .siteFooter {
   background: var(--dark);
-  padding-block: 16px;
   color: var(--dark);
   gap: 1.6rem;
   flex-wrap: wrap-reverse;
   border-radius: clamp(12px, 2vw, 16px);
-  padding-inline: 16px 12px;
+  padding-inline: 1.6rem 1.2rem;
+  padding-block: 1.6rem;
 
   @media only screen and (min-width: 768px) and (max-width: 1024px), only screen and (min-width: 1025px) {
     flex-wrap: nowrap;
     height: 664px;
+    padding-block: 1.6rem;
   }
 }
 .siteFooter__main,
@@ -22,13 +23,13 @@
   .siteFooter__bmac {
     width: fit-content;
     flex-direction: row;
-    border-radius: 999px;
+    border-radius: var(--bradius-xl);
     gap: 8px;
     height: fit-content;
     background: var(--footer-3);
     transition: all 0.2s ease;
 
-     &:hover {
+    &:hover {
       background: var(--cream);
     }
 
@@ -63,7 +64,7 @@
 .siteFooter__cell {
   position: relative;
   display: flex;
-  border-radius: 8px;
+  border-radius: var(--bradius-8);
   padding: clamp(16px, 3vw, 24px);
   align-items: center;
   justify-content: center;

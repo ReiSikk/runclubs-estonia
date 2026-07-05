@@ -1,0 +1,141 @@
+.floatingMenu {
+  position: fixed;
+  bottom: 0px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100vw;
+  z-index: 1000;
+  height: 76px;
+
+  .actions {
+    width: 100%;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.6rem;
+    height:100%;
+    border-top: 1px solid var(--dark);
+    background: var(--cream);
+    color: var(--dark);
+    z-index: 1005;
+    span {
+      margin-left: 8px;
+    }
+  }
+}
+.floatingMenu__wrap {
+  height: 100%;
+
+}
+
+/* Menu button */
+.burgerMenu {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 40px;
+  height: 40px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  position: relative;
+  background: var(--dark);
+  border-radius: var(--bradius-8);
+  transition: background 0.2s ease;
+
+  &:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+
+  path {
+    stroke: var(--cream);
+    transition: stroke 0.2s ease;
+  }
+}
+
+/* Menu items container */
+.menuItems {
+  position: absolute;
+  bottom: 0;
+  transform: translateY(100%);
+  width: 100%;
+  background: var(--cream);
+  color: var(--dark);
+  gap: 1.2rem;
+  align-items: center;
+  overflow: hidden;
+  opacity: 0;
+  pointer-events: none;
+  transition: height 0.3s cubic-bezier(0.25, 0.1, 0.25, 1), opacity 0.3s cubic-bezier(0.25, 0.1, 0.25, 1),
+    transform 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
+  z-index: 1002;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.8);
+}
+
+/* Expanded state */
+.menuItems.expanded {
+  pointer-events: auto;
+  padding: 1.2rem;
+  transform: translateY(calc(0% + -76px));
+  opacity: 1;
+}
+
+.item {
+  position: relative;
+  align-items: center;
+  flex-wrap: nowrap;
+  gap: 0.8rem;
+  cursor: pointer;
+  width: 100%;
+  padding: 1rem;
+  border-radius: 4px;
+  transition: background 0.2s ease;
+
+  a {
+    &::before {
+      content: " ";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+    }
+  }
+
+  .item__icon {
+    flex-shrink: 0;
+  }
+}
+
+.menuItems a,
+.menuItems button {
+  text-decoration: none;
+  cursor: pointer;
+  text-wrap: nowrap;
+}
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  opacity: 1;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(10px);
+  z-index: 998;
+  transition: opacity 0.3s ease-in-out;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .item:hover {
+    background: rgba(0, 0, 0, 0.1);
+  }
+  .burgerMenu:hover {
+    background: var(--accent);
+    path {
+      stroke: var(--dark);
+    }
+  }
+}

@@ -1,4 +1,4 @@
-import { adminDb } from '../firebaseAdmin';
+import { adminDb } from '../firebase/firebaseAdmin';
 import { RunClub } from '../types/runClub';
 import { convertTimestamp } from '../utils/fireStoreConverter';
 

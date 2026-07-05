@@ -1,0 +1,69 @@
+import React, { useState, useRef, useEffect } from "react";
+import styles from "./FloatingMenu.module.css";
+import Link from "next/link";
+import { LucideHome, LucideSend, LucideLogOut, LucideMenu, LucideX, LucidePlus } from "lucide-react";
+
+interface FloatingMenuProps {
+  handleLogOut: () => void;
+  onEventClicked?: () => void;
+}
+
+export default function FloatingMenu({ handleLogOut, onEventClicked }: FloatingMenuProps) {
+  const firstMenuItemRef = useRef<HTMLAnchorElement>(null);
+  const burgerButtonRef = useRef<HTMLButtonElement>(null);
+  const [isExpanded, setIsExpanded] = useState(false);
+
+  const toggleMenu = () => {
+    setIsExpanded((prev) => !prev);
+  };
+
+  // Focus management for accessibility
+  useEffect(() => {
+    if (isExpanded && firstMenuItemRef.current) {
+      firstMenuItemRef.current.focus();
+    } else if (!isExpanded && burgerButtonRef.current) {
+      burgerButtonRef.current.focus();
+    }
+  }, [isExpanded]);
+
+  return (
+    <div className={styles.floatingMenu}>
+      <div className={styles.floatingMenu__wrap + " fp-col"}>
+        <nav className={styles.menuItems + (isExpanded ? ` ${styles.expanded}` : "") + " fp-col"} role="menu" aria-hidden={!isExpanded}>
+              <Link href="/" className={`${styles.item} h4 fp`} tabIndex={isExpanded ? 0 : -1} ref={firstMenuItemRef} role="menuitem">
+                <LucideHome size={20} className={styles.item__icon} />
+                  Home
+              </Link>
+              <Link href="/submit" className={`${styles.item} h4 fp`} tabIndex={isExpanded ? 0 : -1} role="menuitem">
+                  <LucideSend size={20} className={styles.item__icon} />
+                      Register club
+              </Link>
+              <div className={`${styles.item} h4 fp`} aria-hidden={!isExpanded} tabIndex={isExpanded ? 0 : -1} onClick={onEventClicked}>
+                  <LucidePlus size={20} className={styles.item__icon} />
+                  Create new event
+              </div>
+              <div className={`${styles.item} fp`} onClick={handleLogOut} tabIndex={isExpanded ? 0 : -1} role="menuitem">
+                  <LucideLogOut size={20} className={styles.item__icon} />
+                  <div onClick={handleLogOut} className="h4">
+                      Log out
+                  </div>
+              </div>
+          </nav>
+        <div className={styles.actions + " fp"}>
+            <span className="h3">Menu</span>
+            <button
+                ref={burgerButtonRef}
+                className={styles.burgerMenu}
+                onClick={toggleMenu}
+                aria-expanded={isExpanded}
+                aria-label={isExpanded ? "Close menu" : "Open menu"}
+                tabIndex={isExpanded ? 0 : -1}
+                role="button"
+            >
+            {isExpanded ? <LucideX size={24} /> : <LucideMenu size={24} />}
+            </button>
+        </div>
+      </div>
+    </div>
+  );
+}

@@ -62,6 +62,7 @@
     text-wrap: nowrap;
     gap: 8px;
     width: 100%;
+    justify-content: center;
 
     div {
       padding: 7px;
@@ -91,7 +92,6 @@
   }
 }
 .ctaSection__image {
-  border-radius: 16px;
   object-fit: cover;
   width: 100%;
 

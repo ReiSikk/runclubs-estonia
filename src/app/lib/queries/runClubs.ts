@@ -6,7 +6,7 @@ export async function getRunClubs(): Promise<RunClub[]> {
   if (typeof window === 'undefined') {
     // ✅ SERVER-SIDE: Use Admin SDK
     try {
-      const { adminDb } = await import('../firebaseAdmin');
+      const { adminDb } = await import('../firebase/firebaseAdmin');
       
       const snapshot = await adminDb
         .collection('runclubs')
@@ -32,7 +32,7 @@ export async function getRunClubs(): Promise<RunClub[]> {
   } else {
     // ✅ CLIENT-SIDE: Use Client SDK with App Check
     try {
-      const { db } = await import('@/app/lib/firebase');
+      const { db } = await import('@/app/lib/firebase/firebase');
       const { collection, getDocs, query, where, orderBy } = await import('firebase/firestore');
       
       const q = query(

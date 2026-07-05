@@ -10,6 +10,12 @@ const nextConfig: NextConfig = {
       bodySizeLimit: "7mb"
       },
     },
+      env: {
+      NEXT_PUBLIC_SITE_URL:
+        process.env.DEPLOY_PRIME_URL || // deploy preview URL
+        process.env.URL || // production URL
+        'https://runclubs.ee', // fallback
+    },
     images: {
       remotePatterns: [
         new URL('https://placehold.co/**'),
@@ -21,6 +27,10 @@ const nextConfig: NextConfig = {
         {
           protocol: 'https',
           hostname: 'storage.googleapis.com',
+        },
+        {
+          protocol: 'https',
+          hostname: 'lh3.googleusercontent.com',
         },
       ],
     },

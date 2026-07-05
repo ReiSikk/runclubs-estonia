@@ -1,25 +1,90 @@
 "use server";
 
-import { submitRunClubSchema } from "@/app/lib/types/submitRunClub";
-import { adminApp, adminDb } from "@/app/lib/firebaseAdmin";
+import 'server-only'; // Ensure these server actions don't get bundled into client
+
+// Firestore and firebase admin imports
+import { adminApp, adminDb, adminAuth } from "@/app/lib/firebase/firebaseAdmin";
+import { Timestamp } from "firebase-admin/firestore";
+import { getAuth } from "firebase-admin/auth";
+import { uploadImageToStorage } from './lib/firebase/uploadImageToStorage';
+import { FieldValue } from "firebase-admin/firestore";
 import { getStorage } from "firebase-admin/storage";
-import { boolean } from "zod";
+// Schemas and types
+import { submitRunClubSchema } from "@/app/lib/types/submitRunClub";
+import { submitEventSchema } from './lib/types/submitEvent';
+// Utility functions
 import getOptionalField from "@/app/lib/utils/getOptionalField";
 import normalizeToSlug from "@/app/lib/utils/generateSlugFromName";
 import sanitizeSVGs from "@/app/lib/utils/sanitizeSvgs";
-import { Timestamp } from "firebase-admin/firestore";
+import sanitizeHtml from "sanitize-html";
 
 type ActionResult =
-  | { success: true; message: string }
+  | { success: true; message: string; id?: string }
   | { success: false; message: string; errors?: Record<string, string[]> };
 
-export async function createRunClub(
+export async function saveRunClub(
   prevState: ActionResult | undefined,
   formData: FormData
 ): Promise<ActionResult> {
+
+  const mode = formData.get("mode") as "create" | "update";
+  const clubId = formData.get("clubId") as string | null;
+
+  // Get ID token from formData
+  const idToken = formData.get("idToken") as string | undefined;
+  if (!idToken) {
+    return {
+      success: false,
+      message: "You must be logged in to submit a run club.",
+    };
+  }
+
+  // Check if logo removal is requested
+  const removeLogo = formData.get("removeLogo") === "true";
+
+    // Verify the token and get the UID
+  let creatorUid: string;
   try {
+    const decodedToken = await getAuth(adminApp).verifyIdToken(idToken);
+    creatorUid = decodedToken.uid;
+  } catch {
+    return {
+      success: false,
+      message: "Invalid or expired authentication token.",
+    };
+  }
+
+  // Sanitize description HTML
+    const rawDescription = formData.get('description') as string;
+    const cleanDescription = sanitizeHtml(rawDescription, {
+      allowedTags: ['p', 'strong', 'b', 'em', 'i', 'ul', 'ol', 'li'],
+      allowedAttributes: {},
+    });
+
+
+  // For update mode, verify ownership
+  if (mode === "update") {
+    if (!clubId) {
+      return {
+        success: false,
+        message: "Club ID is required for updates.",
+      };
+    }
+
+    const clubDoc = await adminDb.collection("runclubs").doc(clubId).get();
+    if (!clubDoc.exists) {
+      return { success: false, message: "Club not found." };
+    }
+    
+    const clubData = clubDoc.data();
+    if (clubData?.creator_id !== creatorUid) {
+      return { success: false, message: "You don't have permission to update this club." };
+    }
+  }
+
+  try {
+    let logoUrl: string | null = null;
     const logoFile = formData.get("logo") as File | null;
-    let logoUrl = "";
 
     // File upload with Admin SDK
     if (logoFile && logoFile.size > 0) {
@@ -110,12 +175,17 @@ export async function createRunClub(
       distance: formData.get("distance") as string,
       city: formData.get("city") as string,
       area: formData.get("area") as string,
-      description: formData.get("description") as string,
+      description: cleanDescription,
       email: formData.get("email") as string,
-      approvedForPublication: boolean().default(false).parse(false),
-      createdAt: Timestamp.now(),
       updatedAt: Timestamp.now(),
     };
+
+    // Set these fields only when creating doc
+    if (mode === "create") {
+      submission.approvedForPublication = false;
+      submission.createdAt = Timestamp.now();
+      submission.creator_id = creatorUid;
+    }
 
     if (logoUrl) {
       submission.logo = logoUrl;
@@ -169,15 +239,28 @@ export async function createRunClub(
       }
     });
 
-    // Save to Firestore using Admin SDK
-    await adminDb.collection("runclubs").add(cleanData);
-
-    return {
-      success: true,
-      message: "Success! Your club has been registered and is pending approval.",
-    };
+    // Save to Firestore - CREATE or UPDATE depending on mode prop in form
+    if (mode === "create") {
+      await adminDb.collection("runclubs").add(cleanData);
+      return {
+        success: true,
+        message: "Success! Your club has been registered and is pending approval.",
+      };
+    } else {
+        // When updating check if we should remove logo
+        if (removeLogo) {
+        cleanData.logo = FieldValue.delete(); // Remove current logo
+        } else if (logoUrl) {
+          cleanData.logo = logoUrl; // New logo
+        }
+      await adminDb.collection("runclubs").doc(clubId!).update(cleanData);
+      return {
+        success: true,
+        message: "Success! Your club has been updated.",
+      };
+    }
   } catch (error: unknown) {
-    console.error("Registration error:", error);
+    console.error("Error saving run club:", error);
     const errorMessage = error instanceof Error ? error.message : "An unexpected error occurred";
 
     return {
@@ -185,5 +268,264 @@ export async function createRunClub(
       message: errorMessage,
       errors: {},
     };
+  }
+}
+
+
+/*
+   Create event server action
+   ========================================================================== */
+
+export async function saveEvent(
+  prevState: ActionResult | undefined,
+  formData: FormData
+): Promise<ActionResult> {
+  const mode = formData.get("mode") as "create" | "update";
+  const eventId = formData.get("eventId") as string | undefined;
+
+  // Get user ID token from formData
+  const idToken = formData.get("idToken") as string | undefined;
+  if (!idToken) {
+    return {
+      success: false,
+      message: "You must be logged in to create an event.",
+    };
+  }
+
+  // Check if image removal is requested
+  const removeImage = formData.get("removeImage") === "true";
+
+  // Verify token and get UID
+  let creatorUid: string;
+  try {
+    const decodedToken = await getAuth(adminApp).verifyIdToken(idToken);
+    creatorUid = decodedToken.uid;
+  } catch {
+    return {
+      success: false,
+      message: "Invalid or expired authentication token.",
+    };
+  }
+
+    const rawDescription = formData.get('description') as string;
+    const cleanDescription = sanitizeHtml(rawDescription, {
+      allowedTags: ['p', 'strong', 'em', 'u', 'h1', 'h2', 'h3', 'ul', 'ol', 'li', 'blockquote', 'a'],
+      allowedAttributes: {},
+    });
+
+  // For update mode, verify ownership of event
+  if (mode === "update") {
+    if (!eventId) {
+      return {
+        success: false,
+        message: "Event ID is required for updates.",
+      };
+    }
+
+    const eventDoc = await adminDb.collection("events").doc(eventId).get();
+    if (!eventDoc.exists) {
+      return { success: false, message: "Event not found." };
+    }
+    
+    const eventData = eventDoc.data();
+    if (eventData?.creator_id !== creatorUid) {
+      return { success: false, message: "You don't have permission to update this event." };
+    }
+  }
+
+  try {
+    // Extract fields from formData
+    const title = String(formData.get("title") || "").trim();
+    const date = String(formData.get("date") || "").trim(); // expect yyyy-mm-dd or ISO
+    const startTime = String(formData.get("startTime") || "").trim();
+    const endTime = String(formData.get("endTime") || "").trim() || null;
+    const locationAddress =  formData.get("locationAddress");
+    const lat = formData.get("locationLat") ? Number(formData.get("locationLat")) : null;
+    const lng = formData.get("locationLng") ? Number(formData.get("locationLng")) : null;
+    const placeId = formData.get("locationPlaceId") ? String(formData.get("locationPlaceId")) : null;
+    const runclub_id = String(formData.get("runclub_id") || "").trim();
+    const imageFile = formData.get("image") as File | null;
+    const tags = formData.getAll("tags") as string[];
+    const distance = formData.get("distance") ? Number(formData.get("distance")) : null;
+    const pace = formData.get("pace") ? String(formData.get("pace")) : null;
+
+    // Handle image upload if provided
+    let imageUrl: string | null = null;
+    if (imageFile && imageFile.size > 0) {
+      // Validate file size/type if needed
+      imageUrl = await uploadImageToStorage(imageFile, "event-images", `${Date.now()}`);
+    }
+
+    // Ensure runclub exists and that the requesting user is the creator
+    const runclubRef = adminDb.collection("runclubs").doc(runclub_id);
+    const runclubSnap = await runclubRef.get();
+    if (!runclubSnap.exists) {
+      return {
+        success: false,
+        message: "Runclub not found",
+      };
+    }
+    const runclubData = runclubSnap.data() as Record<string, unknown>;
+    if (runclubData.creator_id !== creatorUid) {
+      return {
+        success: false,
+        message: "Forbidden: you are not the owner of this run club",
+      };
+    }
+
+    // Build submission object for validation
+    const submission: Record<string, unknown> = {
+      title,
+      date,
+      startTime,
+      endTime,
+      locationAddress,
+      lat,
+      lng,
+      placeId,
+      description: cleanDescription,
+      runclub_id,
+      creator_id: creatorUid,
+      tags,
+      distance,
+      pace,
+      updatedAt: Timestamp.now(),
+    };
+
+    // Add image url if provided
+    if (imageUrl) {
+      submission.image = imageUrl;
+    }
+
+    // Set createdAt only for new events
+    if (mode === "create") {
+      submission.createdAt = Timestamp.now();
+    }
+
+    // Validate with Zod schema
+    const validatedFields = submitEventSchema.safeParse(submission);
+    if (!validatedFields.success) {
+      const errors: Record<string, string[]> = {};
+      validatedFields.error.issues.forEach((issue) => {
+        const path = issue.path.join(".");
+        if (!errors[path]) errors[path] = [];
+        errors[path].push(issue.message);
+      });
+
+      return {
+        success: false,
+        message: "Please check the form for errors.",
+        errors,
+      };
+    }
+
+    // Clean data
+    const cleanData: Record<string, unknown> = {};
+    Object.entries(validatedFields.data).forEach(([key, value]) => {
+      if (value !== undefined && value !== null && value !== "") {
+        cleanData[key] = value;
+
+      }
+    });
+
+    // Save to Firestore
+    if (mode === "create") {
+      // Ensure server-controlled fields are set
+      cleanData.creator_id = creatorUid;
+      cleanData.runclub_id = runclub_id;
+      cleanData.runclub = runclubRef;
+      const docRef = await adminDb.collection("events").add(cleanData);
+      return {
+        success: true,
+        message: "Event successfully created!",
+        id: docRef.id,
+      };
+    } else {
+      // For update check if we need to remove image 
+      if (removeImage) {
+        cleanData.image = FieldValue.delete();
+      } else if (imageUrl) {
+        cleanData.image = imageUrl;
+      }
+      await adminDb.collection("events").doc(eventId!).update(cleanData);
+      return {
+        success: true,
+        message: "Event successfully updated!",
+        id: eventId,
+      };
+    }
+
+  } catch (error: unknown) {
+      console.error("saveEvent action error:", error);
+      let errorMessage = "An unexpected error occurred";
+      if (error instanceof Error) {
+        errorMessage = error.message;
+      } else if (typeof error === "string") {
+        errorMessage = error;
+      } else if (typeof error === "object" && error !== null && "message" in error) {
+        errorMessage = String((error as any).message);
+      }
+      return {
+        success: false,
+        message: errorMessage,
+      };
+  }
+}
+
+/*
+   Delete club alongside it's connected events server action
+   ========================================================================== */
+
+export async function deleteRunClub(clubId: string, idToken: string) {
+  // Verify the user
+  let decodedToken;
+  try {
+    decodedToken = await adminAuth.verifyIdToken(idToken);
+  } catch {
+    return { success: false, message: 'Unauthorized' };
+  }
+
+  const userId = decodedToken.uid;
+
+  try {
+    // Verify ownership
+    const clubDoc = await adminDb.collection('runclubs').doc(clubId).get();
+    
+    if (!clubDoc.exists) {
+      return { success: false, message: 'Club not found' };
+    }
+
+    const clubData = clubDoc.data();
+    if (clubData?.creator_id !== userId) {
+      return { success: false, message: 'You do not own this club' };
+    }
+
+    // Delete events first (cascade)
+    const eventsSnapshot = await adminDb
+      .collection('events')
+      .where('runclub_id', '==', clubId)
+      .get();
+
+    const batch = adminDb.batch();
+
+    // Add all events to batch delete
+    for (const doc of eventsSnapshot.docs) {
+      batch.delete(doc.ref);
+    }
+
+    // Add club to batch delete
+    batch.delete(adminDb.collection('runclubs').doc(clubId));
+
+    // Execute batch (atomic - all or nothing)
+    await batch.commit();
+
+    return { 
+      success: true, 
+      message: `Club and ${eventsSnapshot.size} event(s) deleted successfully`,
+      deletedEventsCount: eventsSnapshot.size
+    };
+  } catch (error) {
+    console.error('Error deleting club:', error);
+    return { success: false, message: 'Failed to delete club' };
   }
 }
