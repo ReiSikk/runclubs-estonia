@@ -5,6 +5,8 @@ import {
   QueryClient,
 } from '@tanstack/react-query'
 import { cookies } from 'next/headers';
+import { connection } from 'next/server';
+import { Suspense } from 'react';
 import { adminAuth } from '../lib/firebase/firebaseAdmin';
 // Hooks 
 import { getUserRunClubs } from '../lib/queries/userRunClubs';
@@ -13,8 +15,17 @@ import DashboardClient from '../components/Dashboard/DashboardClient';
 import { RunClub } from '../lib/types/runClub';
 
 
-export default async function DashboardPage() {
+export default function DashboardPage() {
+  return (
+    <Suspense fallback={<DashboardClient />}>
+      <DashboardData />
+    </Suspense>
+  );
+}
+
+async function DashboardData() {
   const queryClient = new QueryClient();
+  await connection();
 
   // Get user from session cookie before prefetching
   let userId: string | null = null;

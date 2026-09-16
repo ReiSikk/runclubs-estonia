@@ -1,4 +1,6 @@
 import { notFound } from "next/navigation";
+import { connection } from "next/server";
+import { Suspense } from "react";
 import { Metadata } from "next";
 import { getEventById } from "@/app/lib/queries/currentEvent";
 import { getCurrentClub } from "@/app/lib/queries/currentClub";
@@ -12,6 +14,7 @@ type Props = {
 // Generate metadata for SEO
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   try {
+    await connection();
     const { slug, eventId } = await params;
     
     const [club, event] = await Promise.all([
@@ -36,7 +39,16 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   }
 }
 
-export default async function EventPage({ params }: Props) {
+export default function EventPage({ params }: Props) {
+  return (
+    <Suspense fallback={<EventPageFallback />}>
+      <EventPageContent params={params} />
+    </Suspense>
+  )
+}
+
+async function EventPageContent({ params }: Props) {
+  await connection();
   try {
     const { slug, eventId } = await params;
 
@@ -63,4 +75,8 @@ export default async function EventPage({ params }: Props) {
     console.error("❌ EventPage error:", error);
     notFound();
   }
+}
+
+function EventPageFallback() {
+  return <main className="page-single-event" id="page-top" />;
 }

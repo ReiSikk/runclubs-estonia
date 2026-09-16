@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import { useEffect, useState } from "react";
 // Styles
 import styles from "./MainSection.module.css";
 // Components
@@ -12,6 +12,11 @@ import getRunClubs from "../../lib/hooks/useRunClubs";
 function MainSection() {
   const [selectedCity, setSelectedCity] = useState("all");
   const [searchTerm, setSearchTerm] = useState("");
+  const [today, setToday] = useState<string | null>(null);
+
+  useEffect(() => {
+    setToday(new Date().toLocaleString("en-US", { weekday: "long" }).toLowerCase());
+  }, []);
 
   // Use server prefetched data to avoid showing loading state on UI
   const { data: clubs = [], isLoading, isError } = getRunClubs();
@@ -58,11 +63,10 @@ function MainSection() {
   const filteredClubs = getFilteredClubs();
 
   // Check which clubs are running today
-  const today = new Date().toLocaleString("en-US", { weekday: "long" }).toLowerCase();
-
   // Filter clubs that run today
   const todaysClubs = filteredClubs.filter(
     (club) =>
+      today &&
       club.runDays &&
       club.runDays.some(
         (day: string) => day.toLowerCase().includes(today) || day.toLowerCase().includes(today.substring(0, 3)) // Check for abbreviations

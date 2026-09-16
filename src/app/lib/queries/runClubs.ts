@@ -6,7 +6,10 @@ export async function getRunClubs(): Promise<RunClub[]> {
   if (typeof window === 'undefined') {
     // ✅ SERVER-SIDE: Use Admin SDK
     try {
+      const { connection } = await import('next/server');
       const { adminDb } = await import('../firebase/firebaseAdmin');
+
+      await connection();
       
       const snapshot = await adminDb
         .collection('runclubs')

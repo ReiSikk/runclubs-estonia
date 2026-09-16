@@ -52,3 +52,8 @@ node_modules/
 
 # Sentry Config File
 .env.sentry-build-plugin
+
+
+# Agent files and skills
+*.md
+skills-lock.json
