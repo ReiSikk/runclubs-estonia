@@ -17,7 +17,7 @@ function SiteFooter() {
         </div>
         <div className={`${styles.siteFooter__row} fp`}>
           <div className={`${styles.siteFooter__cell} ${styles.siteFooter__cell_2} fp`}>
-            <span className='h4'>All rights reserved.
+            <span className='h4' suppressHydrationWarning>All rights reserved.
               <br />© {new Date().getFullYear()}</span>
           </div>
           <div className={`${styles.siteFooter__cell} ${styles.siteFooter__cell_3} fp-col`}>

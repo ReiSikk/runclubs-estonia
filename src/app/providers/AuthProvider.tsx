@@ -3,6 +3,7 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { onAuthStateChanged, User } from "firebase/auth";
 import { auth } from "@/app/lib/firebase/firebase";
+import { initializeAppCheckClient } from "@/app/lib/firebase/appCheck";
 import { useRouter, usePathname } from "next/navigation";
 
 interface AuthContextType {
@@ -19,6 +20,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
 
   useEffect(() => {
+    // Initialize App Check once the DOM is ready on the client, before any
+    // auth-protected requests are made. Deferring this from module evaluation
+    // prevents reCAPTCHA from injecting nodes during React hydration.
+    initializeAppCheckClient();
+
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser as User | null);
       setLoading(false);
