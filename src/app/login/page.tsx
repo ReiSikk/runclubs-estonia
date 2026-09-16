@@ -67,14 +67,18 @@ export default function LoginPage() {
       setToastOpen(true);
       if (countdownInterval.current) clearInterval(countdownInterval.current);
 
+      let remaining = seconds;
       countdownInterval.current = setInterval(() => {
-        setCountdown((prev) => {
-          if (prev && prev > 1) return prev - 1;
+        remaining -= 1;
+        if (remaining > 0) {
+          setCountdown(remaining);
+        } else {
           clearInterval(countdownInterval.current!);
+          countdownInterval.current = null;
           setToastOpen(false);
+          setCountdown(null);
           onComplete?.();
-          return null;
-        });
+        }
       }, 1000);
 
       setToastMessage(message);

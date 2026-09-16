@@ -5,6 +5,7 @@ import {
   QueryClient,
   QueryClientProvider,
 } from '@tanstack/react-query'
+import { Suspense } from 'react'
 import { AuthProvider } from './AuthProvider'
 
 function makeQueryClient() {
@@ -39,9 +40,9 @@ export default function Providers({ children }: { children: React.ReactNode }) {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <AuthProvider>
-        {children}
-      </AuthProvider>
+      <Suspense fallback={children}>
+        <AuthProvider>{children}</AuthProvider>
+      </Suspense>
     </QueryClientProvider>
   )
 }

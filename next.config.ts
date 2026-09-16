@@ -1,7 +1,8 @@
-import {withSentryConfig} from "@sentry/nextjs";
+import {withSentryConfig} from "@sentry/nextjs/config";
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+    cacheComponents: true,
     experimental: {
       serverActions: {
       /**
@@ -75,12 +76,12 @@ export default withSentryConfig(nextConfig, {
   // side errors will fail.
   // tunnelRoute: "/monitoring",
 
-  // Automatically tree-shake Sentry logger statements to reduce bundle size
-  disableLogger: true,
+  // Automatically tree-shake Sentry logger statements to reduce bundle size ( Soon to be deprecated and doesn't work with turbopack)
+  // disableLogger: true,
 
-  // Enables automatic instrumentation of Vercel Cron Monitors. (Does not yet work with App Router route handlers.)
+  // Enables automatic instrumentation of Vercel Cron Monitors. (Does not yet work with App Router route handlers.)( Soon to be deprecated and doesn't work with turbopack)
   // See the following for more information:
   // https://docs.sentry.io/product/crons/
   // https://vercel.com/docs/cron-jobs
-  automaticVercelMonitors: true,
+  //automaticVercelMonitors: true,
 });

@@ -1,4 +1,3 @@
-import React from 'react'
 import Image from 'next/image'
 import { LucideArrowUp, LucideSend } from 'lucide-react'
 import styles from './SiteFooter.module.css'
@@ -18,7 +17,7 @@ function SiteFooter() {
         <div className={`${styles.siteFooter__row} fp`}>
           <div className={`${styles.siteFooter__cell} ${styles.siteFooter__cell_2} fp`}>
             <span className='h4' suppressHydrationWarning>All rights reserved.
-              <br />© {new Date().getFullYear()}</span>
+              <br />© 2026</span>
           </div>
           <div className={`${styles.siteFooter__cell} ${styles.siteFooter__cell_3} fp-col`}>
               <p className="h4">

@@ -1,4 +1,6 @@
 import { notFound } from 'next/navigation'
+import { connection } from 'next/server'
+import { Suspense } from 'react'
 // Styles
 import styles from './page.module.css'
 // Components
@@ -14,7 +16,16 @@ type PageProps = {
 }
 
 
-export default async function SingleRunClubPage({ params }: PageProps) {
+export default function SingleRunClubPage({ params }: PageProps) {
+  return (
+    <Suspense fallback={<ClubPageFallback />}>
+      <ClubPageContent params={params} />
+    </Suspense>
+  )
+}
+
+async function ClubPageContent({ params }: PageProps) {
+  await connection();
   const { slug } = await params;
   const club = await getCurrentClub(slug);
 
@@ -34,4 +45,8 @@ export default async function SingleRunClubPage({ params }: PageProps) {
       </main>
     </div>
   )
+}
+
+function ClubPageFallback() {
+  return <main className={`${styles.page} page-single-runclub`} id="page-top" />;
 }
